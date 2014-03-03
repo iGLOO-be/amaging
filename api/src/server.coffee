@@ -9,9 +9,9 @@ module.exports = (options) ->
   app.set('port', 3000)
 
   # Routes
-  app.get('/:uid/:file', amaging.read)
+  app.get('/:cid/*', amaging.read)
 
-  app.post('/:uid/:file', amaging.write)
-  app.put('/:uid/:file', amaging.write)
+  app.post('/:cid/*', amaging.write)
+  app.put('/:cid/*', amaging.write)
 
   return app

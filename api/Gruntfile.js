@@ -41,7 +41,7 @@ module.exports = function (grunt) {
     },
     nodemon: {
       dev: {
-        script: 'lib/amaging.js'
+        script: 'lib/sample.js'
       }
     },
     concurrent: {
@@ -58,10 +58,12 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('server', [
+    'build',
     'concurrent:dev'
   ]);
 
-  grunt.registerTask('default', [
+  grunt.registerTask('default', 'build');
+  grunt.registerTask('build', [
     'clean',
     'jshint',
     'coffeelint',

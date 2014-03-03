@@ -4,9 +4,6 @@ optionsSep = '&'
 
 class File
   @create: (storage, filename, cb) ->
-
-    console.log arguments
-
     file = new File(storage, filename)
     file.readInfo(cb)
     return file
@@ -14,16 +11,12 @@ class File
   constructor: (@storage, filename) ->
     match = filename.match optionsRegex
 
-    console.log @
-
     if match
       @options = match[0].split(optionsSep)
       @filename = filename.replace optionsRegex, ''
     else
       @options = []
       @filename = filename
-
-    console.log @
 
   readInfo: (cb) ->
     @storage.readInfo @filename, (err, info) =>
@@ -38,5 +31,8 @@ class File
 
   createReadStream: ->
     @storage.createReadStream @filename
+
+  createWriteStream: ->
+    @storage.createWriteStream @filename
 
 module.exports = File

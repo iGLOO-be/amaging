@@ -7,6 +7,7 @@ storageIniter = require './stack/storage-initer'
 fileIniter = require './stack/file-initer'
 
 defaultReader = require './reader/default-reader'
+defaultWriter = require './writer/default-writer'
 
 module.exports = (options) ->
   readStack = [
@@ -20,13 +21,13 @@ module.exports = (options) ->
   ]
 
   writeStack = [
-    # bootstrapper(options)
-    # cidResolver()
-    # storageIniter()
-    # fileIniter()
+    bootstrapper(options)
+    cidResolver()
+    storageIniter()
+    fileIniter()
 
     # auth()
-    # defaultWriter()
+    defaultWriter()
   ]
 
   read: (req, res, next) ->

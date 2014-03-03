@@ -7,8 +7,6 @@ module.exports = ->
     amaging = req.amaging
     params = req.params
 
-    console.log params
-
     unless params.file
       return httpError 404, 'File not found', res
 

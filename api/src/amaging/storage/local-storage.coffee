@@ -28,6 +28,8 @@ class LocalStorage extends AbstractStorage
   createReadStream: (file) ->
     fs.createReadStream(@_filepath(file))
 
+  createWriteStream: (file) ->
+    fs.createWriteStream(@_filepath(file))
 
   # Privates
 

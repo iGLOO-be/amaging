@@ -26,6 +26,9 @@ class File
 
       cb()
 
+  contentType: ->
+    @info.ContentType
+
   exists: ->
     typeof @info == 'object'
 

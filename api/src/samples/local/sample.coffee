@@ -1,17 +1,17 @@
 
-server = require './amaging/server'
+server = require './server'
 
-app = server(
+app = server
   customers:
     test:
       storage:
         type: 'local'
         options:
-          path: __dirname + '/../storage/sample'
+          path: __dirname + '/storage/sample'
       cacheStorage:
         type: 'local'
         options:
-          path: __dirname + '/../storage_cache/sample'
+          path: __dirname + '/storage_cache/sample'
     # rcbe:
       # access:
         # 'partnerportal': 'qsd5q4s65d54qa5z4e6a5z465s4654qsd56qqs4d56a4ze6'
@@ -21,7 +21,6 @@ app = server(
           # bucket: 'bucket-amaging-rcbe'
           # path: '/rcbe/amaging/original'
           # key: ''
-          # secret: ''
       # cacheStorage:
         # type: 's3'
         # options:
@@ -32,7 +31,6 @@ app = server(
         # type: 'local'
         # options:
         #   path: '/rcbe/amaging/cache'
-)
 
 app.listen app.get('port'), (err) ->
   throw err if err

@@ -4,6 +4,7 @@ path = require 'path'
 fs = require 'fs'
 mime = require 'mime'
 _ = require 'lodash'
+mkdirp = require 'mkdirp'
 
 class LocalStorage extends AbstractStorage
   constructor: (options) ->
@@ -26,10 +27,15 @@ class LocalStorage extends AbstractStorage
         LastModified: stat.mtime
 
   createReadStream: (file) ->
-    fs.createReadStream(@_filepath(file))
+    fs.createReadStream @_filepath(file)
+
+  requestWriteStream: (file, cb) ->
+    mkdirp path.dirname(@_filepath(file)), (err) =>
+      return cb err if err
+      cb null, @createWriteStream(file)
 
   createWriteStream: (file) ->
-    fs.createWriteStream(@_filepath(file))
+    fs.createWriteStream @_filepath(file)
 
   # Privates
 

@@ -5,9 +5,11 @@ module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
 
-    stream = amaging.file.createWriteStream()
-    req.pipe(stream)
-    req.on 'end', ->
-      res.send
-        success: true
-        file: amaging.file.info
+    amaging.file.requestWriteStream (err, stream) ->
+      return next err if err
+
+      req.pipe(stream)
+      req.on 'end', ->
+        res.send
+          success: true
+          file: amaging.file.info

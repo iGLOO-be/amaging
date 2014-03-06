@@ -12,7 +12,7 @@ class File
     match = filename.match optionsRegex
 
     if match
-      @options = match[0].split(optionsSep)
+      @options = match[1].split(optionsSep)
       @filename = filename.replace optionsRegex, ''
     else
       @options = []
@@ -35,7 +35,7 @@ class File
   createReadStream: ->
     @storage.createReadStream @filename
 
-  createWriteStream: ->
-    @storage.createWriteStream @filename
+  requestWriteStream: (cb) ->
+    @storage.requestWriteStream @filename, cb
 
 module.exports = File

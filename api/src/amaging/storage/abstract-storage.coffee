@@ -23,7 +23,7 @@ class AbstractStorage
   createReadStream: (file) ->
     throw new Error('Not Implemented')
 
-  createWriteStream: (file) ->
+  requestWriteStream: (file, cb) ->
     throw new Error('Not Implemented')
 
 module.exports = AbstractStorage

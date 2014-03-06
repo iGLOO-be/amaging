@@ -41,7 +41,12 @@ module.exports = function (grunt) {
     },
     nodemon: {
       dev: {
-        script: 'lib/samples/local/sample.js'
+        script: 'lib/samples/local/sample.js',
+        options: {
+          watch: 'lib',
+          nodeArgs: ['--debug'],
+          delay: 1
+        }
       }
     },
     mochaTest: {

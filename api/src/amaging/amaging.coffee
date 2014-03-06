@@ -7,6 +7,8 @@ storageIniter = require './stack/storage-initer'
 fileIniter = require './stack/file-initer'
 
 defaultReader = require './reader/default-reader'
+imageReader = require './reader/image-reader'
+
 defaultWriter = require './writer/default-writer'
 
 module.exports = (options) ->
@@ -17,6 +19,7 @@ module.exports = (options) ->
     fileIniter()
 
     # imageReader()
+    imageReader()
     defaultReader()
   ]
 

@@ -1,6 +1,6 @@
 
 express = require 'express'
-amaging = require './amaging/amaging'
+amaging = require './amaging'
 
 module.exports = (options) ->
   app = express(options)

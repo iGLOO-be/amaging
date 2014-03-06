@@ -1,7 +1,7 @@
 
-server = require './server'
+server = require './amaging/server'
 
-app = server
+app = server(
   customers:
     test:
       storage:
@@ -32,6 +32,7 @@ app = server
         # type: 'local'
         # options:
         #   path: '/rcbe/amaging/cache'
+)
 
 app.listen app.get('port'), (err) ->
   throw err if err

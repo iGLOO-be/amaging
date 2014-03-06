@@ -9,8 +9,8 @@ module.exports = ->
     unless params.cid
       return httpError 403, 'CustomerId could not be found.', res
 
-    customers = amaging.options.customers
-    customer = customers[params.cid]
+    customers = amaging.options?.customers
+    customer = customers?[params.cid]
 
     unless customer
       return httpError 403, 'CustomerId could not be found.', res

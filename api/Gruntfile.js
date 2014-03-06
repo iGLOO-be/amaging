@@ -44,6 +44,25 @@ module.exports = function (grunt) {
         script: 'lib/sample.js'
       }
     },
+    mochaTest: {
+      test: {
+        options: {
+          reporter: 'spec'
+        },
+        src: ['lib/test/*.js']
+      }
+      // coverage: {
+      //   options: {
+      //     reporter: 'html-cov',
+      //     quiet: true,
+      //     captureFile: 'coverage.html'
+      //   },
+      //   src: [
+      //     'src/sample.coffee',
+      //     'src/amaging/**/*.coffee'
+      //   ]
+      // }
+    },
     concurrent: {
       dev: {
         tasks: [
@@ -54,6 +73,21 @@ module.exports = function (grunt) {
       options: {
         logConcurrentOutput: true
       }
+    },
+    copy: {
+      test: {
+        files: [{
+          expand: true,
+          cwd: 'src/test/fixtures/',
+          src: ['storage/**', 'storage_cache/**'],
+          dest: 'lib/test/fixtures/'
+        }, {
+          expand: true,
+          cwd: 'src/test/expected/',
+          src: ['**'],
+          dest: 'lib/test/expected/'
+        }]
+      }
     }
   });
 
@@ -63,6 +97,12 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', 'build');
+  grunt.registerTask('test', [
+    'build',
+    'jshint',
+    'copy:test',
+    'mochaTest'
+  ]);
   grunt.registerTask('build', [
     'clean',
     'jshint',

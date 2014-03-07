@@ -1,10 +1,10 @@
 
 express = require 'express'
-amaging = require './amaging'
+amagingFactory = require './amaging'
 
 module.exports = (options) ->
   app = express(options)
-  amaging = amaging(options)
+  amaging = amagingFactory(options)
 
   app.set('port', 3000)
 

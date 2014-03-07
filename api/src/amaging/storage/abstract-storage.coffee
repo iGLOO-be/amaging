@@ -1,9 +1,10 @@
 
+assert = require 'assert'
+
 class AbstractStorage
   @create: (type, options) ->
     Storage = require('./' + type + '-storage')
     storage = new Storage(options)
-
     return storage
 
   constructor: (@options) ->
@@ -17,13 +18,15 @@ class AbstractStorage
     # }
     throw new Error('Not Implemented')
 
-  get: (file) ->
-    throw new Error('Not Implemented')
-
   createReadStream: (file) ->
     throw new Error('Not Implemented')
 
-  requestWriteStream: (file, cb) ->
+  requestWriteStream: (file, info, cb) ->
+    # info = { 'content-length': '', 'content-type': '' }
     throw new Error('Not Implemented')
+
+  _validWriteInfo: (info) ->
+    assert.ok(info.ContentLength, 'ContentLength property is mandatory in write info.')
+    assert.ok(info.ContentType, 'ContentType property is mandatory in write info.')
 
 module.exports = AbstractStorage

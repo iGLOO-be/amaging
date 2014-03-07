@@ -55,7 +55,7 @@ module.exports = function (grunt) {
           reporter: 'spec'
         },
         src: ['lib/test/*.js']
-      }
+      },
       // coverage: {
       //   options: {
       //     reporter: 'html-cov',

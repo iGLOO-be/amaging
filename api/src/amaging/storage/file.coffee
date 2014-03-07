@@ -27,15 +27,16 @@ class File
       cb()
 
   contentType: ->
-    @info.ContentType
+    @info?.ContentType
 
   exists: ->
+    #console.log typeof @info
     typeof @info == 'object'
 
   createReadStream: ->
     @storage.createReadStream @filename
 
-  requestWriteStream: (cb) ->
-    @storage.requestWriteStream @filename, cb
+  requestWriteStream: (info, cb) ->
+    @storage.requestWriteStream @filename, info, cb
 
 module.exports = File

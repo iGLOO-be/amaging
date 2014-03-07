@@ -3,8 +3,6 @@
 #
 
 chai = require 'chai'
-should = chai.should
-expect = chai.expect
 assert = chai.assert
 request = require 'supertest'
 appFactory = require('./fixtures/app')
@@ -13,43 +11,14 @@ app = null
 before (done) ->
   app = appFactory(done)
 
-describe 'GET a file', () ->
-  it 'Should return a 404 error because of an unexpected url', (done) ->
-    request app
-      .get '/notExist.png'
-      .expect 404, (err) ->
-        return done err if err
-        done()
-
-
-  it 'Should return a 403 error Forbidden because of an non-existing cid', (done) ->
-    request app
-      .get '/notExits/file.png'
-      .expect 403, (err) ->
-        return done err if err
-        done()
-
-
-  it 'Should return a 404 not found because the file doesn\'t exist', (done) ->
-    request app
-      .get '/test/file.png'
-      .expect 404, (err) ->
-        return done err if err
-        done()
-
-  it 'Should return a 200 OK because the file exist', (done) ->
-    request app
-      .get '/test/igloo.jpg'
-      .expect 200, (err) ->
-        return done(err) if err
-        done()
-
-
 describe 'POST a new json file and check his Content-Type', () ->
   it 'Should return a 404 not found when retreive the file that doesn\'t exist', (done) ->
     request app
       .get '/test/file.json'
-      .expect 404, done
+      .expect 404, (err) ->
+        #console.log 'ERR: ', err
+        return done err if err
+        done()
 
   it 'Should return a 200 OK by adding a json file', (done) ->
     request app
@@ -64,8 +33,10 @@ describe 'POST a new json file and check his Content-Type', () ->
     request app
       .get '/test/file.json'
       .set 'Accept', 'application/json'
-      .end (err) ->
+      .end (err, res) ->
+        #console.log 'RES: ', res.headers['content-type']
         return done err if err
+        assert.equal(res.headers['content-type'], 'application/json')
         done()
 
   it 'Should return the content of the file.json', (done) ->

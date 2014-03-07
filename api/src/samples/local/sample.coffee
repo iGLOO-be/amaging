@@ -1,36 +1,19 @@
 
-server = require './server'
+server = require '../../amaging/server'
+path = require 'path'
 
-app = server
+app = server(
   customers:
     test:
       storage:
         type: 'local'
         options:
-          path: __dirname + '/storage/sample'
+          path: path.join(__dirname, 'storage')
       cacheStorage:
         type: 'local'
         options:
-          path: __dirname + '/storage_cache/sample'
-    # rcbe:
-      # access:
-        # 'partnerportal': 'qsd5q4s65d54qa5z4e6a5z465s4654qsd56qqs4d56a4ze6'
-      # storage:
-        # type: 's3'
-        # options:
-          # bucket: 'bucket-amaging-rcbe'
-          # path: '/rcbe/amaging/original'
-          # key: ''
-      # cacheStorage:
-        # type: 's3'
-        # options:
-          # bucket: 'bucket-amaging-rcbe'
-          # path: '/rcbe/amaging/cache'
-          # key: ''
-          # secret: ''
-        # type: 'local'
-        # options:
-        #   path: '/rcbe/amaging/cache'
+          path: path.join(__dirname, 'storage_cache')
+  )
 
 app.listen app.get('port'), (err) ->
   throw err if err

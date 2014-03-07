@@ -41,7 +41,10 @@ module.exports = function (grunt) {
     },
     nodemon: {
       dev: {
-        script: 'lib/samples/local/sample.js'
+        script: 'lib/samples/s3/sample.js',
+        options: {
+          watch: ['lib']
+        }
       }
     },
     mochaTest: {
@@ -50,7 +53,7 @@ module.exports = function (grunt) {
           reporter: 'spec'
         },
         src: ['lib/test/*.js']
-      }
+      },
       // coverage: {
       //   options: {
       //     reporter: 'html-cov',

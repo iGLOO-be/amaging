@@ -6,6 +6,13 @@ module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
 
+    # Valid headers
+    contentLength = req.headers['content-length']
+    contentType = req.headers['content-type']
+
+    unless contentLength and contentType
+      return httpError 403, 'Missing header(s)', res
+
     stream = null
     async.series [
       (done) ->

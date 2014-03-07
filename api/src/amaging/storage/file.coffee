@@ -27,7 +27,7 @@ class File
       cb()
 
   contentType: ->
-    @info.ContentType
+    @info?.ContentType
 
   exists: ->
     #console.log typeof @info

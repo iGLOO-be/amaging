@@ -1,6 +1,9 @@
 
 server = require('../../amaging/server')
 path = require 'path'
+AWS = require 'aws-sdk'
+async = require 'async'
+fs = require 'fs'
 env = process.env.TEST_ENV
 
 if env is 'local'
@@ -22,7 +25,7 @@ if env is 'local'
 
 else if env is 's3'
   module.exports = (done) ->
-    app = server(
+    options =
       customers:
         test:
           # access:
@@ -46,8 +49,39 @@ else if env is 's3'
             # type: 'local'
             # options:
             #   path: '/rcbe/amaging/cache'
-    )
-    process.nextTick(done)
+    app = server(options)
+
+    s3 = new AWS.S3
+      accessKeyId: options.customers.test.storage.options.key
+      secretAccessKey: options.customers.test.storage.options.secret
+      region: options.customers.test.storage.options.region
+      params:
+        Bucket: options.customers.test.storage.options.bucket
+
+    keys = null
+    async.series [
+      (done) ->
+        s3.listObjects
+          Prefix: options.customers.test.storage.options.path
+        , (err, _keys) ->
+          keys = _keys
+          done err
+      (done) ->
+        unless keys?.Contents?.length
+          return done()
+        s3.deleteObjects
+          Delete:
+            Objects: keys?.Contents.map (k) ->
+              Key: k.Key
+        , done
+      (done) ->
+        s3.putObject
+          ContentType: 'image/jpeg'
+          Body: fs.createReadStream(path.join(__dirname, 'storage/igloo.jpg'))
+          Key: options.customers.test.storage.options.path + 'igloo.jpg'
+        , done
+    ], done
+
     return app
 
 else

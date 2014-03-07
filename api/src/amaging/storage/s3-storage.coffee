@@ -21,6 +21,8 @@ class S3ReadStream extends Readable
     @_bucket.getObject
       Key: @_key
     , (err, data) =>
+      if err
+        @emit 'error', err
       @_fetched = true
       @push data.Body
 
@@ -43,7 +45,6 @@ class S3WriteStream extends Writable
 
   end: (chunk, encoding, cb) ->
     @_data.Body = @_buffer
-    #console.log @_data
     @_bucket.putObject @_data, (err, data) =>
       if err
         @emit 'error', err
@@ -64,9 +65,9 @@ class S3Storage extends AbstractStorage
     debug('Start reading info for "%s"', file)
     @_S3.headObject Key: @_filepath(file), (err, info) =>
       debug('End reading info for "%s" that results in: %j', file, info)
-      if err?.code == 'NotFound'
+      if err?.code == 'NotFound' or err?.code == 'NoSuchKey'
+        err = null
         info = null
-        return cb()
       cb err, info
 
   createReadStream: (file) ->

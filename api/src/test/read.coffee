@@ -21,7 +21,7 @@ describe 'GET a file', () ->
 
   it 'Should return a 200 OK because the file exist', (done) ->
     request app
-      .get '/test/igloo2.jpg'
+      .get '/test/igloo.jpg'
       .expect 200, (err) ->
         return done(err) if err
         done()

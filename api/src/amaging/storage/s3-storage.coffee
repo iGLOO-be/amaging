@@ -63,7 +63,7 @@ class S3Storage extends AbstractStorage
 
   readInfo: (file, cb) ->
     debug('Start reading info for "%s"', file)
-    @_S3.headObject Key: @_filepath(file), (err, info) =>
+    @_S3.headObject Key: @_filepath(file), (err, info) ->
       debug('End reading info for "%s" that results in: %j', file, info)
       if err?.code == 'NotFound' or err?.code == 'NoSuchKey'
         err = null
@@ -71,7 +71,11 @@ class S3Storage extends AbstractStorage
       cb err, info
 
   createReadStream: (file) ->
-    new S3ReadStream @_S3, @_filepath(file)
+    stream = new S3ReadStream @_S3, @_filepath(file)
+    stream.on 'error', (err) ->
+      if err.code != 'NotFound' or err?.code != 'NoSuchKey'
+        throw err
+    return stream
 
   requestWriteStream: (file, info, cb) ->
     @_validWriteInfo info

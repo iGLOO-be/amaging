@@ -16,7 +16,6 @@ describe 'POST a new json file and check his Content-Type', () ->
     request app
       .get '/test/file.json'
       .expect 404, (err) ->
-        #console.log 'ERR: ', err
         return done err if err
         done()
 
@@ -34,7 +33,6 @@ describe 'POST a new json file and check his Content-Type', () ->
       .get '/test/file.json'
       .set 'Accept', 'application/json'
       .end (err, res) ->
-        #console.log 'RES: ', res.headers['content-type']
         return done err if err
         assert.equal(res.headers['content-type'], 'application/json')
         done()
@@ -44,7 +42,6 @@ describe 'POST a new json file and check his Content-Type', () ->
       .get '/test/file.json'
       .set 'Accept', 'application/json'
       .end (err, res) ->
-        # console.log 'RES: ', res
         return done err if err
         assert.equal(res.text, '{"test":3}')
         done()

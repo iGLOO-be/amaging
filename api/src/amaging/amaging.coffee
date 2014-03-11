@@ -5,10 +5,10 @@ bootstrapper = require './stack/bootstrapper'
 cidResolver = require './stack/cid-resolver'
 storageIniter = require './stack/storage-initer'
 fileIniter = require './stack/file-initer'
+auth = require './stack/auth'
 
 defaultReader = require './reader/default-reader'
 imageReader = require './reader/image-reader'
-
 defaultWriter = require './writer/default-writer'
 
 module.exports = (options) ->
@@ -26,10 +26,12 @@ module.exports = (options) ->
   writeStack = [
     bootstrapper(options)
     cidResolver()
+
+    # uploaderHandler()
+    auth()
+
     storageIniter()
     fileIniter()
-
-    # auth()
     defaultWriter()
   ]
 

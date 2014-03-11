@@ -7,25 +7,7 @@ AWS = require 'aws-sdk'
 path = require 'path'
 _ = require 'lodash'
 fs = require 'fs'
-{Readable} = require('stream')
 {Writable} = require('stream')
-
-class S3ReadStream extends Readable
-  constructor: (@_bucket, @_key) ->
-    super
-
-  _read: ->
-    if @_fetched
-      return @push null
-
-    @_bucket.getObject
-      Key: @_key
-    , (err, data) =>
-      if err
-        @emit 'error', err
-      @_fetched = true
-      @push data.Body
-
 
 class S3WriteStream extends Writable
   constructor: (@_bucket, file, @_data = {}) ->
@@ -63,17 +45,29 @@ class S3Storage extends AbstractStorage
 
   readInfo: (file, cb) ->
     debug('Start reading info for "%s"', file)
-    @_S3.headObject Key: @_filepath(file), (err, info) ->
+
+    onEnd = (err, info) ->
       debug('End reading info for "%s" that results in: %j', file, info)
+      if err
+        debug('Error reading info for "%s" : %j', file, err)
       if err?.code == 'NotFound' or err?.code == 'NoSuchKey'
         err = null
         info = null
       cb err, info
 
+    dom = require('domain').create()
+    dom.on 'error', onEnd
+    dom.run =>
+      @_S3.headObject Key: @_filepath(file), onEnd
+
   createReadStream: (file) ->
-    stream = new S3ReadStream @_S3, @_filepath(file)
+    debug('Create readStream for "%s"', file)
+    stream = @_S3
+      .getObject(Key: @_filepath(file))
+      .createReadStream()
     stream.on 'error', (err) ->
-      if err.code != 'NotFound' or err?.code != 'NoSuchKey'
+      debug('Error in readStream for "%s" : %j', file, err)
+      if err.code != 'NotFound' and err.code != 'NoSuchKey'
         throw err
     return stream
 

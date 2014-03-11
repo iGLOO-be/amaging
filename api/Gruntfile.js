@@ -41,7 +41,7 @@ module.exports = function (grunt) {
     },
     nodemon: {
       dev: {
-        script: 'lib/samples/local/sample.js',
+        script: 'lib/samples/s3/sample.js',
         options: {
           watch: 'lib',
           nodeArgs: ['--debug'],
@@ -54,7 +54,7 @@ module.exports = function (grunt) {
         options: {
           reporter: 'spec'
         },
-        src: ['lib/test/*.js']
+        src: ['lib/test/test.js']
       },
       // coverage: {
       //   options: {
@@ -91,6 +91,11 @@ module.exports = function (grunt) {
           cwd: 'src/test/expected/',
           src: ['**'],
           dest: 'lib/test/expected/'
+        }, {
+          expand: true,
+          cwd: 'src/test/request/',
+          src: 'testfile.json',
+          dest: 'lib/test/request/'
         }]
       }
     }

@@ -16,5 +16,6 @@ module.exports = ->
       return httpError 403, 'CustomerId could not be found.', res
 
     amaging.customer = customer
+    amaging.customer.id = params.cid
 
     next()

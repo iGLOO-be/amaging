@@ -30,8 +30,7 @@ class File
     @info?.ContentType
 
   exists: ->
-    #console.log typeof @info
-    typeof @info == 'object'
+    @info and typeof @info == 'object'
 
   createReadStream: ->
     @storage.createReadStream @filename

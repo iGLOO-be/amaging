@@ -47,6 +47,7 @@ module.exports = ->
 
     debug 'Proceed to authentication ...'
     new_sha = hash(cid + userId + secret + fileName + contentType + contentLength)
+    debug 'new_sha: ' + new_sha
 
     if sha != new_sha
       debug '403: sha integrity failed'

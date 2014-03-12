@@ -6,48 +6,69 @@ app = null
 crypto = require 'crypto'
 server = require '../amaging/server'
 
-token = crypto.createHash('sha1')
-  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'test.jpg' + 'image/jpeg')
-  .digest('hex')
-
-token_json = crypto.createHash('sha1')
-  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'file.json' + 'application/json')
-  .digest('hex')
-
-token_json_noSecret = crypto.createHash('sha1')
-  .update('test' + 'apiaccess' + 'file.json' + 'application/json')
-  .digest('hex')
-
-token_err = crypto.createHash('sha1')
-  .update('test' + 'apiaccess' + 'azerty9b81ee67e305b1eb4329e00000' + 'file.json' + 'image/jpeg')
-  .digest('hex')
-
 file = require('fs').readFileSync(__dirname + '/expected/igloo2.jpg')
 file = new Buffer(file)
 fileUploaded = file.length
 
-wrong_app = server (
-  customers:
-    test:
-      access:
-        'apiaccess': '4ec2b79b81ee67e305b1eb4329ef2cd1'
-      storage:
-        type: 's3'
-        options:
-          bucket: 'igloo-s3-test'
-          path: 'storage/main/'
-          key: 'TRY'
-          secret: 'AGAIN'
-          region: 'eu-west-1'
-      cacheStorage:
-        type: 's3'
-        options:
-          bucket: 'igloo-s3-test'
-          path: 'storage/cache/'
-          key: 'TRY'
-          secret: 'AGAIN'
-          region: 'eu-west-1'
-  )
+# Prepare token to use in differents 'it'
+
+token = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'test.jpg' + 'image/jpeg' + fileUploaded)
+  .digest('hex')
+
+addJson = "{\"test\":3}"
+token_json = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'file.json' +
+    'application/json' + addJson.length)
+  .digest('hex')
+
+wAPI_userId = "{\"test_bad_ct\":1}"
+token_err = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + 'azerty9b81ee67e305b1eb4329e00000' +
+    'file.json' + 'application/json' + wAPI_userId.length)
+  .digest('hex')
+
+missSecret = "{\"test_no_api_secret\":1}"
+token_json_noSecret = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + 'file.json' + 'application/json' + missSecret.length)
+  .digest('hex')
+
+wrongCreds = "{\"test_wrong_creds\":1}"
+token_json_wCreds = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' +
+    'file.json' + 'application/json' + wrongCreds.length)
+  .digest('hex')
+
+altToken = "{\"test_err_token\":1}"
+altered_token_json = crypto.createHash('sha1')
+  .update('test' + 'APIaccess' + '4ec2b79baaaaaaa305b1eb4329ef2cd1' +
+    'file.json' + 'application/json' + altToken.length)
+  .digest('hex')
+
+# Example of a bad config of S3 credentials
+
+# wrong_app = server (
+#   customers:
+#     test:
+#       access:
+#         'apiaccess': '4ec2b79b81ee67e305b1eb4329ef2cd1'
+#       storage:
+#         type: 's3'
+#         options:
+#           bucket: 'igloo-s3-test'
+#           path: 'storage/main/'
+#           key: 'TRY'
+#           secret: 'AGAIN'
+#           region: 'eu-west-1'
+#       cacheStorage:
+#         type: 's3'
+#         options:
+#           bucket: 'igloo-s3-test'
+#           path: 'storage/cache/'
+#           key: 'TRY'
+#           secret: 'AGAIN'
+#           region: 'eu-west-1'
+#   )
 
 before (done) ->
   app = appFactory(done)
@@ -81,7 +102,6 @@ describe 'GET a file', () ->
         return done err if err
         done()
 
-
 describe 'POST a new json file and check his Content-Type', () ->
   it 'Should return a 404 not found when retreive the file that doesn\'t exist', (done) ->
     request app
@@ -96,7 +116,7 @@ describe 'POST a new json file and check his Content-Type', () ->
       .type 'application/json'
       .set 'x-authentication', 'apiaccess'
       .set 'x-authentication-token', token_json
-      .send "{\"test\":3}"
+      .send addJson
       .expect 200, (err) ->
         return done err if err
         done()
@@ -159,26 +179,25 @@ describe 'POST : authentication on S3', () ->
       .post '/test/file.json'
       .type 'application/json'
       .set 'x-authentication', 'apiaccess'
-      .set 'x-authentication-token', token_err
-      .send "{\"test_err_token\":1}"
+      .set 'x-authentication-token', altered_token_json
+      .send altToken
       .expect 403, (err) ->
         return done err if err
         done()
 
-  it 'Should return a 403 error NOT AUTHORIZED because of wrong S3 credentials', (done) ->
-    request wrong_app
-      .post '/test/file.json'
-      .type 'application/json'
-      .set 'x-authentication', 'apiaccess'
-      .set 'x-authentication-token', token_err
-      .send "{\"test_wrong_creds\":1}"
-      .end (err, res) ->
-        return done err if err
-        assert.equal(res.text, 'Not Authorized !')
-        done()
+  # it 'Should return a 403 error NOT AUTHORIZED because of wrong S3 credentials', (done) ->
+  #   request wrong_app
+  #     .post '/test/file.json'
+  #     .type 'application/json'
+  #     .set 'x-authentication', 'apiaccess'
+  #     .set 'x-authentication-token', token_json_wCreds
+  #     .send wrongCreds
+  #     .expect 500, (err) ->
+  #       return done err if err
+  #       done()
 
   it 'Should return a 403 error NOT AUTHORIZED because of no token was provided', (done) ->
-    request wrong_app
+    request app
       .post '/test/file.json'
       .type 'application/json'
       .set 'x-authentication', 'apiaccess'
@@ -188,12 +207,12 @@ describe 'POST : authentication on S3', () ->
         done()
 
   it 'Should return a 403 error NOT AUTHORIZED because of missing API user secret', (done) ->
-    request wrong_app
+    request app
       .post '/test/file.json'
       .type 'application/json'
       .set 'x-authentication', 'apiaccess'
       .set 'x-authentication-token', token_json_noSecret
-      .send "{\"test_no_api_secret\":1}"
+      .send missSecret
       .expect 403, (err) ->
         return done err if err
         done()
@@ -204,7 +223,7 @@ describe 'POST : authentication on S3', () ->
       .type 'application/json'
       .set 'x-authentication', 'apiaccess'
       .set 'x-authentication-token', token_err
-      .send "{\"test_bad_ct\":1}"
+      .send wAPI_userId
       .expect 403, (err) ->
         return done err if err
         done()

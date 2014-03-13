@@ -27,6 +27,7 @@ module.exports = ->
 
     tmpFile = null
     writeStream = null
+    tmpStats = null
 
     async.series [
       (done) ->
@@ -41,13 +42,20 @@ module.exports = ->
       (done) ->
         gmFilter.runOn(tmpFile, done)
       (done) ->
-        amaging.cacheFile.requestWriteStream (err, _writeStream) ->
+        fs.stat tmpFile, (err, stats) ->
+          tmpStats = stats
+          done err
+      (done) ->
+        amaging.cacheFile.requestWriteStream
+          ContentLength: tmpStats.size
+          ContentType: amaging.file.contentType()
+        , (err, _writeStream) ->
           writeStream = _writeStream
           done err
       (done) ->
         tmpRead = fs.createReadStream(tmpFile)
         tmpRead.pipe(writeStream)
-        tmpRead.on 'end', done
+        writeStream.on 'close', done
       (done) ->
         fs.unlink tmpFile, done
       (done) ->

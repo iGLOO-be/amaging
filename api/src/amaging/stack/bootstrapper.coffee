@@ -6,4 +6,7 @@ module.exports = (options) ->
     # TODO: do copy of options
     amaging.options = options
 
+    amaging.auth =
+      headers: []
+
     next()

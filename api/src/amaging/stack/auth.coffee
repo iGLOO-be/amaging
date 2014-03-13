@@ -42,16 +42,25 @@ module.exports = ->
 
     # Data to be hashed
     fileName = params.file
-    contentType = headers['content-type']
-    contentLength = headers['content-length']
+
+    # Prepare string to hash
+    str = cid + userId + secret + fileName
+
+    # Is there another info to add in hash ?
+    for header in amaging.auth.headers
+      val = headers[header]
+
+      unless val
+        return result403()
+
+      str += val
 
     debug 'Proceed to authentication ...'
-    new_sha = hash(cid + userId + secret + fileName + contentType + contentLength)
+    new_sha = hash(str)
     debug 'new_sha: ' + new_sha
-
     if sha != new_sha
       debug '403: sha integrity failed'
       return result403()
 
     debug 'Authentication Success'
-    next()
+    return next()

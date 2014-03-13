@@ -41,11 +41,11 @@ module.exports = function (grunt) {
     },
     nodemon: {
       dev: {
-        script: 'lib/samples/s3/sample.js',
+        script: 'lib/samples/local/sample.js',
         options: {
           watch: 'lib',
           nodeArgs: ['--debug'],
-          delay: 1
+          delay: 10
         }
       }
     },
@@ -55,18 +55,7 @@ module.exports = function (grunt) {
           reporter: 'spec'
         },
         src: ['lib/test/test.js']
-      },
-      // coverage: {
-      //   options: {
-      //     reporter: 'html-cov',
-      //     quiet: true,
-      //     captureFile: 'coverage.html'
-      //   },
-      //   src: [
-      //     'src/sample.coffee',
-      //     'src/amaging/**/*.coffee'
-      //   ]
-      // }
+      }
     },
     concurrent: {
       dev: {
@@ -80,6 +69,14 @@ module.exports = function (grunt) {
       }
     },
     copy: {
+      samples: {
+        files: [{
+          expand: true,
+          cwd: 'src/samples/local/storage',
+          src: ['**'],
+          dest: 'lib/samples/local/storage'
+        }]
+      },
       test: {
         files: [{
           expand: true,
@@ -94,7 +91,7 @@ module.exports = function (grunt) {
         }, {
           expand: true,
           cwd: 'src/test/request/',
-          src: 'testfile.json',
+          src: ['testfile.json', 'igloo.jpg'],
           dest: 'lib/test/request/'
         }]
       }
@@ -117,7 +114,8 @@ module.exports = function (grunt) {
     'clean',
     'jshint',
     'coffeelint',
-    'coffee'
+    'coffee',
+    'copy:samples'
   ]);
 
 };

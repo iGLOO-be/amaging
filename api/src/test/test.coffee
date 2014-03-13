@@ -1,5 +1,6 @@
 chai = require 'chai'
 assert = chai.assert
+chai.should()
 request = require 'supertest'
 appFactory = require('./fixtures/app')
 app = null
@@ -9,6 +10,11 @@ server = require '../amaging/server'
 file = require('fs').readFileSync(__dirname + '/expected/igloo2.jpg')
 file = new Buffer(file)
 fileUploaded = file.length
+
+original_buf = new Buffer(file.toString(), 'base64')
+original_img_hash = crypto.createHash('sha1')
+  .update(original_buf)
+  .digest('hex')
 
 # Prepare token to use in differents 'it'
 
@@ -43,6 +49,10 @@ altToken = "{\"test_err_token\":1}"
 altered_token_json = crypto.createHash('sha1')
   .update('test' + 'APIaccess' + '4ec2b79baaaaaaa305b1eb4329ef2cd1' +
     'file.json' + 'application/json' + altToken.length)
+  .digest('hex')
+
+token_del_img = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'test.jpg')
   .digest('hex')
 
 # Example of a bad config of S3 credentials
@@ -225,5 +235,61 @@ describe 'POST : authentication on S3', () ->
       .set 'x-authentication-token', token_err
       .send wAPI_userId
       .expect 403, (err) ->
+        return done err if err
+        done()
+
+describe 'GET : Play with image effects', () ->
+  it 'Should return a 200 OK by modifying the image', (done) ->
+    request app
+      .get '/test/blur(5,2)&/igloo.jpg'
+      .expect 200, (err) ->
+        #console.log 'ARGS: ', arguments
+        return done err if err
+        done()
+
+  it 'Should return the same hash from the original and retreived image', (done) ->
+    request app
+      .get '/test/igloo.jpg'
+      .type 'image/jpeg'
+      .end (err, res) ->
+        return done err if err
+        modified_buf = new Buffer(res.text, 'base64')
+        modified_img_hash = crypto.createHash('sha1')
+          .update(modified_buf)
+          .digest('hex')
+        assert.equal(original_img_hash, modified_img_hash)
+        done()
+
+  it 'The original image should not be equal to the modified one', (done) ->
+    request app
+      .get '/test/blur(5,2)&/igloo.jpg'
+      .type 'image/jpeg'
+      .end (err, res) ->
+        return done err if err
+        modified_buf = new Buffer(res.text, 'base64')
+        modified_img_hash = crypto.createHash('sha1')
+          .update(modified_buf)
+          .digest('hex')
+        original_img_hash.should.not.equal(modified_img_hash)
+        done()
+
+describe 'DELETE files just added', () ->
+  it 'Should return a 200 OK by erasing the image', (done) ->
+    request app
+      .del '/test/test.jpg'
+      .set 'x-authentication', 'apiaccess'
+      .set 'x-authentication-token', token_del_img
+      .expect 200, (err) ->
+        #console.log 'ARGS: ', arguments
+        return done err if err
+        done()
+
+  it 'Should return a 404 not found by erasing the same image AGAIN', (done) ->
+    request app
+      .del '/test/test.jpg'
+      .set 'x-authentication', 'apiaccess'
+      .set 'x-authentication-token', token_del_img
+      .expect 404, (err) ->
+        #console.log 'ARGS: ', arguments
         return done err if err
         done()

@@ -14,4 +14,6 @@ module.exports = (options) ->
   app.post('/:cid/*', amaging.write)
   app.put('/:cid/*', amaging.write)
 
+  app.delete('/:cid/*', amaging.delete)
+
   return app

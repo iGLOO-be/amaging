@@ -45,6 +45,7 @@ class S3Storage extends AbstractStorage
 
   readInfo: (file, cb) ->
     debug('Start reading info for "%s"', file)
+    cbFired = false
 
     onEnd = (err, info) ->
       debug('End reading info for "%s" that results in: %j', file, info)
@@ -53,10 +54,12 @@ class S3Storage extends AbstractStorage
       if err?.code == 'NotFound' or err?.code == 'NoSuchKey'
         err = null
         info = null
-      cb err, info
+      unless cbFired
+        cb err, info
+        cbFired = true
 
     dom = require('domain').create()
-    dom.on 'error', onEnd
+    dom.on 'error', (err) -> onEnd err if err
     dom.run =>
       @_S3.headObject Key: @_filepath(file), onEnd
 
@@ -74,7 +77,14 @@ class S3Storage extends AbstractStorage
   requestWriteStream: (file, info, cb) ->
     @_validWriteInfo info
     stream = new S3WriteStream @_S3, @_filepath(file), info
+
+    # Trick to be compatible with local storage
+    stream.on 'end', -> stream.emit 'close'
+
     cb null, stream
+
+  deleteFile: (file, cb) ->
+    @_S3.deleteObject Key: @_filepath(file), cb
 
   _filepath: (file) ->
     path.join(@options.path, file)

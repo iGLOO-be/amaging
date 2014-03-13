@@ -5,7 +5,6 @@ fs = require 'fs'
 mime = require 'mime'
 mkdirp = require 'mkdirp'
 _ = require 'lodash'
-mkdirp = require 'mkdirp'
 
 class LocalStorage extends AbstractStorage
   constructor: (options) ->
@@ -37,6 +36,9 @@ class LocalStorage extends AbstractStorage
 
   createWriteStream: (file) ->
     fs.createWriteStream @_filepath(file)
+
+  deleteFile: (file, cb) ->
+    fs.unlink @_filepath(file), cb
 
   # Privates
 

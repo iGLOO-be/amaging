@@ -14,6 +14,17 @@ module.exports = ->
       return httpError 404, 'File not found', res
 
     async.parallel [
-      (done) -> amaging.file = File.create amaging.storage, params.file, done
-      (done) -> amaging.cacheFile = CacheFile.create amaging.cacheStorage, params.file, done
+      (done) ->
+        amaging.file = File.create(
+          amaging.storage,
+          amaging.cacheStorage,
+          params.file,
+          done
+        )
+      (done) ->
+        amaging.cacheFile = CacheFile.create(
+          amaging.cacheStorage,
+          params.file,
+          done
+        )
     ], next

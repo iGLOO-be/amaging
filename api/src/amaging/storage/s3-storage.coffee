@@ -3,6 +3,7 @@ AbstractStorage = require './abstract-storage'
 
 debug = require('debug') 'S3-Storage'
 
+async = require 'async'
 AWS = require 'aws-sdk'
 path = require 'path'
 _ = require 'lodash'
@@ -55,6 +56,7 @@ class S3Storage extends AbstractStorage
         err = null
         info = null
       unless cbFired
+        dom.exit()
         cb err, info
         cbFired = true
 
@@ -85,6 +87,25 @@ class S3Storage extends AbstractStorage
 
   deleteFile: (file, cb) ->
     @_S3.deleteObject Key: @_filepath(file), cb
+
+  deleteCachedFiles: (file, cb) ->
+    keys = null
+    async.series [
+      (done) =>
+        @_S3.listObjects
+          Prefix: @_filepath(file)
+        , (err, _keys) ->
+          keys = _keys
+          done err
+      (done) =>
+        unless keys?.Contents?.length
+          return done()
+        @_S3.deleteObjects
+          Delete:
+            Objects: keys?.Contents.map (k) ->
+              Key: k.Key
+        , done
+    ], cb
 
   _filepath: (file) ->
     path.join(@options.path, file)

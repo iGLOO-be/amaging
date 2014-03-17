@@ -1,41 +1,33 @@
 
-optionsRegex = /^(.*)&\//
-optionsSep = '&'
+AbstractFile = require './abstract-file'
 
-class File
-  @create: (storage, filename, cb) ->
-    file = new File(storage, filename)
+fs = require 'fs'
+
+class File extends AbstractFile
+  @create: (storage, cacheStorage, filename, cb) ->
+    file = new File(storage, cacheStorage, filename)
     file.readInfo(cb)
     return file
 
-  constructor: (@storage, filename) ->
-    match = filename.match optionsRegex
-
-    if match
-      @options = match[1].split(optionsSep)
-      @filename = filename.replace optionsRegex, ''
-    else
-      @options = []
-      @filename = filename
-
-  readInfo: (cb) ->
-    @storage.readInfo @filename, (err, info) =>
-      return cb(err) if err
-
-      @info = info
-
-      cb()
-
-  contentType: ->
-    @info?.ContentType
-
-  exists: ->
-    @info and typeof @info == 'object'
-
-  createReadStream: ->
-    @storage.createReadStream @filename
+  constructor: (storage, @cacheStorage, filename) ->
+    super(storage, filename)
 
   requestWriteStream: (info, cb) ->
-    @storage.requestWriteStream @filename, info, cb
+    super info, (err, stream) =>
+      return cb err if err
+
+      stream.on 'close', =>
+        @deleteCachedFiles (err) ->
+          throw err if err
+
+      cb(null, stream)
+
+  deleteFile: (cb) ->
+    super (err) =>
+      return cb err if err
+      @deleteCachedFiles cb
+
+  deleteCachedFiles: (cb) ->
+    @cacheStorage.deleteCachedFiles @_filepath(), cb
 
 module.exports = File

@@ -41,7 +41,7 @@ module.exports = function (grunt) {
     },
     nodemon: {
       dev: {
-        script: 'lib/samples/local/sample.js',
+        script: 'lib/samples/s3/sample.js',
         options: {
           watch: 'lib',
           nodeArgs: ['--debug'],

@@ -11,6 +11,9 @@ module.exports = ->
     amaging = req.amaging
     options = amaging.file.options
 
+    unless amaging.file.exists()
+      return httpError 404, 'File not found', res
+
     unless options.length
       return next()
 

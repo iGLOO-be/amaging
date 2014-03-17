@@ -2,9 +2,10 @@
 AbstractStorage = require './abstract-storage'
 path = require 'path'
 fs = require 'fs'
-mime = require 'mime'
 mkdirp = require 'mkdirp'
 _ = require 'lodash'
+rimraf = require 'rimraf'
+
 
 class LocalStorage extends AbstractStorage
   constructor: (options) ->
@@ -22,7 +23,6 @@ class LocalStorage extends AbstractStorage
 
       cb null,
         ContentLength: stat.size
-        ContentType: mime.lookup(file)
         ETag: '"' + stat.size + '"'
         LastModified: stat.mtime
 
@@ -39,6 +39,9 @@ class LocalStorage extends AbstractStorage
 
   deleteFile: (file, cb) ->
     fs.unlink @_filepath(file), cb
+
+  deleteCachedFiles: (file, cb) ->
+    rimraf @_filepath(file), cb
 
   # Privates
 

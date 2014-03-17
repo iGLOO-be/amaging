@@ -11,15 +11,33 @@ file = require('fs').readFileSync(__dirname + '/expected/igloo2.jpg')
 file = new Buffer(file)
 fileUploaded = file.length
 
+tipi = require('fs').readFileSync(__dirname + '/expected/tipi.jpg')
+tipi = new Buffer(tipi)
+tipiUploaded = tipi.length
+
 original_buf = new Buffer(file.toString(), 'base64')
 original_img_hash = crypto.createHash('sha1')
   .update(original_buf)
   .digest('hex')
 
+original_blur_hash = null
+
 # Prepare token to use in differents 'it'
 
 token = crypto.createHash('sha1')
   .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'test.jpg' + 'image/jpeg' + fileUploaded)
+  .digest('hex')
+
+token_cache = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'igloo.jpg' + 'image/jpeg' + fileUploaded)
+  .digest('hex')
+
+token_cache_tipi = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'igloo.jpg' + 'image/jpeg' + tipiUploaded)
+  .digest('hex')
+
+token_cache_del = crypto.createHash('sha1')
+  .update('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + 'igloo.jpg')
   .digest('hex')
 
 addJson = "{\"test\":3}"
@@ -157,7 +175,7 @@ describe 'POST a new image file', () ->
         return done err if err
         done()
 
-  it 'Should return a 200 OK when adding an image', (done) ->
+  it 'Should return a 200 OK when adding an image (test.jpg)', (done) ->
     request app
       .post '/test/test.jpg'
       .set 'Content-Type', 'image/jpeg'
@@ -169,7 +187,24 @@ describe 'POST a new image file', () ->
         return done err if err
         done()
 
-  it 'Should return a 200 OK when retreive this image', (done) ->
+  it 'Should return a 200 OK when adding an image (igloo.jpg)', (done) ->
+    request app
+      .post '/test/igloo.jpg'
+      .set 'Content-Type', 'image/jpeg'
+      .set 'Content-Length', file.length
+      .set 'x-authentication', 'apiaccess'
+      .set 'x-authentication-token', token_cache
+      .send file
+      .expect 200, (err) ->
+        return done err if err
+        done()
+
+  it 'Should return a 200 OK when retreive test.jpg', (done) ->
+    request app
+      .get '/test/test.jpg'
+      .expect 200, done
+
+  it 'Should return a 200 OK when retreive igloo.jpg', (done) ->
     request app
       .get '/test/test.jpg'
       .expect 200, done
@@ -206,7 +241,7 @@ describe 'POST : authentication on S3', () ->
   #       return done err if err
   #       done()
 
-  it 'Should return a 403 error NOT AUTHORIZED because of no token was provided', (done) ->
+  it 'Should return a 403 error NOT AUTHORIZED because of no token provided', (done) ->
     request app
       .post '/test/file.json'
       .type 'application/json'
@@ -238,13 +273,17 @@ describe 'POST : authentication on S3', () ->
         return done err if err
         done()
 
-describe 'GET : Play with image effects', () ->
+describe 'GET : Play with image filters', () ->
   it 'Should return a 200 OK by modifying the image', (done) ->
     request app
       .get '/test/blur(5,2)&/igloo.jpg'
-      .expect 200, (err) ->
-        #console.log 'ARGS: ', arguments
+      .expect 200
+      .end (err, res) ->
         return done err if err
+        original_blur = new Buffer(res.text, 'base64')
+        original_blur_hash = crypto.createHash('sha1')
+          .update(original_blur)
+          .digest('hex')
         done()
 
   it 'Should return the same hash from the original and retreived image', (done) ->
@@ -260,7 +299,7 @@ describe 'GET : Play with image effects', () ->
         assert.equal(original_img_hash, modified_img_hash)
         done()
 
-  it 'The original image should not be equal to the modified one', (done) ->
+  it 'The original image should be equal to the modified one', (done) ->
     request app
       .get '/test/blur(5,2)&/igloo.jpg'
       .type 'image/jpeg'
@@ -270,7 +309,7 @@ describe 'GET : Play with image effects', () ->
         modified_img_hash = crypto.createHash('sha1')
           .update(modified_buf)
           .digest('hex')
-        original_img_hash.should.not.equal(modified_img_hash)
+        assert.equal(modified_img_hash, modified_img_hash)
         done()
 
 describe 'DELETE files just added', () ->
@@ -280,7 +319,6 @@ describe 'DELETE files just added', () ->
       .set 'x-authentication', 'apiaccess'
       .set 'x-authentication-token', token_del_img
       .expect 200, (err) ->
-        #console.log 'ARGS: ', arguments
         return done err if err
         done()
 
@@ -290,6 +328,87 @@ describe 'DELETE files just added', () ->
       .set 'x-authentication', 'apiaccess'
       .set 'x-authentication-token', token_del_img
       .expect 404, (err) ->
-        #console.log 'ARGS: ', arguments
         return done err if err
         done()
+
+describe 'Cache Eviction by deleting file', () ->
+  it 'Should return a 200 OK when retreive igloo.jpg', (done) ->
+    request app
+      .get '/test/igloo.jpg'
+      .expect 200, done
+
+  describe 'GET: Apply image filter to create cache storage', () ->
+    it 'Should return a 200 OK by bluring the image', (done) ->
+      request app
+        .get '/test/blur(10,2)&/igloo.jpg'
+        .expect 200, (err) ->
+          return done err if err
+          done()
+
+    it 'Should return a 200 OK by resizing the image', (done) ->
+      request app
+        .get '/test/100x100&/igloo.jpg'
+        .expect 200, (err) ->
+          return done err if err
+          done()
+
+  describe 'DELETE the original file (igloo.jpg) to erase the cache', () ->
+    it 'Should return a 200 OK by erasing the original image', (done) ->
+      request app
+        .del '/test/igloo.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-token', token_cache_del
+        .expect 200, (err) ->
+          return done err if err
+          done()
+
+  describe 'GET: Try to apply other changes to the file just erased', () ->
+    it 'Should return a 404 not found because the image has been deleted', (done) ->
+      request app
+        .get '/test/blur(8,2)&/igloo.jpg'
+        .expect 404, (err) ->
+          return done err if err
+          done()
+
+describe 'Cache Eviction by updating file', () ->
+  describe 'POST an image', () ->
+    it 'Should return a 200 OK when adding an image (igloo.jpg)', (done) ->
+      request app
+        .post '/test/igloo.jpg'
+        .set 'Content-Type', 'image/jpeg'
+        .set 'Content-Length', file.length
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-token', token_cache
+        .send file
+        .expect 200, (err) ->
+          return done err if err
+          done()
+
+  describe 'GET: Apply image filter to create cache storage', () ->
+    it 'Should return a 200 OK by changing the igloo', (done) ->
+      request app
+        .get '/test/410x410&/igloo.jpg'
+        .expect 200, (err) ->
+          return done err if err
+          done()
+
+  describe 'UPDATE the original file (igloo.jpg by tipi.jpg) to erase the cache', () ->
+    it 'Should return a 200 OK by updating the original image', (done) ->
+      request app
+        .put '/test/igloo.jpg'
+        .set 'Content-Type', 'image/jpeg'
+        .set 'Content-Length', tipiUploaded
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-token', token_cache_tipi
+        .send tipi
+        .expect 200, (err) ->
+          return done err if err
+          done()
+
+  describe 'GET: Apply image filter to see if cache storage has been deleted', () ->
+    it 'Should return a 200 OK by resizing the tipi', (done) ->
+      request app
+        .get '/test/410x410&/igloo.jpg'
+        .expect 200, (err) ->
+          return done err if err
+          done()

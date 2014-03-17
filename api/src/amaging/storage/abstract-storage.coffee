@@ -21,6 +21,9 @@ class AbstractStorage
   deleteFile: (file) ->
     throw new Error('Not Implemented')
 
+  deleteCachedFiles: (file, cb) ->
+    throw new Error('Not Implemented')
+
   _validWriteInfo: (info) ->
     assert.ok(info.ContentLength, 'ContentLength property is mandatory in write info.')
     assert.ok(info.ContentType, 'ContentType property is mandatory in write info.')

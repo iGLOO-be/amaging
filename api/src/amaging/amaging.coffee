@@ -12,8 +12,6 @@ defaultReader = require './reader/default-reader'
 imageReader = require './reader/image-reader'
 defaultWriter = require './writer/default-writer'
 
-debug = require('debug') 'delete'
-
 module.exports = (options) ->
   readStack = [
     bootstrapper(options)
@@ -27,7 +25,6 @@ module.exports = (options) ->
   writeStack = [
     bootstrapper(options)
     cidResolver()
-    # uploaderHandler()
     (req, res, next) ->
       req.amaging.auth.headers.push('content-type')
       req.amaging.auth.headers.push('content-length')
@@ -47,26 +44,22 @@ module.exports = (options) ->
     fileDeleter()
   ]
 
+  goTo404 = (err) ->
+    return next(err) if err
+    # 404
+    next()
+
   read: (req, res, next) ->
     req.params.file = req.params[0]
 
-    executeStack readStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
+    executeStack readStack, [req, res], goTo404
 
   write: (req, res, next) ->
     req.params.file = req.params[0]
 
-    executeStack writeStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
+    executeStack writeStack, [req, res], goTo404
 
   delete: (req, res, next) ->
     req.params.file = req.params[0]
 
-    executeStack deleteStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
+    executeStack deleteStack, [req, res], goTo404

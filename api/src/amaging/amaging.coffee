@@ -1,5 +1,5 @@
 
-{executeStack} = require './lib/utils'
+{executeStack, cleanAmagingFile} = require './lib/utils'
 
 bootstrapper = require './stack/bootstrapper'
 cidResolver = require './stack/cid-resolver'
@@ -44,22 +44,26 @@ module.exports = (options) ->
     fileDeleter()
   ]
 
-  goTo404 = (err) ->
-    return next(err) if err
-    # 404
-    next()
-
   read: (req, res, next) ->
-    req.params.file = req.params[0]
-
-    executeStack readStack, [req, res], goTo404
+    req.params.file = cleanAmagingFile req.params[0]
+    
+    executeStack readStack, [req, res], (err) ->
+      return next(err) if err
+      # 404
+      next()
 
   write: (req, res, next) ->
-    req.params.file = req.params[0]
-
-    executeStack writeStack, [req, res], goTo404
+    req.params.file = cleanAmagingFile req.params[0]
+    
+    executeStack writeStack, [req, res], (err) ->
+      return next(err) if err
+      # 404
+      next()
 
   delete: (req, res, next) ->
-    req.params.file = req.params[0]
-
-    executeStack deleteStack, [req, res], goTo404
+    req.params.file = cleanAmagingFile req.params[0]
+    
+    executeStack deleteStack, [req, res], (err) ->
+      return next(err) if err
+      # 404
+      next()

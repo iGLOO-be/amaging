@@ -18,3 +18,8 @@ module.exports =
 
   httpError: (type, message, res) ->
     res.send(type, message)
+
+
+  cleanAmagingFile: (filePath) ->
+    # Security concerns
+    filePath.replace(/(\.\.\/)+/g, '')

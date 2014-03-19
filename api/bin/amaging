@@ -1,2 +1,21 @@
 #!/usr/bin/env node
 
+var amaging = require('../lib/amaging/server');
+var nconf = require('nconf');
+var path = require('path');
+
+var options = nconf
+  .argv();
+
+if (options.get('config')) {
+  options.file(path.resolve(options.get('config')));
+}
+
+var app = amaging(options.get());
+
+app.listen(app.get('port'), function (err) {
+  if (err) {
+    throw err;
+  }
+  console.log('Amaging is listening on port ' + app.get('port'));
+});

@@ -6,7 +6,7 @@ module.exports = (options) ->
   app = express(options)
   amaging = amagingFactory(options)
 
-  app.set('port', 3000)
+  app.set('port', options.port || process.env.PORT || 3000)
 
   # Routes
   app.get('/:cid/*', amaging.read)

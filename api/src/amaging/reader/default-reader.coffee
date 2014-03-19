@@ -13,6 +13,8 @@ module.exports = ->
       debug('Stop default reader cause to not found file.')
       return httpError 404, 'File not found', res
 
+    debug('File exists!')
+
     res.set('Content-Type', amaging.file.contentType())
 
     stream = amaging.file.createReadStream()

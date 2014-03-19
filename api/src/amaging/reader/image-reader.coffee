@@ -6,18 +6,24 @@ tmp = require 'tmp'
 async = require 'async'
 fs = require 'fs'
 
+debug = require('debug') 'image-reader'
+
 module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
     options = amaging.file.options
 
+    debug('Start image reader for file: %j', amaging.file)
+
     unless amaging.file.exists()
+      debug('Stop image reader cause to not found file.')
       return httpError 404, 'File not found', res
 
     unless options.length
       return next()
 
     if amaging.cacheFile.exists()
+      debug('Stop image reader cause to cache file exists.')
       # really bad no?
       amaging.file = amaging.cacheFile
       return next()
@@ -26,11 +32,14 @@ module.exports = ->
     gmFilter.addOptions options
 
     unless gmFilter.hasFilters()
+      debug('Stop image reader cause to no filters match.')
       return next()
 
     tmpFile = null
     writeStream = null
     tmpStats = null
+
+    debug('Begin image transform with filters. %j', gmFilter)
 
     async.series [
       (done) ->

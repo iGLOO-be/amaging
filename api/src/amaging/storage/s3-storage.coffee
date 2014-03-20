@@ -56,14 +56,11 @@ class S3Storage extends AbstractStorage
         err = null
         info = null
       unless cbFired
-        dom.exit()
-        cb err, info
+        process.nextTick ->
+          cb err, info
         cbFired = true
 
-    dom = require('domain').create()
-    dom.on 'error', (err) -> onEnd err if err
-    dom.run =>
-      @_S3.headObject Key: @_filepath(file), onEnd
+    @_S3.headObject Key: @_filepath(file), onEnd
 
   createReadStream: (file) ->
     debug('Create readStream for "%s"', file)

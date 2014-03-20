@@ -2,6 +2,8 @@
 {httpError} = require '../lib/utils'
 async = require 'async'
 
+debug = require('debug') 'default-writer'
+
 module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
@@ -10,12 +12,21 @@ module.exports = ->
     contentLength = req.headers['content-length']
     contentType = req.headers['content-type']
 
+    debug('Start default writer with %j',
+      contentLength: contentLength
+      contentType: contentType
+    )
+
     unless contentLength and contentType
+      debug('Abort default writer due to missing headers')
       return httpError 403, 'Missing header(s)', res
+
+    debug('Start rewriting file...')
 
     stream = null
     async.series [
       (done) ->
+        debug('Request rewrite stream.')
         amaging.file.requestWriteStream
           ContentLength: req.headers['content-length']
           ContentType: req.headers['content-type']
@@ -23,9 +34,11 @@ module.exports = ->
           stream = _stream
           done err
       (done) ->
+        debug('Pipe in stream.')
         req.pipe stream
         req.on 'end', done
       (done) ->
+        debug('Read info.')
         amaging.file.readInfo done
     ], (err) ->
       return next err if err

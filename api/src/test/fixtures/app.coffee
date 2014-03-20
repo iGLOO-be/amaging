@@ -4,7 +4,10 @@ path = require 'path'
 AWS = require 'aws-sdk'
 async = require 'async'
 fs = require 'fs'
+mime = require 'mime'
 env = process.env.TEST_ENV
+
+storageDir = path.join(__dirname, 'storage')
 
 if env is 'local'
   module.exports = (done) ->
@@ -75,10 +78,13 @@ else if env is 's3'
               Key: k.Key
         , done
       (done) ->
-        s3.putObject
-          ContentType: 'image/jpeg'
-          Body: fs.createReadStream(path.join(__dirname, 'storage/igloo.jpg'))
-          Key: options.customers.test.storage.options.path + 'igloo.jpg'
+        files = fs.readdirSync(storageDir)
+        async.each files, (file, done) ->
+          s3.putObject
+            ContentType: mime.lookup(file)
+            Body: fs.createReadStream(path.join(storageDir, file))
+            Key: options.customers.test.storage.options.path + file
+          , done
         , done
     ], done
 

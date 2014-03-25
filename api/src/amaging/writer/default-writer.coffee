@@ -17,6 +17,9 @@ module.exports = ->
       contentType: contentType
     )
 
+    if contentType.indexOf('multipart/form-data') >= 0
+      return next()
+
     unless contentLength and contentType
       debug('Abort default writer due to missing headers')
       return httpError 403, 'Missing header(s)', res
@@ -26,7 +29,7 @@ module.exports = ->
     stream = null
     async.series [
       (done) ->
-        debug('Request rewrite stream.')
+        debug('Request write stream.')
         amaging.file.requestWriteStream
           ContentLength: req.headers['content-length']
           ContentType: req.headers['content-type']

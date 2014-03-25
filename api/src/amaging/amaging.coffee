@@ -7,10 +7,12 @@ storageIniter = require './stack/storage-initer'
 fileIniter = require './stack/file-initer'
 auth = require './stack/auth'
 fileDeleter = require './stack/file-deleter'
+multipartResolver = require './stack/multipart-resolver'
 
 defaultReader = require './reader/default-reader'
 imageReader = require './reader/image-reader'
 defaultWriter = require './writer/default-writer'
+mutlipartWriter = require './writer/multipart-writer'
 
 module.exports = (options) ->
   readStack = [
@@ -25,14 +27,12 @@ module.exports = (options) ->
   writeStack = [
     bootstrapper(options)
     cidResolver()
-    (req, res, next) ->
-      req.amaging.auth.headers.push('content-type')
-      req.amaging.auth.headers.push('content-length')
-      next()
+    multipartResolver()
     auth()
     storageIniter()
     fileIniter()
     defaultWriter()
+    mutlipartWriter()
   ]
 
   deleteStack = [

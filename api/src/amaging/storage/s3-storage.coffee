@@ -7,33 +7,7 @@ async = require 'async'
 AWS = require 'aws-sdk'
 path = require 'path'
 _ = require 'lodash'
-fs = require 'fs'
-{Writable} = require('stream')
-
-class S3WriteStream extends Writable
-  constructor: (@_bucket, file, @_data = {}) ->
-    @_data.Key = file
-    super
-
-  _write: (chunk, encoding, cb) ->
-    unless Buffer.isBuffer chunk
-      chunk = new Buffer chunk
-
-    if @_buffer
-      @_buffer = Buffer.concat(chunk)
-    else
-      @_buffer = chunk
-
-    cb()
-
-  end: (chunk, encoding, cb) ->
-    @_data.Body = @_buffer
-    @_bucket.putObject @_data, (err, data) =>
-      if err
-        @emit 'error', err
-      else
-        @emit 'end'
-
+knox = require 'knox'
 
 class S3Storage extends AbstractStorage
   constructor: (@options) ->
@@ -43,6 +17,13 @@ class S3Storage extends AbstractStorage
       region: @options.region
       params:
         Bucket: @options.bucket
+
+    @_S3_knox = new knox.createClient(
+      key: @options.key
+      secret: @options.secret
+      region: @options.region
+      bucket: @options.bucket
+    )
 
   readInfo: (file, cb) ->
     debug('Start reading info for "%s"', file)
@@ -75,10 +56,13 @@ class S3Storage extends AbstractStorage
 
   requestWriteStream: (file, info, cb) ->
     @_validWriteInfo info
-    stream = new S3WriteStream @_S3, @_filepath(file), info
 
-    # Trick to be compatible with local storage
-    stream.on 'end', -> stream.emit 'close'
+    headers =
+      'content-type': info.ContentType
+      'content-length': info.ContentLength
+
+    stream = @_S3_knox.put(@_filepath(file), headers)
+    stream.on 'response', -> stream.emit 'close'
 
     cb null, stream
 

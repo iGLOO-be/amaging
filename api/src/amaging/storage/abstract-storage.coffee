@@ -12,7 +12,7 @@ class AbstractStorage
   readInfo: (file, cb) ->
     throw new Error('Not Implemented')
 
-  createReadStream: (file) ->
+  requestReadStream: (file, cb) ->
     throw new Error('Not Implemented')
 
   requestWriteStream: (file, info, cb) ->

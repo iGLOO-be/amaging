@@ -29,8 +29,8 @@ class AbstractFile
   exists: ->
     @info and typeof @info == 'object'
 
-  createReadStream: ->
-    @storage.createReadStream @_filepath()
+  requestReadStream: (cb) ->
+    @storage.requestReadStream @_filepath(), cb
 
   requestWriteStream: (info, cb) ->
     @storage.requestWriteStream @_filepath(), info, cb

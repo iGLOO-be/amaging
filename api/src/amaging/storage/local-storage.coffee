@@ -26,8 +26,8 @@ class LocalStorage extends AbstractStorage
         ETag: '"' + stat.size + '"'
         LastModified: stat.mtime
 
-  createReadStream: (file) ->
-    fs.createReadStream @_filepath(file)
+  requestReadStream: (file, cb) ->
+    cb null, fs.createReadStream @_filepath(file)
 
   requestWriteStream: (file, info, cb) ->
     mkdirp path.dirname(@_filepath(file)), (err) =>

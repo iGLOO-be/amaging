@@ -47,10 +47,12 @@ module.exports = ->
           tmpFile = _tmpFile
           done err
       (done) ->
-        read = amaging.file.createReadStream()
-        write = fs.createWriteStream(tmpFile)
-        read.pipe(write)
-        read.on('end', done)
+        amaging.file.requestReadStream (err, read) ->
+          return done err if err
+
+          write = fs.createWriteStream(tmpFile)
+          read.pipe(write)
+          read.on('end', done)
       (done) ->
         gmFilter.runOn(tmpFile, done)
       (done) ->
@@ -67,13 +69,16 @@ module.exports = ->
       (done) ->
         tmpRead = fs.createReadStream(tmpFile)
         tmpRead.pipe(writeStream)
-        writeStream.on 'close', done
+        writeStream.on 'close', () ->
+          done()
       (done) ->
         fs.unlink tmpFile, done
       (done) ->
-        amaging.cacheFile.readInfo done
+        amaging.cacheFile.readInfo (err) ->
+          done err
       (done) ->
         # really bad no?
         amaging.file = amaging.cacheFile
         done()
-    ], next
+    ], (err) ->
+      next err

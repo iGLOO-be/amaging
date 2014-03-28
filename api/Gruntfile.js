@@ -47,12 +47,21 @@ module.exports = function (grunt) {
           nodeArgs: ['--debug'],
           delay: 10
         }
+      },
+      s3: {
+        script: 'lib/samples/s3/sample.js',
+        options: {
+          watch: 'lib',
+          nodeArgs: ['--debug'],
+          delay: 10
+        }
       }
     },
     mochaTest: {
       test: {
         options: {
-          reporter: 'spec'
+          reporter: 'spec',
+          timeout: 400000
         },
         src: ['lib/test/*_test.js']
       }
@@ -61,6 +70,12 @@ module.exports = function (grunt) {
       dev: {
         tasks: [
           'nodemon:dev',
+          'watch'
+        ]
+      },
+      s3: {
+        tasks: [
+          'nodemon:s3',
           'watch'
         ]
       },
@@ -101,6 +116,11 @@ module.exports = function (grunt) {
   grunt.registerTask('server', [
     'build',
     'concurrent:dev'
+  ]);
+
+  grunt.registerTask('server:s3', [
+    'build',
+    'concurrent:s3'
   ]);
 
   grunt.registerTask('default', 'build');

@@ -71,7 +71,6 @@ utils =
 
 
   assertResEqualFile: (res, filePath) ->
-    res_buffer = new Buffer(res.text, 'base64')
     res_sha = utils.sha1(res.text)
 
     file_buffer = fs.readFileSync(path.join(__dirname, '..', filePath))

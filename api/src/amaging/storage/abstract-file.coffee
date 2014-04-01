@@ -26,6 +26,12 @@ class AbstractFile
   contentType: ->
     @info?.ContentType or mime.lookup(@filename)
 
+  eTag: ->
+    @info?.ETag
+
+  lastModified: ->
+    @info?.LastModified
+
   exists: ->
     @info and typeof @info == 'object'
 

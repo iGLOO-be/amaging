@@ -6,6 +6,7 @@ debug = require('debug') 'default-reader'
 module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
+    customer = amaging.options.cache
 
     debug('Start default reader for file: %j', amaging.file)
 
@@ -15,7 +16,10 @@ module.exports = ->
 
     debug('File exists!')
 
-    res.set('Content-Type', amaging.file.contentType())
+    res.setHeader('Content-Type', amaging.file.contentType())
+    res.setHeader('Etag', amaging.file.eTag())
+    res.setHeader('Cache-Control', 'max-age=' + customer['maxAge'] + ', ' + customer['cacheControl'])
+    res.setHeader('Last-Modified', amaging.file.lastModified())
 
     amaging.file.requestReadStream (err, stream) ->
       return next err if err

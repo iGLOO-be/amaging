@@ -27,7 +27,7 @@ class S3Storage extends AbstractStorage
       cb null,
         ContentType: res.headers['content-type']
         ContentLength: res.headers['content-length']
-        ETag: "'#{res.headers['content-length']}'"
+        ETag: res.headers['etag']
         LastModified: res.headers['last-modified']
 
   requestReadStream: (file, cb) ->

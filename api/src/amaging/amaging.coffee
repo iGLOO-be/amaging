@@ -8,6 +8,7 @@ fileIniter = require './stack/file-initer'
 auth = require './stack/auth'
 fileDeleter = require './stack/file-deleter'
 multipartResolver = require './stack/multipart-resolver'
+cacheResolver = require './stack/cache-resolver'
 
 defaultReader = require './reader/default-reader'
 imageReader = require './reader/image-reader'
@@ -20,6 +21,7 @@ module.exports = (options) ->
     cidResolver()
     storageIniter()
     fileIniter()
+    cacheResolver()
     imageReader()
     defaultReader()
   ]

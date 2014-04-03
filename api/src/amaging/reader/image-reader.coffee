@@ -12,12 +12,20 @@ module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
     options = amaging.file.options
+    acceptType = [
+      'image/jpeg'
+      'image/png'
+      'image/gif'
+      'image/bmp'
+      'image/tiff'
+      'image/x-jg'
+    ]
 
     debug('Start image reader for file: %j', amaging.file)
 
     unless amaging.file.exists()
       debug('Stop image reader cause to not found file.')
-      return httpError 404, 'File not found', res
+      return next()
 
     unless options.length
       return next()
@@ -26,6 +34,10 @@ module.exports = ->
       debug('Stop image reader cause to cache file exists.')
       # really bad no?
       amaging.file = amaging.cacheFile
+      return next()
+
+    unless acceptType.indexOf(amaging.file.contentType()) > -1
+      debug('Stop image reader cause the file is not an image')
       return next()
 
     gmFilter = new GMFilterEngine()

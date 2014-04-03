@@ -37,7 +37,7 @@ module.exports = ->
     # Retrive secret
     secret = amaging.customer.access?[userId]
     unless secret
-      debug '403: cid bad cid secret'
+      debug '403: bad cid secret'
       return result403()
 
     # Data to be hashed

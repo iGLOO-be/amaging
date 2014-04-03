@@ -17,12 +17,12 @@ module.exports = ->
       contentType: contentType
     )
 
+    if contentType.match /^multipart\/form-data/
+      return next()
+
     unless contentLength and contentType
       debug('Abort default writer due to missing headers')
       return httpError 403, 'Missing header(s)', res
-
-    if contentType.match /^multipart\/form-data/
-      return next()
 
     debug('Start rewriting file...')
 
@@ -45,6 +45,8 @@ module.exports = ->
         amaging.file.readInfo done
     ], (err) ->
       return next err if err
+
+      debug('End default writer.')
 
       res.send
         success: true

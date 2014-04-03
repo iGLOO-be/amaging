@@ -1,4 +1,6 @@
 
+require('longjohn')
+
 server = require '../../amaging/server'
 path = require 'path'
 

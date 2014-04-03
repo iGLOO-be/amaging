@@ -5,10 +5,11 @@ assert = chai.assert
 request = require 'supertest'
 appFactory = require('./fixtures/app')
 
+env = process.env.TEST_ENV
 app = null
 cacheControl = 'max-age=604800, public'
 
-if process.env.TEST_ENV == 'local'
+if env == 'local'
   Etag = '"17252"'
   newEtag = '"4667"'
 else

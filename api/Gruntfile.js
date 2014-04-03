@@ -61,7 +61,8 @@ module.exports = function (grunt) {
       test: {
         options: {
           reporter: 'spec',
-          timeout: 400000
+          timeout: 400000,
+          grep: process.env.GREP
         },
         src: ['lib/test/*_test.js']
       }
@@ -110,6 +111,56 @@ module.exports = function (grunt) {
           dest: 'lib/test/request/'
         }]
       }
+    },
+    env: {
+      coverage: {
+        APP_SRV_COVERAGE: '../coverage/instrument/lib/amaging/server'
+      },
+      local: {
+        TEST_ENV: 'local'
+      },
+      s3: {
+        TEST_ENV: 's3'
+      }
+    },
+    instrument: {
+      files: [
+        'lib/**/*.js'
+      ],
+      options: {
+        lazy: true,
+        basePath: 'lib/test/coverage/instrument'
+      }
+    },
+    storeCoverage: {
+      options: {
+        dir: 'lib/test/coverage/reports'
+      }
+    },
+    makeReport: {
+      src: 'lib/test/coverage/reports/**/*.json',
+      options: {
+        type: 'lcov',
+        dir: 'lib/test/coverage/reports',
+        print: 'detail'
+      }
+    },
+    open: {
+      htmlReport: {
+        path : 'lib/test/coverage/reports/lcov-report/index.html'
+      }
+    },
+    coverage: {
+      options: {
+        thresholds: {
+          'statements': 89,
+          'branches': 50,
+          'lines': 90,
+          'functions': 90
+        },
+        dir: 'test/coverage',
+        root: 'lib'
+      }
     }
   });
 
@@ -124,12 +175,6 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', 'build');
-  grunt.registerTask('test', [
-    'build',
-    'jshint',
-    'copy:test',
-    'mochaTest'
-  ]);
   grunt.registerTask('build', [
     'clean',
     'jshint',
@@ -137,5 +182,46 @@ module.exports = function (grunt) {
     'coffee',
     'copy:samples'
   ]);
-
+  grunt.registerTask('test', [
+    'build',
+    'copy:test',
+    'env:local',
+    'mochaTest'
+  ]);
+  grunt.registerTask('test:s3', [
+    'build',
+    'copy:test',
+    'env:s3',
+    'mochaTest'
+  ]);
+  grunt.registerTask('coverage-report', [
+    'build',
+    'copy:test',
+    'env:coverage',
+    'instrument',
+    'env:local',
+    'mochaTest',
+    'storeCoverage',
+    'makeReport',
+    'coverage'
+  ]);
+  grunt.registerTask('coverage-report:s3', [
+    'build',
+    'copy:test',
+    'env:coverage',
+    'instrument',
+    'env:s3',
+    'mochaTest',
+    'storeCoverage',
+    'makeReport',
+    'coverage'
+  ]);
+  grunt.registerTask('coverage-html', [
+    'coverage-report',
+    'open:htmlReport'
+  ]);
+  grunt.registerTask('coverage-html:s3', [
+    'coverage-report:s3',
+    'open:htmlReport'
+  ]);
 };

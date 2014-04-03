@@ -17,7 +17,11 @@
     "blanket": "~1.1.6",
     "grunt-contrib-copy": "~0.5.0",
     "chai": "~1.9.0",
-    "request": "~2.34.0"
+    "request": "~2.34.0",
+    "grunt-istanbul": "^0.2.5",
+    "grunt-open": "^0.2.3",
+    "grunt-istanbul-coverage": "0.0.5",
+    "grunt-env": "^0.4.1"
   },
   "dependencies": {
     "express": "~3.4.8",

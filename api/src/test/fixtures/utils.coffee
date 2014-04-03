@@ -78,4 +78,7 @@ utils =
 
     assert.equal(res_sha, file_sha)
 
+  getServer: ->
+    return require(process.env.APP_SRV_COVERAGE || '../../amaging/server')
+
 module.exports = utils

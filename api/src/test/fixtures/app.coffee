@@ -1,10 +1,13 @@
 
-server = require('../../amaging/server')
 path = require 'path'
 AWS = require 'aws-sdk'
 async = require 'async'
 fs = require 'fs'
 mime = require 'mime'
+
+{getServer} = require './utils'
+server = getServer()
+
 env = process.env.TEST_ENV
 
 storageDir = path.join(__dirname, 'storage')

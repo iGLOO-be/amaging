@@ -1,6 +1,5 @@
 
 {httpError} = require '../lib/utils'
-assert = require('chai').assert
 
 debug = require('debug') 'cache-resolver'
 

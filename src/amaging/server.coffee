@@ -16,4 +16,6 @@ module.exports = (options) ->
 
   app.delete('/:cid/*', amaging.delete)
 
+  app.get('/doc', amaging.doc)
+
   return app

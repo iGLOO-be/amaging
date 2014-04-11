@@ -7,6 +7,8 @@ class CacheFile extends AbstractFile
     file.readInfo(cb)
     return file
 
+  # todo: not fetch info if no options
+
   _filepath: ->
     @filename + '/' + @options.join('_')
 

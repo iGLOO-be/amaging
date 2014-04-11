@@ -59,7 +59,7 @@ describe 'Upload large file to potentialy generate errors', () ->
 ###
         CACHE EVICTION UPDATE FILE MULTIPART
 ###
-describe 'Cache Eviction by updating file', () ->
+describe 'Cache Eviction by updating file in multipart', () ->
   describe 'POST an image', () ->
     it 'Should return a 200 OK when adding an image in multipart (cache-eviction-update.jpg)', (done) ->
       tok = requestMultipartFileToken('expected/igloo.jpg', 'cache-eviction-update.jpg')
@@ -80,7 +80,7 @@ describe 'Cache Eviction by updating file', () ->
           return done err if err
           done()
 
-  describe 'UPDATE the original file (cache-eviction-update.jpg by tipi.jpg) to erase the cache', () ->
+  describe 'UPDATE the original file (cache-eviction-update.jpg by tente.jpg) to erase the cache', () ->
     it 'Should return a 200 OK by updating the original image in multipart', (done) ->
       tok = requestMultipartFileToken('expected/tente.jpg', 'cache-eviction-update.jpg')
       request app

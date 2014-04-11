@@ -69,3 +69,11 @@ module.exports = (options) ->
       return next(err) if err
       # 404
       next()
+
+  doc: (req, res, next) ->
+    
+
+
+
+
+

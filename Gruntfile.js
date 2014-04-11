@@ -161,6 +161,11 @@ module.exports = function (grunt) {
         dir: 'test/coverage',
         root: 'lib'
       }
+    },
+    release: {
+      options: {
+        npm: false
+      }
     }
   });
 

@@ -4,6 +4,9 @@
   "publishConfig": {
     "registry": "http://npmregistry.igloo.be:19720"
   },
+  "scripts": {
+    "prepublish": "grunt build"
+  },
   "devDependencies": {
     "aws-sdk": "~2.0.0-rc10",
     "blanket": "~1.1.6",

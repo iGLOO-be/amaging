@@ -1,6 +1,6 @@
 {
   "name": "igloo-amaging",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "publishConfig": {
     "registry": "http://npmregistry.igloo.be:19720"
   },
@@ -41,7 +41,6 @@
     "nconf": "^0.6.9",
     "formidable": "^1.0.14",
     "knox": "^0.8.9",
-    "phash": "0.0.5",
     "resemble": "^1.0.3"
   }
 }

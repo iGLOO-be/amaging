@@ -2,7 +2,6 @@
 fs = require 'fs'
 path = require 'path'
 crypto = require 'crypto'
-pHash = require 'phash'
 resemble = require('resemble').resemble
 
 chai = require 'chai'

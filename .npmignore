@@ -1,4 +1,6 @@
 /src
 /config
+/lib/test
+/lib/samples
 /.gitignore
 /Gruntfile.js

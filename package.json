@@ -1,6 +1,6 @@
 {
   "name": "igloo-amaging",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publishConfig": {
     "registry": "http://npmregistry.igloo.be:19720"
   },

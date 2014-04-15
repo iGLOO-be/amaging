@@ -7,6 +7,7 @@ module.exports = (options) ->
   amaging = amagingFactory(options)
 
   app.set('port', options.port || process.env.PORT || 3000)
+  app.disable('x-powered-by')
 
   # Routes
   app.get('/:cid/*', amaging.read)
@@ -15,7 +16,5 @@ module.exports = (options) ->
   app.put('/:cid/*', amaging.write)
 
   app.delete('/:cid/*', amaging.delete)
-
-  app.get('/doc', amaging.doc)
 
   return app

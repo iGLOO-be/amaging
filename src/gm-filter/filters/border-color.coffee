@@ -9,6 +9,6 @@ class BorderColorFilter extends Filter
   applyOn: (gm) ->
     # http://www.graphicsmagick.org/GraphicsMagick.html#details-bordercolor
     # borderColor(color)
-    gm.borderColor('#' + @_match[1])
+    gm.bordercolor('#' + @_match[1])
 
 module.exports = BorderColorFilter

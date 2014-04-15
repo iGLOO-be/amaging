@@ -70,9 +70,6 @@ module.exports = (options) ->
       # 404
       next()
 
-  doc: (req, res, next) ->
-    
-
 
 
 

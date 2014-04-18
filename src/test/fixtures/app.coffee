@@ -41,18 +41,18 @@ else if env is 's3'
           storage:
             type: 's3'
             options:
-              bucket: 'igloo-s3-test'
+              bucket: 'igloo-amaging-testbucket'
               path: 'storage/main/'
-              key: 'AKIAJWPY4WSQO7FWJF2A'
-              secret: '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'
+              key: 'AKIAIHK2HP6ME7U3Y3TA'
+              secret: '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'
               region: 'eu-west-1'
           cacheStorage:
             type: 's3'
             options:
-              bucket: 'igloo-s3-test'
+              bucket: 'igloo-amaging-testbucket'
               path: 'storage/cache/'
-              key: 'AKIAJWPY4WSQO7FWJF2A'
-              secret: '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'
+              key: 'AKIAIHK2HP6ME7U3Y3TA'
+              secret: '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'
               region: 'eu-west-1'
 
     app = server(options)

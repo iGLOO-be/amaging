@@ -1,6 +1,7 @@
 
 chai = require 'chai'
 assert = chai.assert
+expect = chai.expect
 chai.should()
 
 
@@ -18,7 +19,7 @@ before (done) ->
 ###
         READ
 ###
-describe 'GET a file', () ->
+describe 'GET a file\n', () ->
   it 'Should return a 404 error because of an unexpected url', (done) ->
     request app
       .get '/notExist.png'
@@ -49,12 +50,30 @@ describe 'GET a file', () ->
       .get '/test/'
       .expect 404, done
 
+###
+        HEAD
+###
+describe 'HEAD a file\n', () ->
+  it 'Should return a 404 error because the file doesn\'t exist', (done) ->
+    request app
+      .head '/igl00.png'
+      .expect 404, done
+
+  it 'Should return a 200 OK with file info', (done) ->
+    request app
+      .head '/test/igloo.jpg'
+      .expect 200
+      .end (err, res) ->
+        expect(err).to.be.null
+        expect(res.headers['content-type']).to.be.equals('image/jpeg')
+        expect(res.headers['etag']).to.be.equals('"17252"')
+        done()
 
 
 ###
         WRITE
 ###
-describe 'POST a new json file and check his Content-Type', () ->
+describe 'POST a new json file and check his Content-Type\n', () ->
   it 'Should return a 404 not found when retreive the file that doesn\'t exist', (done) ->
     request app
       .get '/test/notExist.json'
@@ -90,7 +109,7 @@ describe 'POST a new json file and check his Content-Type', () ->
 
 
 
-describe 'POST a new image file', () ->
+describe 'POST a new image file\n', () ->
   it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
     request app
       .get '/test/test.jpg'
@@ -122,7 +141,7 @@ describe 'POST a new image file', () ->
 
 
 
-describe 'POST : authentication', () ->
+describe 'POST : authentication\n', () ->
   it 'Should return a 403 error NOT AUTHORIZED because of no token provided', (done) ->
     request app
       .post '/test/file.json'
@@ -159,7 +178,7 @@ describe 'POST : authentication', () ->
 ###
         DELETE
 ###
-describe 'DELETE files just added', () ->
+describe 'DELETE files just added\n', () ->
   it 'Should return a 200 OK by erasing the image', (done) ->
     request app
       .del '/test/delete.jpg'

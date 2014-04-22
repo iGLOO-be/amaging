@@ -9,7 +9,7 @@ auth = require './stack/auth'
 fileDeleter = require './stack/file-deleter'
 multipartResolver = require './stack/multipart-resolver'
 cacheResolver = require './stack/cache-resolver'
-
+headResolver = require './stack/head-resolver'
 defaultReader = require './reader/default-reader'
 imageReader = require './reader/image-reader'
 defaultWriter = require './writer/default-writer'
@@ -46,9 +46,17 @@ module.exports = (options) ->
     fileDeleter()
   ]
 
+  headStack = [
+    bootstrapper(options)
+    cidResolver()
+    storageIniter()
+    fileIniter()
+    headResolver()
+  ]
+
   read: (req, res, next) ->
     req.params.file = cleanAmagingFile req.params[0]
-    
+
     executeStack readStack, [req, res], (err) ->
       return next(err) if err
       # 404
@@ -56,7 +64,7 @@ module.exports = (options) ->
 
   write: (req, res, next) ->
     req.params.file = cleanAmagingFile req.params[0]
-    
+
     executeStack writeStack, [req, res], (err) ->
       return next(err) if err
       # 404
@@ -64,13 +72,16 @@ module.exports = (options) ->
 
   delete: (req, res, next) ->
     req.params.file = cleanAmagingFile req.params[0]
-    
+
     executeStack deleteStack, [req, res], (err) ->
       return next(err) if err
       # 404
       next()
 
+  head: (req, res, next) ->
+    req.params.file = cleanAmagingFile req.params[0]
 
-
-
-
+    executeStack headStack, [req, res], (err) ->
+      return next(err) if err
+      # 404
+      next()

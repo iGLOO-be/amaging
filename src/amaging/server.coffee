@@ -10,6 +10,7 @@ module.exports = (options) ->
   app.disable('x-powered-by')
 
   # Routes
+  app.head('/:cid/*', amaging.head)
   app.get('/:cid/*', amaging.read)
 
   app.post('/:cid/*', amaging.write)

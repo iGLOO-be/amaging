@@ -1,6 +1,5 @@
 
 {httpError} = require '../lib/utils'
-_ = require 'lodash'
 
 module.exports = ->
   (req, res, next) ->
@@ -18,13 +17,5 @@ module.exports = ->
 
     amaging.customer = customer
     amaging.customer.id = params.cid
-
-    # Default options
-    _.merge amaging.options,
-      cache:
-        cacheControl: 'public'
-        maxAge: 604800 # 7 days
-        etag: true
-
 
     next()

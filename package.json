@@ -29,8 +29,7 @@
     "load-grunt-tasks": "~0.4.0",
     "longjohn": "^0.2.4",
     "request": "~2.34.0",
-    "supertest": "~0.9.0",
-    "resemble": "^1.0.3"
+    "supertest": "~0.9.0"
   },
   "dependencies": {
     "express": "~3.4.8",

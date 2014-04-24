@@ -66,7 +66,6 @@ describe 'HEAD a file\n', () ->
       .end (err, res) ->
         expect(err).to.be.null
         expect(res.headers['content-type']).to.be.equals('image/jpeg')
-        expect(res.headers['etag']).to.be.equals('"17252"')
         done()
 
 

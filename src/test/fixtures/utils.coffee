@@ -2,7 +2,6 @@
 fs = require 'fs'
 path = require 'path'
 crypto = require 'crypto'
-resemble = require('resemble').resemble
 
 chai = require 'chai'
 assert = chai.assert
@@ -73,32 +72,13 @@ utils =
 
   assertResEqualFile: (res, filePath) ->
 
-    console.log res.headers
-
-    #res_sha = utils.sha1(res.text)
-
+    res_sha = utils.sha1(res.text)
     file_buffer = fs.readFileSync(path.join(__dirname, '..', filePath))
-    #console.log 'BUF-LENGTH: ', file_buffer.toString().length
 
-    console.log(res.text.substr(0, 100))
-
-    buff = new Buffer(res.text, 'binary')
-
-    fs.writeFileSync('/tmp/test_buffer_node.jpg', res.text, {
-      encoding: null
-    })
-
-    resemble(buff).compareTo(file_buffer).onComplete (data) ->
-      console.log 'DATA: ', data
-      assert.equal(data.misMatchPercentage, '0.00')
-
-    #console.log 'DIFF: ', diff
-
-
-    # file_sha = utils.sha1(file_buffer.toString())
-    # console.log 'RES: ', res_sha
-    # console.log 'FILE: ', file_sha
-    # assert.equal(res_sha, file_sha)
+    file_sha = utils.sha1(file_buffer.toString())
+    console.log 'RES: ', res_sha
+    console.log 'FILE: ', file_sha
+    assert.equal(res_sha, file_sha)
 
   getServer: ->
     return require(process.env.APP_SRV_COVERAGE || '../../amaging/server')

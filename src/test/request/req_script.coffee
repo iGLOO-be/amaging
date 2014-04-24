@@ -126,46 +126,65 @@ crypto = require 'crypto'
 
 # request.put options, cb
 
-console.log '############################'
-console.log 'GET AN IMAGE to cache'
-console.log '############################\n'
+# console.log '############################'
+# console.log 'GET AN IMAGE to cache'
+# console.log '############################\n'
+
+# cid = 'test'
+# user_cid = 'apiaccess'
+# secret_cid = '4ec2b79b81ee67e305b1eb4329ef2cd1'
+# file_name = 'igloo.jpg'
+# file = require('fs').readFileSync(__dirname + '/igloo.jpg')
+# content_type = 'image/jpeg'
+# content_length = file.length
+
+# console.log 'CONTENT-LENGTH: ', content_length
+
+# token = crypto.createHash('sha1')
+#   .update(cid + user_cid + secret_cid + file_name + content_type + content_length)
+#   .digest('hex')
+
+# console.log 'SEND_TOKEN: ', token
+
+
+# console.log(__dirname + '/igloo.jpg')
+
+# options =
+#   url: "http://localhost:3000/#{cid}/#{file_name}"
+#   headers:
+#     'x-authentication': user_cid
+#     'x-authentication-token': token
+#     'content-type' : content_type
+#     'content-length' : content_length
+#     'cache-control' : 'public'
+#     'max-age': 30
+
+# cb = (error, response, body) ->
+#   console.log 'REQUEST_CODE: ', response.statusCode
+#   if !error && response.statusCode == 200
+#     info = JSON.parse(body)
+#     console.log 'INFO: ', info
+#   else
+#     console.log 'REQUEST_ERROR: ', error
+
+# request.get options, cb
+
+console.log '###########################'
+console.log 'GET AN EXISTING FILE IMAGE'
+console.log '###########################\n'
 
 cid = 'test'
-user_cid = 'apiaccess'
-secret_cid = '4ec2b79b81ee67e305b1eb4329ef2cd1'
 file_name = 'igloo.jpg'
-file = require('fs').readFileSync(__dirname + '/igloo.jpg')
-content_type = 'image/jpeg'
-content_length = file.length
-
-console.log 'CONTENT-LENGTH: ', content_length
-
-token = crypto.createHash('sha1')
-  .update(cid + user_cid + secret_cid + file_name + content_type + content_length)
-  .digest('hex')
-
-console.log 'SEND_TOKEN: ', token
-
-
-console.log(__dirname + '/igloo.jpg')
 
 options =
   url: "http://localhost:3000/#{cid}/#{file_name}"
-  headers:
-    'x-authentication': user_cid
-    'x-authentication-token': token
-    'content-type' : content_type
-    'content-length' : content_length
-    'cache-control' : 'public'
-    'max-age': 30
 
-cb = (error, response, body) ->
-  console.log 'REQUEST_CODE: ', response.statusCode
-  if !error && response.statusCode == 200
-    info = JSON.parse(body)
-    console.log 'INFO: ', info
-  else
-    console.log 'REQUEST_ERROR: ', error
+cb = (error, res, body) ->
+  console.log 'REQUEST_CODE: ', res.headers
+  # if !error && response.statusCode == 200
+  #   info = JSON.parse(body)
+  #   console.log 'INFO: ', info
+  # else
+  #   console.log 'REQUEST_ERROR: ', error
 
-request.get options, cb
-
+request.head options, cb

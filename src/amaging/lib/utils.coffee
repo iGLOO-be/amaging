@@ -17,7 +17,10 @@ module.exports =
 
 
   httpError: (type, message, res) ->
-    res.send(type, message)
+    res.format
+      'text/plain': -> res.send(type, message)
+      'text/html': -> res.send(type, message)
+      'application/json': -> res.send(type, JSON.stringify({success: false, message: message}))
 
 
   cleanAmagingFile: (filePath) ->

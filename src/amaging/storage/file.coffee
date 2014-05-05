@@ -2,6 +2,7 @@
 AbstractFile = require './abstract-file'
 
 fs = require 'fs'
+async = require 'async'
 
 class File extends AbstractFile
   @create: (storage, cacheStorage, filename, cb) ->
@@ -13,14 +14,17 @@ class File extends AbstractFile
     super(storage, filename)
 
   requestWriteStream: (info, cb) ->
-    super info, (err, stream) =>
-      return cb err if err
+    stream = null
 
-      stream.on 'close', =>
-        @deleteCachedFiles (err) ->
-          throw err if err
-
-      cb(null, stream)
+    async.series [
+      (done) =>
+        super info, (err, _stream) =>
+          stream = _stream
+          done(err, @) # result @ is to avoid coffeelint alert "no_unnecessary_fat_arrows"
+      (done) =>
+        @deleteCachedFiles done
+    ], (err) ->
+      cb err, stream
 
   deleteFile: (cb) ->
     super (err) =>

@@ -71,13 +71,10 @@ utils =
 
 
   assertResEqualFile: (res, filePath) ->
-
     res_sha = utils.sha1(res.text)
     file_buffer = fs.readFileSync(path.join(__dirname, '..', filePath))
 
     file_sha = utils.sha1(file_buffer.toString())
-    console.log 'RES: ', res_sha
-    console.log 'FILE: ', file_sha
     assert.equal(res_sha, file_sha)
 
   getServer: ->

@@ -28,8 +28,6 @@ module.exports = ->
     amaging = req.amaging
     headers = req.headers
 
-    #console.log 'OPTIONS: ', amaging.file.options.length
-
     if amaging.file.options.length == 0
       debug('AMAGING FILE')
       doneCacheWith(res, amaging.file, headers, next)

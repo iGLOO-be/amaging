@@ -7,7 +7,7 @@ appFactory = require('./fixtures/app')
 
 env = process.env.TEST_ENV
 app = null
-cacheControl = 'max-age=604800, public'
+cacheControl = 'max-age=0, private'
 
 if env == 'local'
   Etag = '"17252"'

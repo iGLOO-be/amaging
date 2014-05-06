@@ -8,6 +8,13 @@ _ = require 'lodash'
 
 debug = require('debug') 'multipart-writer'
 
+eraseTempFiles = (files) ->
+  debug('Erase temp file')
+  async.each _.keys(files), (fileKey, done) ->
+    fs.unlink(files[fileKey].path, done)
+  , (err) ->
+    throw err if err
+
 module.exports = ->
   (req, res, next) ->
     amaging = req.amaging
@@ -68,6 +75,12 @@ module.exports = ->
           debug('Abort due to missing file size')
           return httpError 403, 'Missing file size', res
 
+        try
+          amaging.policy.set('content-type', file.type)
+          amaging.policy.set('content-length', file.size)
+        catch err
+          done err
+
         debug('Request write stream.')
 
         amaging.file.requestWriteStream
@@ -82,14 +95,10 @@ module.exports = ->
         readStream.pipe stream
         readStream.on 'end', done
       (done) ->
-        debug('Erase temp file')
-        async.each _.keys(files), (fileKey, done) ->
-          fs.unlink(files[fileKey].path, done)
-        , done
-      (done) ->
         debug('Read info.')
         amaging.file.readInfo done
     ], (err) ->
+      eraseTempFiles(files)
       return next err if err
 
       res.send

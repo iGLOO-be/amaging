@@ -11,6 +11,10 @@ utils =
     crypto.createHash('sha1')
       .update(data)
       .digest('hex')
+  hmacSha1: (data, secret) ->
+    sign = crypto.createHmac('sha1', secret)
+    sign.update(data)
+    return sign.digest('hex').toLowerCase()
 
   # Normal upload
   requestFileToken: (filePath, file, contentType) ->
@@ -33,7 +37,6 @@ utils =
 
   # Multipart upload
   requestMultipartFileToken: (filePath, file) ->
-    file_open = fs.createReadStream(path.join(__dirname, '..', filePath))
     token = utils.sha1([
       'test',
       'apiaccess',
@@ -42,10 +45,9 @@ utils =
     ].join(''))
     return {
       access: 'apiaccess'
-      file: file_open
+      file_path: path.join(__dirname, '..', filePath)
       token: token
-      length: file.length
-      }
+    }
 
   requestJSONToken: (data, file) ->
     contentType = 'application/json'
@@ -69,6 +71,18 @@ utils =
   requestDeleteToken: (file) ->
     utils.sha1('test' + 'apiaccess' + '4ec2b79b81ee67e305b1eb4329ef2cd1' + file)
 
+  requestPolicyFileToken: (filePath, policy) ->
+    policy = utils.encodeBase64(JSON.stringify(policy))
+    token = utils.hmacSha1(policy, '4ec2b79b81ee67e305b1eb4329ef2cd1')
+    return {
+      access: 'apiaccess'
+      file_path: path.join(__dirname, '..', filePath)
+      token: token
+      policy: policy
+    }
+
+  encodeBase64: (policy) ->
+    return Buffer(policy, "utf-8").toString("base64")
 
   assertResEqualFile: (res, filePath) ->
     res_sha = utils.sha1(res.text)

@@ -1,9 +1,13 @@
 {httpError} = require '../lib/utils'
 crypto = require 'crypto'
+domain = require 'domain'
 debug = require('debug') 'auth'
+PolicyFactory = require 'igloo-amaging-policy'
+Policy = require 'igloo-amaging-policy/lib/policy'
 
 headerUserId = 'x-authentication'
 headerToken = 'x-authentication-token'
+headerPolicy = 'x-authentication-policy'
 
 hash = (input) ->
   crypto
@@ -40,27 +44,61 @@ module.exports = ->
       debug '403: bad cid secret'
       return result403()
 
-    # Data to be hashed
-    fileName = params.file
+    ## Policy
+    if headers[headerPolicy]
+      debug('Start Policy authentification')
 
-    # Prepare string to hash
-    str = cid + userId + secret + fileName
+      policyFactory = new PolicyFactory(secret)
+      d = domain.create()
 
-    # Is there another info to add in hash ?
-    for header in amaging.auth.headers
-      val = headers[header]
+      d.on 'error', (err) ->
+        if (err.name and err.name == 'PolicyError')
+          return result403(err.message)
+        else
+          next(err)
 
-      unless val
+      d.run ->
+        process.nextTick ->
+          debug('Try to create policy with: ', headers[headerPolicy], headers[headerToken])
+          policy = policyFactory.create(headers[headerPolicy], headers[headerToken])
+          unless policy
+            debug "403: Policy creation failed"
+            return result403()
+
+          amaging.policy = policy
+
+          policy.set 'key', params.file
+
+          for header, val in amaging.auth.headers
+            policy.set header, val
+
+          next()
+
+    # Traditional authentification
+    else
+      amaging.policy = new Policy({})
+
+      # Data to be hashed
+      fileName = params.file
+
+      # Prepare string to hash
+      str = cid + userId + secret + fileName
+
+      # Is there another info to add in hash ?
+      for header in amaging.auth.headers
+        val = headers[header]
+
+        unless val
+          return result403()
+
+        str += val
+
+      debug 'Proceed to authentication ...'
+      new_sha = hash(str)
+      debug 'new_sha: ' + new_sha
+      if sha != new_sha
+        debug '403: sha integrity failed'
         return result403()
 
-      str += val
-
-    debug 'Proceed to authentication ...'
-    new_sha = hash(str)
-    debug 'new_sha: ' + new_sha
-    if sha != new_sha
-      debug '403: sha integrity failed'
-      return result403()
-
-    debug 'Authentication Success'
-    return next()
+      debug 'Authentication Success'
+      return next()

@@ -30,7 +30,7 @@ describe 'POST a new image file', () ->
       .post '/test/tente.jpg'
       .set 'x-authentication', tok.access
       .set 'x-authentication-token', tok.token
-      .attach 'img', tok.file.path
+      .attach 'img', tok.file_path
       .expect 200, (err) ->
         return done err if err
         done()
@@ -67,7 +67,7 @@ describe 'Cache Eviction by updating file in multipart', () ->
         .post '/test/multipart-cache-eviction-update.jpg'
         .set 'x-authentication', 'apiaccess'
         .set 'x-authentication-token', tok.token
-        .attach 'img', tok.file.path
+        .attach 'img', tok.file_path
         .expect 200, (err) ->
           return done err if err
           done()
@@ -87,7 +87,7 @@ describe 'Cache Eviction by updating file in multipart', () ->
         .put '/test/multipart-cache-eviction-update.jpg'
         .set 'x-authentication', 'apiaccess'
         .set 'x-authentication-token', tok.token
-        .attach 'img', tok.file.path
+        .attach 'img', tok.file_path
         .expect 200, (err) ->
           return done err if err
           done()

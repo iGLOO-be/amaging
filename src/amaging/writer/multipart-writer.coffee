@@ -79,7 +79,7 @@ module.exports = ->
           amaging.policy.set('content-type', file.type)
           amaging.policy.set('content-length', file.size)
         catch err
-          done err
+          return done err
 
         debug('Request write stream.')
 

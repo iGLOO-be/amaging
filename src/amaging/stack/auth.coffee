@@ -96,7 +96,7 @@ module.exports = ->
       debug 'Proceed to authentication ...'
       new_sha = hash(str)
       debug 'new_sha: ' + new_sha
-      if sha != new_sha
+      if sha.toLowerCase() != new_sha.toLowerCase()
         debug '403: sha integrity failed'
         return result403()
 

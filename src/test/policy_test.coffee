@@ -22,9 +22,7 @@ describe 'Policy', ->
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/tente.jpg'
-        .expect 404, (err) ->
-          return done err if err
-          done()
+        .expect 404, done
 
     it 'Should return a 200 OK when adding an image in multipart (tente.jpg)', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -36,9 +34,7 @@ describe 'Policy', ->
         .set 'x-authentication-policy', pol.policy
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
-        .expect 200, (err) ->
-          return done err if err
-          done()
+        .expect 200, done
 
     it 'Should return the same hash as the expected tente.jpg hash', (done) ->
       request app
@@ -56,9 +52,7 @@ describe 'Policy', ->
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/expired.jpg'
-        .expect 404, (err) ->
-          return done err if err
-          done()
+        .expect 404, done
 
     it 'Should return a 403 when adding an image in multipart with a expired', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -70,16 +64,12 @@ describe 'Policy', ->
         .set 'x-authentication-policy', pol.policy
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
-        .expect 403, (err) ->
-          return done err if err
-          done()
+        .expect 403, done
 
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/expired.jpg'
-        .expect 404, (err) ->
-          return done err if err
-          done()
+        .expect 404, done
 
   ###
           INVALID POLICY
@@ -88,9 +78,7 @@ describe 'Policy', ->
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/invalid.jpg'
-        .expect 404, (err) ->
-          return done err if err
-          done()
+        .expect 404, done
 
     it 'Should return a 403 when adding an image in multipart with a invalid', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -105,16 +93,12 @@ describe 'Policy', ->
         .set 'x-authentication-policy', pol.policy
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
-        .expect 403, (err) ->
-          return done err if err
-          done()
+        .expect 403, done
 
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/invalid.jpg'
-        .expect 404, (err) ->
-          return done err if err
-          done()
+        .expect 404, done
 
 
 # ###

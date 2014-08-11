@@ -15,8 +15,13 @@ imageReader = require './reader/image-reader'
 defaultWriter = require './writer/default-writer'
 mutlipartWriter = require './writer/multipart-writer'
 
+handler = (stack) ->
+  (req, res, next) ->
+    req.params.file = cleanAmagingFile req.params[0]
+    executeStack stack, [req, res], next
+
 module.exports = (options) ->
-  readStack = [
+  read: handler([
     bootstrapper(options)
     cidResolver()
     storageIniter()
@@ -24,9 +29,9 @@ module.exports = (options) ->
     cacheResolver()
     imageReader()
     defaultReader()
-  ]
+  ])
 
-  writeStack = [
+  write: handler([
     bootstrapper(options)
     cidResolver()
     multipartResolver()
@@ -35,53 +40,21 @@ module.exports = (options) ->
     fileIniter()
     defaultWriter()
     mutlipartWriter()
-  ]
+  ])
 
-  deleteStack = [
+  delete: handler([
     bootstrapper(options)
     cidResolver()
     auth()
     storageIniter()
     fileIniter()
     fileDeleter()
-  ]
+  ])
 
-  headStack = [
+  head: handler([
     bootstrapper(options)
     cidResolver()
     storageIniter()
     fileIniter()
     headResolver()
-  ]
-
-  read: (req, res, next) ->
-    req.params.file = cleanAmagingFile req.params[0]
-
-    executeStack readStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
-
-  write: (req, res, next) ->
-    req.params.file = cleanAmagingFile req.params[0]
-
-    executeStack writeStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
-
-  delete: (req, res, next) ->
-    req.params.file = cleanAmagingFile req.params[0]
-
-    executeStack deleteStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
-
-  head: (req, res, next) ->
-    req.params.file = cleanAmagingFile req.params[0]
-
-    executeStack headStack, [req, res], (err) ->
-      return next(err) if err
-      # 404
-      next()
+  ])

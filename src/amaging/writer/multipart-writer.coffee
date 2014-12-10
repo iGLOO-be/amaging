@@ -6,7 +6,7 @@ path = require 'path'
 fs = require 'fs'
 _ = require 'lodash'
 
-debug = require('debug') 'multipart-writer'
+debug = require('debug') 'amaging:writer:multipart'
 
 eraseTempFiles = (files) ->
   debug('Erase temp file')

@@ -1,7 +1,7 @@
 
 {httpError} = require '../lib/utils'
 
-debug = require('debug') 'head-resolver'
+debug = require('debug') 'amaging:head-resolver'
 
 module.exports = ->
   (req, res, next) ->

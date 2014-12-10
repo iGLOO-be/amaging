@@ -1,7 +1,7 @@
 
 {httpError} = require '../lib/utils'
 
-debug = require('debug') 'default-reader'
+debug = require('debug') 'amaging:reader:default'
 
 module.exports = ->
   (req, res, next) ->

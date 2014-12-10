@@ -1,7 +1,7 @@
 
 AbstractStorage = require './abstract-storage'
 
-debug = require('debug') 'S3-Storage'
+debug = require('debug') 'amaging:storage:s3'
 
 async = require 'async'
 path = require 'path'

@@ -1,7 +1,7 @@
 {httpError} = require '../lib/utils'
 crypto = require 'crypto'
 domain = require 'domain'
-debug = require('debug') 'auth'
+debug = require('debug') 'amaging:auth'
 PolicyFactory = require 'igloo-amaging-policy'
 Policy = require 'igloo-amaging-policy/lib/policy'
 

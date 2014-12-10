@@ -1,7 +1,7 @@
 
 {httpError} = require '../lib/utils'
 
-debug = require('debug') 'cache-resolver'
+debug = require('debug') 'amaging:cache-resolver'
 
 doneCacheWith = (res, file, headers, next) ->
   unless file

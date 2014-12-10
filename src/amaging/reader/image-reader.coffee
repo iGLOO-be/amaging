@@ -6,7 +6,7 @@ tmp = require 'tmp'
 async = require 'async'
 fs = require 'fs'
 
-debug = require('debug') 'image-reader'
+debug = require('debug') 'amaging:reader:image'
 
 module.exports = ->
   (req, res, next) ->

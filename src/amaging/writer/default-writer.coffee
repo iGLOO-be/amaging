@@ -2,7 +2,7 @@
 {httpError} = require '../lib/utils'
 async = require 'async'
 
-debug = require('debug') 'default-writer'
+debug = require('debug') 'amaging:writer:default'
 
 module.exports = ->
   (req, res, next) ->

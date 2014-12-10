@@ -1,6 +1,6 @@
 
 {httpError} = require '../lib/utils'
-debug = require('debug') 'delete'
+debug = require('debug') 'amaging:delete'
 
 module.exports = ->
   (req, res, next) ->

@@ -85,7 +85,12 @@ utils =
     return Buffer(policy, "utf-8").toString("base64")
 
   assertResEqualFile: (res, filePath) ->
-    res_sha = utils.sha1(res.text)
+    unless Buffer.isBuffer(res.body)
+      body = JSON.stringify(res.body)
+    else
+      body = res.body.toString()
+
+    res_sha = utils.sha1(body)
     file_buffer = fs.readFileSync(path.join(__dirname, '..', filePath))
 
     file_sha = utils.sha1(file_buffer.toString())

@@ -16,11 +16,12 @@ module.exports =
     next()
 
 
-  httpError: (type, message, res) ->
+  httpError: (status, message, res) ->
+    res.status status
     res.format
-      'text/plain': -> res.send(type, message)
-      'text/html': -> res.send(type, message)
-      'application/json': -> res.send(type, JSON.stringify({success: false, message: message}))
+      'text/plain': -> res.send message
+      'text/html': -> res.send message
+      'application/json': -> res.send success: false, message: message
 
 
   cleanAmagingFile: (filePath) ->

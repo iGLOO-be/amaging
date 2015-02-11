@@ -16,6 +16,7 @@ module.exports = ->
 
     debug('File exists!')
 
+    res.setHeader('Content-Length', amaging.file.contentLength())
     res.setHeader('Content-Type', amaging.file.contentType())
     res.setHeader('Etag', amaging.file.eTag())
     res.setHeader('Cache-Control', 'max-age=' + customer['maxAge'] + ', ' + customer['cacheControl'])

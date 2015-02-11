@@ -65,6 +65,7 @@ describe 'HEAD a file\n', () ->
       .expect 200
       .end (err, res) ->
         expect(err).to.be.null
+        expect(res.headers['content-length']).to.be.equals('17252')
         expect(res.headers['content-type']).to.be.equals('image/jpeg')
         done()
 
@@ -103,6 +104,7 @@ describe 'POST a new json file and check his Content-Type\n', () ->
         assert.equal(res.text, JSON.stringify(
           test: true
         ))
+        assert.equal(res.headers['content-length'], '13')
         assert.equal(res.headers['content-type'], 'application/json')
         done()
 
@@ -202,4 +204,3 @@ describe 'DELETE files just added\n', () ->
       .expect 404, (err) ->
         return done err if err
         done()
-

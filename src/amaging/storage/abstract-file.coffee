@@ -23,6 +23,9 @@ class AbstractFile
 
       cb()
 
+  contentLength: ->
+    @info?.ContentLength
+
   contentType: ->
     @info?.ContentType or mime.lookup(@filename)
 

@@ -3,7 +3,7 @@
   "version": "0.0.11",
   "main": "lib/amaging/server.js",
   "publishConfig": {
-    "registry": "http://npmregistry.igloo.be:19720"
+    "registry": "http://npmregistry.igloo.be"
   },
   "scripts": {
     "prepublish": "grunt build"

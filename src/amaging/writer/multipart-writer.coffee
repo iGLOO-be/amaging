@@ -62,14 +62,11 @@ module.exports = ->
         debug('Check file')
 
         file = files[_.keys(files)[0]]
+        file.type = file.type || 'application/octet-stream'
 
         unless file
           debug('Abort due to missing file')
           return httpError 403, 'Missing file', res
-
-        unless file.type
-          debug('Abort due to missing content-type')
-          return httpError 403, 'Missing content-type', res
 
         unless file.size
           debug('Abort due to missing file size')

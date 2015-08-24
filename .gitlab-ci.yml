@@ -1,0 +1,18 @@
+image: fridus/docker-rvm-nvm
+
+before_script:
+  - source /etc/profile
+
+  # Link node_modules for cache
+  - mkdir -p /cache/node_modules
+  - ln -s /cache/node_modules ./node_modules
+
+  # Setup NVM dir for cache
+  - mkdir -p /cache/nvm
+  - export NVM_DIR=/cache/nvm
+
+iojs-v2:
+  script:
+    - nvm install iojs-v2
+    - npm install
+    - npm test

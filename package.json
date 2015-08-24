@@ -6,6 +6,7 @@
     "registry": "http://npmregistry.igloo.be"
   },
   "scripts": {
+    "test": "grunt test",
     "prepublish": "grunt build"
   },
   "devDependencies": {

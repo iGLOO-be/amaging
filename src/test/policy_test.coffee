@@ -5,7 +5,7 @@ chai.should()
 
 request = require 'supertest'
 
-{requestPolicyFileToken, assertResEqualFile} = require './fixtures/utils'
+{requestPolicyFileToken, assertResImageEqualFile} = require './fixtures/utils'
 appFactory = require('./fixtures/app')
 app = null
 
@@ -42,8 +42,7 @@ describe 'Policy', ->
         .expect 200
         .end (err, res) ->
           return done err if err
-          assertResEqualFile(res, 'expected/tente.jpg')
-          done()
+          assertResImageEqualFile res, 'expected/tente.jpg', done
 
   ###
           EXPIRED POLICY
@@ -154,5 +153,4 @@ describe 'Policy', ->
 #         .get '/test/410x410&/multipart-cache-eviction-update.jpg'
 #         .end (err, res) ->
 #           return done err if err
-#           assertResEqualFile res, 'expected/410x410_tente.jpg'
-#           done()
+#           assertResImageEqualFile res, 'expected/410x410_tente.jpg', done

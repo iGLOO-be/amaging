@@ -1,7 +1,7 @@
 
 request = require 'supertest'
 
-{assertResEqualFile} = require './fixtures/utils'
+{assertResEqualFile, assertResImageEqualFile} = require './fixtures/utils'
 appFactory = require('./fixtures/app')
 app = null
 
@@ -16,8 +16,7 @@ describe 'GET : Play with image filters', () ->
       .expect 200
       .end (err, res) ->
         return done err if err
-        assertResEqualFile res, 'expected/blur(5,2)_igloo.jpg'
-        done()
+        assertResImageEqualFile res, 'expected/blur(5,2)_igloo.jpg', done
 
   it 'Should return a 200 OK by using an unknown filter', (done) ->
     request app

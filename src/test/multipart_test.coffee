@@ -5,7 +5,7 @@ chai.should()
 
 request = require 'supertest'
 
-{requestMultipartFileToken, assertResEqualFile} = require './fixtures/utils'
+{requestMultipartFileToken, assertResEqualFile, assertResImageEqualFile} = require './fixtures/utils'
 appFactory = require('./fixtures/app')
 app = null
 
@@ -41,8 +41,7 @@ describe 'POST a new image file', () ->
       .expect 200
       .end (err, res) ->
         return done err if err
-        assertResEqualFile(res, 'expected/tente.jpg')
-        done()
+        assertResImageEqualFile res, 'expected/tente.jpg', done
 
 
 ###
@@ -98,5 +97,4 @@ describe 'Cache Eviction by updating file in multipart', () ->
         .get '/test/410x410&/multipart-cache-eviction-update.jpg'
         .end (err, res) ->
           return done err if err
-          assertResEqualFile res, 'expected/410x410_tente.jpg'
-          done()
+          assertResImageEqualFile res, 'expected/410x410_tente.jpg', done

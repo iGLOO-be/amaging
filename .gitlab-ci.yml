@@ -35,3 +35,29 @@ iojs-v2:
     - npm install
     - npm install -g grunt-cli
     - npm test
+
+node-v0.10:
+  script:
+    # Install node
+    - nvm install v0.10
+
+    # Set private NPM registry
+    - npm set registry http://npmregistry.igloo.be/
+
+    # Run tests
+    - npm install
+    - npm install -g grunt-cli
+    - npm test
+
+node-v0.12:
+  script:
+    # Install node
+    - nvm install v0.12
+
+    # Set private NPM registry
+    - npm set registry http://npmregistry.igloo.be/
+
+    # Run tests
+    - npm install
+    - npm install -g grunt-cli
+    - npm test

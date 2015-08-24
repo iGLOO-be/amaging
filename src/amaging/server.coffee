@@ -1,6 +1,8 @@
 
 express = require 'express'
 cors = require 'cors'
+Boom = require 'boom'
+_ = require 'lodash'
 amagingFactory = require './amaging'
 
 module.exports = (options) ->
@@ -26,5 +28,19 @@ module.exports = (options) ->
   app.put('/:cid/*', amaging.write)
 
   app.delete('/:cid/*', amaging.delete)
+
+  # Error handling
+  app.use (err, req, res, next) ->
+    return next err unless err.name == 'PolicyError'
+    next new Boom.badRequest(err.message)
+
+  app.use (err, req, res, next) ->
+    return next err unless err.isBoom
+    res.status err.output.statusCode
+    res.format
+      'text/plain': -> res.send err.message
+      'text/html': -> res.send err.message
+      'application/json': -> res.send err.output.payload
+
 
   return app

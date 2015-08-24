@@ -12,7 +12,7 @@ module.exports = ->
 
     unless amaging.file.exists()
       debug('Stop default reader cause to not found file.')
-      return httpError 404, 'File not found', res
+      return next httpError 404, 'File not found'
 
     debug('File exists!')
 
@@ -30,5 +30,5 @@ module.exports = ->
         if err.code != 'ENOENT' and err.code != 'NotFound' and err.code != 'NoSuchKey'
           next err
         else
-          httpError 404, 'File not found', res
+          next httpError 404, 'File not found'
       stream.pipe(res)

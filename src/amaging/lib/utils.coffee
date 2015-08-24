@@ -1,4 +1,6 @@
 
+Boom = require 'boom'
+
 module.exports =
   executeStack: (stack, args, cb) ->
     inc = 0
@@ -16,13 +18,8 @@ module.exports =
     next()
 
 
-  httpError: (status, message, res) ->
-    res.status status
-    res.format
-      'text/plain': -> res.send message
-      'text/html': -> res.send message
-      'application/json': -> res.send success: false, message: message
-
+  httpError: (status, message) ->
+    Boom.create status, message
 
   cleanAmagingFile: (filePath) ->
     # Security concerns

@@ -12,7 +12,7 @@ module.exports = ->
 
     unless amaging.file.exists()
       debug('file not found')
-      return httpError 404, 'File not found', res
+      return next httpError 404, 'File not found'
     else
       debug('file found')
       res.setHeader('Connection', 'close')

@@ -7,6 +7,12 @@ async = require 'async'
 path = require 'path'
 _ = require 'lodash'
 knox = require 'knox'
+Boom = require 'boom'
+
+
+InvalidResponse = (method, response) ->
+  Boom.create 500, "Invalid #{method.toUpperCase()} response from S3. (Status: #{response.statusCode})",
+    response: response
 
 class S3Storage extends AbstractStorage
   constructor: (@options) ->
@@ -22,7 +28,8 @@ class S3Storage extends AbstractStorage
 
     @_S3_knox.headFile @_filepath(file), (err, res) ->
       return cb err if err
-      return cb() unless res.statusCode == 200
+      return cb() if res.statusCode == 404
+      return cb InvalidResponse 'head', res if res.statusCode != 200
 
       cb null,
         ContentType: res.headers['content-type']
@@ -45,11 +52,9 @@ class S3Storage extends AbstractStorage
 
     stream = @_S3_knox.put(@_filepath(file), headers)
 
-    stream.on 'response', (response) ->
-      if response.statusCode != 200
-        err = Boom.create 500, "Invalid PUT response from S3. (Status: #{response.statusCode})",
-          response: response
-        stream.emit 'error', err
+    stream.on 'response', (res) ->
+      if res.statusCode != 200
+        stream.emit 'error', InvalidResponse 'put', res
 
     cb null, stream
 

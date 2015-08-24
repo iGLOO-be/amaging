@@ -21,4 +21,5 @@ iojs-v2:
 
     # Run tests
     - npm install
+    - npm install -g grunt-cli
     - npm test

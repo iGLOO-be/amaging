@@ -3,6 +3,11 @@ image: fridus/docker-rvm-nvm
 before_script:
   - source /etc/profile
 
+  # Link apt cache
+  - mkdir -p /cache/apt
+  - rm -rf /var/cache/apt/archives
+  - ln -s /cache/apt /var/cache/apt/archives
+
   # Link node_modules for cache
   - mkdir -p /cache/node_modules
   - ln -s /cache/node_modules ./node_modules

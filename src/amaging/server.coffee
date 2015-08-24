@@ -1,5 +1,6 @@
 
 express = require 'express'
+cors = require 'cors'
 amagingFactory = require './amaging'
 
 module.exports = (options) ->
@@ -8,6 +9,14 @@ module.exports = (options) ->
 
   app.set('port', options.port || process.env.PORT || 3000)
   app.disable('x-powered-by')
+
+  if options.cors
+    app.use(cors(
+      if _.isObject(options.cors)
+        options.cors
+      else
+        {}
+    ))
 
   # Routes
   app.head('/:cid/*', amaging.head)

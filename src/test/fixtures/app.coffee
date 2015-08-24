@@ -4,6 +4,7 @@ AWS = require 'aws-sdk'
 async = require 'async'
 fs = require 'fs'
 mime = require 'mime'
+_ = require 'lodash'
 
 {getServer} = require './utils'
 server = getServer()
@@ -13,8 +14,9 @@ env = process.env.TEST_ENV
 storageDir = path.join(__dirname, 'storage')
 
 if env is 'local'
-  module.exports = (done) ->
-    app = server(
+  module.exports = (options, done) ->
+    done = options unless done
+    options = _.extend
       customers:
         test:
           access:
@@ -27,13 +29,17 @@ if env is 'local'
             type: 'local'
             options:
               path: path.join(__dirname, 'storage_cache')
-    )
+    , options
+
+    app = server(options)
+
     process.nextTick(done)
     return app
 
 else if env is 's3'
-  module.exports = (done) ->
-    options =
+  module.exports = (options, done) ->
+    done = options unless done
+    options = _.extend
       customers:
         test:
           access:
@@ -54,6 +60,7 @@ else if env is 's3'
               key: 'AKIAIHK2HP6ME7U3Y3TA'
               secret: '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'
               region: 'eu-west-1'
+    , options
 
     app = server(options)
 

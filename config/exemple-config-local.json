@@ -7,16 +7,17 @@
       "storage": {
         "type": "local",
         "options": {
-          "path": "/Users/igloo/Repos/igloo-amaging/api/lib/samples/local/storage"
+          "path": "/tmp/amaging-test/storage"
         }
       },
       "cacheStorage": {
         "type": "local",
         "options": {
-          "path": "/Users/igloo/Repos/igloo-amaging/api/lib/samples/local/storage_cache"
+          "path": "/tmp/amaging-test/storage_cache"
         }
       }
     }
   },
-  "port": "4000"
+  "port": "4000",
+  "cors": "true"
 }

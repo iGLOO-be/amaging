@@ -21,7 +21,8 @@ doneCacheWith = (res, file, headers, next) ->
       if(headers['if-none-match'] != info['ETag'])
         next()
       else
-        return httpError 304, 'Not Modified', res
+        res.status 304, 'Not Modified'
+        res.send ''
 
 module.exports = ->
   (req, res, next) ->

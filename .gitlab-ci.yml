@@ -1,0 +1,76 @@
+image: fridus/docker-rvm-nvm
+
+before_script:
+  - source /etc/profile
+
+  # Link apt cache
+  - mkdir -p /cache/apt
+  - rm -rf /var/cache/apt/archives
+  - ln -s /cache/apt /var/cache/apt/archives
+
+  # Link node_modules for cache
+  - mkdir -p /cache/node_modules
+  - ln -s /cache/node_modules ./node_modules
+
+  # Setup NVM dir for cache
+  - mkdir -p /cache/nvm
+  - export NVM_DIR=/cache/nvm
+
+  # Install apt dependencies
+  - apt-get update
+  - apt-get install -y software-properties-common python-software-properties
+  - add-apt-repository ppa:dhor/myway
+  - apt-get update
+  - apt-get install -y graphicsmagick imagemagick
+
+iojs-v3:
+  script:
+    # Install node
+    - nvm install iojs-v3
+
+    # Set private NPM registry
+    - npm set registry http://npmregistry.igloo.be/
+
+    # Run tests
+    - npm install
+    - npm install -g grunt-cli
+    - npm test
+
+iojs-v2:
+  script:
+    # Install node
+    - nvm install iojs-v2
+
+    # Set private NPM registry
+    - npm set registry http://npmregistry.igloo.be/
+
+    # Run tests
+    - npm install
+    - npm install -g grunt-cli
+    - npm test
+
+node-v0.10:
+  script:
+    # Install node
+    - nvm install v0.10
+
+    # Set private NPM registry
+    - npm set registry http://npmregistry.igloo.be/
+
+    # Run tests
+    - npm install
+    - npm install -g grunt-cli
+    - npm test
+
+node-v0.12:
+  script:
+    # Install node
+    - nvm install v0.12
+
+    # Set private NPM registry
+    - npm set registry http://npmregistry.igloo.be/
+
+    # Run tests
+    - npm install
+    - npm install -g grunt-cli
+    - npm test

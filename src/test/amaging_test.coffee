@@ -7,7 +7,7 @@ chai.should()
 
 request = require 'supertest'
 
-{requestFileToken, requestJSONToken, requestDeleteToken, assertResEqualFile} = require './fixtures/utils'
+{requestFileToken, requestJSONToken, requestDeleteToken, assertResImageEqualFile} = require './fixtures/utils'
 appFactory = require('./fixtures/app')
 app = null
 
@@ -137,8 +137,7 @@ describe 'POST a new image file\n', () ->
       .expect 200
       .end (err, res) ->
         return done err if err
-        assertResEqualFile(res, 'expected/igloo.jpg')
-        done()
+        assertResImageEqualFile res, 'expected/igloo.jpg', done
 
 
 

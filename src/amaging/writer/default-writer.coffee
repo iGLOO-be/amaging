@@ -22,7 +22,7 @@ module.exports = ->
 
     unless contentLength and contentType
       debug('Abort default writer due to missing headers')
-      return httpError 403, 'Missing header(s)', res
+      return next httpError 403, 'Missing header(s)'
 
     debug('Start rewriting file...')
 
@@ -39,6 +39,7 @@ module.exports = ->
       (done) ->
         debug('Pipe in stream.')
         stream.on 'close', done
+        stream.on 'error', done
         req.pipe stream
       (done) ->
         debug('Read info.')

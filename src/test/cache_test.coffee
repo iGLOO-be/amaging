@@ -1,7 +1,7 @@
 
 request = require 'supertest'
 
-{requestFileToken, requestDeleteToken, assertResEqualFile} = require './fixtures/utils'
+{requestFileToken, requestDeleteToken, assertResImageEqualFile} = require './fixtures/utils'
 appFactory = require('./fixtures/app')
 app = null
 
@@ -102,5 +102,4 @@ describe 'Cache Eviction by updating file', () ->
         .get '/test/410x410&/cache-eviction-update.jpg'
         .end (err, res) ->
           return done err if err
-          assertResEqualFile res, 'expected/410x410_tipi.jpg'
-          done()
+          assertResImageEqualFile res, 'expected/410x410_tipi.jpg', done

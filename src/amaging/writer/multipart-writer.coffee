@@ -66,11 +66,11 @@ module.exports = ->
 
         unless file
           debug('Abort due to missing file')
-          return httpError 403, 'Missing file', res
+          return done httpError 403, 'Missing file'
 
         unless file.size
           debug('Abort due to missing file size')
-          return httpError 403, 'Missing file size', res
+          return done httpError 403, 'Missing file size'
 
         try
           amaging.policy.set('content-type', file.type)

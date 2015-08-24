@@ -11,7 +11,7 @@ module.exports = ->
     params = req.params
 
     unless params.file
-      return httpError 404, 'File not found', res
+      return next httpError 404, 'File not found'
 
     async.parallel [
       (done) ->

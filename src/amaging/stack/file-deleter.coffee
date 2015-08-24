@@ -10,7 +10,7 @@ module.exports = ->
 
     unless amaging.file.exists()
       debug 'The process of deleting the file failed because it was not found.'
-      return httpError 404, 'File not found', res
+      return next httpError 404, 'File not found'
 
     amaging.file.deleteFile (err) ->
       return next err if err

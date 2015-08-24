@@ -2,6 +2,8 @@
 fs = require 'fs'
 path = require 'path'
 crypto = require 'crypto'
+gm = require 'gm'
+tmp = require 'tmp'
 
 chai = require 'chai'
 assert = chai.assert
@@ -101,6 +103,22 @@ utils =
 
     # file_sha = utils.sha1(file_buffer.toString())
     # assert.equal(res_sha, file_sha)
+
+  assertResImageEqualFile: (res, filePath, done) ->
+    expected = path.join(__dirname, '..', filePath)
+
+    tmp.file (err, path, fd, clean) ->
+      return done err if err
+      console.log ' wait end', path
+
+      fs.writeFileSync path, res.body
+      gm.compare expected, path, (err, isEqual, diff) ->
+        # clean()
+        return done err if err
+        if isEqual
+          done()
+        else
+          done new Error('Images are not equal.')
 
   getServer: ->
     return require(process.env.APP_SRV_COVERAGE || '../../amaging/server')

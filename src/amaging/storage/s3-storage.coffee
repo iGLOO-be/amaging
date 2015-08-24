@@ -45,6 +45,12 @@ class S3Storage extends AbstractStorage
 
     stream = @_S3_knox.put(@_filepath(file), headers)
 
+    stream.on 'response', (response) ->
+      if response.statusCode != 200
+        err = Boom.create 500, "Invalid PUT response from S3. (Status: #{response.statusCode})",
+          response: response
+        stream.emit 'error', err
+
     cb null, stream
 
   deleteFile: (file, cb) ->

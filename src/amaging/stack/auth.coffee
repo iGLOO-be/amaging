@@ -22,7 +22,7 @@ module.exports = ->
     headers = req.headers
 
     result403 = ->
-      httpError 403, 'Not Authorized !', res
+      next httpError 403, 'Not Authorized !'
 
     cid = amaging.customer.id
 

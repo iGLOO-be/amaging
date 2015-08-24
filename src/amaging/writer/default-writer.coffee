@@ -39,6 +39,7 @@ module.exports = ->
       (done) ->
         debug('Pipe in stream.')
         stream.on 'close', done
+        stream.on 'error', done
         req.pipe stream
       (done) ->
         debug('Read info.')

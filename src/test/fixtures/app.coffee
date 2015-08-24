@@ -39,7 +39,7 @@ if env is 'local'
 else if env is 's3'
   module.exports = (options, done) ->
     done = options unless done
-    options = _.extend
+    options = _.merge
       customers:
         test:
           access:
@@ -63,6 +63,10 @@ else if env is 's3'
     , options
 
     app = server(options)
+
+    if options.__skip_populate
+      done()
+      return app
 
     s3 = new AWS.S3
       accessKeyId: options.customers.test.storage.options.key

@@ -11,6 +11,13 @@ before_script:
   - mkdir -p /cache/nvm
   - export NVM_DIR=/cache/nvm
 
+  # Install apt dependencies
+  - apt-get update
+  - apt-get install -y software-properties-common python-software-properties
+  - add-apt-repository ppa:dhor/myway
+  - apt-get update
+  - apt-get install -y graphicsmagick imagemagick
+
 iojs-v2:
   script:
     # Install node

@@ -168,7 +168,7 @@ describe 'Policy', ->
   ###
           ACTION RESTRICTION
   ###
-  describe.only 'Policy Action Restriction', () ->
+  describe 'Policy Action Restriction', () ->
     it 'Should return a 200 if creation is allowed', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',

@@ -2,9 +2,6 @@
   "name": "igloo-amaging",
   "version": "0.1.0",
   "main": "lib/amaging/server.js",
-  "publishConfig": {
-    "registry": "http://npmregistry.igloo.be"
-  },
   "scripts": {
     "test": "grunt test",
     "prepublish": "grunt build"

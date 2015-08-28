@@ -51,12 +51,7 @@ module.exports = ->
       policyFactory = new PolicyFactory(secret)
       d = domain.create()
 
-      d.on 'error', (err) ->
-        if (err.name and err.name == 'PolicyError')
-          return result403(err.message)
-        else
-          next(err)
-
+      d.on 'error', next
       d.run ->
         process.nextTick ->
           debug('Try to create policy with: ', headers[headerPolicy], headers[headerToken])

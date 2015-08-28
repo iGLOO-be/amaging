@@ -109,7 +109,6 @@ utils =
 
     tmp.file (err, path, fd, clean) ->
       return done err if err
-      console.log ' wait end', path
 
       fs.writeFileSync path, res.body
       gm.compare expected, path, (err, isEqual, diff) ->

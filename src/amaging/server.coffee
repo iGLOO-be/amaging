@@ -32,7 +32,10 @@ module.exports = (options) ->
   # Error handling
   app.use (err, req, res, next) ->
     return next err unless err.name == 'PolicyError'
-    next new Boom.badRequest(err.message)
+    boomErr = new Boom.badRequest(err.message, err.data)
+    boomErr.output.payload.data = err.data || {}
+    boomErr.output.payload.data.type = err.type
+    next boomErr
 
   app.use (err, req, res, next) ->
     return next err unless err.isBoom

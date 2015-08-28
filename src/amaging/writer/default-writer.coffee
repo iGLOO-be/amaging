@@ -17,6 +17,13 @@ module.exports = ->
       contentType: contentType
     )
 
+    # Set `action` to policy for allow action restriction
+    amaging.policy.set 'action',
+      if amaging.file.exists()
+        'update'
+      else
+        'create'
+
     if contentType.match /^multipart\/form-data/
       return next()
 

@@ -32,7 +32,7 @@ iojs-v3:
     - npm set registry http://npmregistry.igloo.be/
 
     # Run tests
-    - npm install
+    - npm update
     - npm install -g grunt-cli
     - npm test
 
@@ -45,7 +45,7 @@ iojs-v2:
     - npm set registry http://npmregistry.igloo.be/
 
     # Run tests
-    - npm install
+    - npm update
     - npm install -g grunt-cli
     - npm test
 
@@ -58,7 +58,7 @@ node-v0.10:
     - npm set registry http://npmregistry.igloo.be/
 
     # Run tests
-    - npm install
+    - npm update
     - npm install -g grunt-cli
     - npm test
 
@@ -71,6 +71,6 @@ node-v0.12:
     - npm set registry http://npmregistry.igloo.be/
 
     # Run tests
-    - npm install
+    - npm update
     - npm install -g grunt-cli
     - npm test

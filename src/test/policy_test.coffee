@@ -100,6 +100,9 @@ describe 'Policy', ->
         .expect 404, done
 
 
+  ###
+          POLICY ERRORS
+  ###
   describe 'Policy Error', ->
     it 'Should return a Bad Request in policy is not validated', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -161,6 +164,164 @@ describe 'Policy', ->
           message: 'Not Authorized !'
           statusCode: 403
         , done
+
+  ###
+          ACTION RESTRICTION
+  ###
+  describe.only 'Policy Action Restriction', () ->
+    it 'Should return a 200 if creation is allowed', (done) ->
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      request app
+        .post '/test/policy/action-restriction/creation-allowed.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-policy', pol.policy
+        .set 'x-authentication-token', pol.token
+        .attach 'img', pol.file_path
+        .expect 200, done
+
+    it 'Should return a 400 if creation is not allowed', (done) ->
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'update']
+        ]
+      })
+      request app
+        .post '/test/policy/action-restriction/creation-not-allowed.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-policy', pol.policy
+        .set 'x-authentication-token', pol.token
+        .attach 'img', pol.file_path
+        .expect 400, done
+
+    it 'Should return a 200 if update is allowed', (done) ->
+      # Creation
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      request app
+        .post '/test/policy/action-restriction/update-allowed.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-policy', pol.policy
+        .set 'x-authentication-token', pol.token
+        .attach 'img', pol.file_path
+        .expect 200, (err) ->
+          return done err if err
+
+          pol = requestPolicyFileToken('expected/tente.jpg', {
+            expiration: '2025-01-01T00:00:00',
+            conditions: [
+              ['eq', 'action', 'update']
+            ]
+          })
+          request app
+            .post '/test/policy/action-restriction/update-allowed.jpg'
+            .set 'x-authentication', 'apiaccess'
+            .set 'x-authentication-policy', pol.policy
+            .set 'x-authentication-token', pol.token
+            .attach 'img', pol.file_path
+            .expect 200, done
+
+    it 'Should return a 400 if update is not allowed', (done) ->
+      # Creation
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      request app
+        .post '/test/policy/action-restriction/update-not-allowed.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-policy', pol.policy
+        .set 'x-authentication-token', pol.token
+        .attach 'img', pol.file_path
+        .expect 200, (err) ->
+          return done err if err
+
+          pol = requestPolicyFileToken('expected/tente.jpg', {
+            expiration: '2025-01-01T00:00:00',
+            conditions: [
+              ['eq', 'action', 'create']
+            ]
+          })
+          request app
+            .post '/test/policy/action-restriction/update-not-allowed.jpg'
+            .set 'x-authentication', 'apiaccess'
+            .set 'x-authentication-policy', pol.policy
+            .set 'x-authentication-token', pol.token
+            .attach 'img', pol.file_path
+            .expect 400, done
+
+    it 'Should return a 200 if delete is allowed', (done) ->
+      # Creation
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      request app
+        .post '/test/policy/action-restriction/delete-allowed.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-policy', pol.policy
+        .set 'x-authentication-token', pol.token
+        .attach 'img', pol.file_path
+        .expect 200, (err) ->
+          return done err if err
+
+          pol = requestPolicyFileToken('expected/tente.jpg', {
+            expiration: '2025-01-01T00:00:00',
+            conditions: [
+              ['eq', 'action', 'delete']
+            ]
+          })
+          request app
+            .del '/test/policy/action-restriction/delete-allowed.jpg'
+            .set 'x-authentication', 'apiaccess'
+            .set 'x-authentication-policy', pol.policy
+            .set 'x-authentication-token', pol.token
+            .attach 'img', pol.file_path
+            .expect 200, done
+
+    it 'Should return a 400 if delete is allowed', (done) ->
+      # Creation
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      request app
+        .post '/test/policy/action-restriction/delete-not-allowed.jpg'
+        .set 'x-authentication', 'apiaccess'
+        .set 'x-authentication-policy', pol.policy
+        .set 'x-authentication-token', pol.token
+        .attach 'img', pol.file_path
+        .expect 200, (err) ->
+          return done err if err
+
+          pol = requestPolicyFileToken('expected/tente.jpg', {
+            expiration: '2025-01-01T00:00:00',
+            conditions: [
+              ['eq', 'action', 'create']
+            ]
+          })
+          request app
+            .del '/test/policy/action-restriction/delete-not-allowed.jpg'
+            .set 'x-authentication', 'apiaccess'
+            .set 'x-authentication-policy', pol.policy
+            .set 'x-authentication-token', pol.token
+            .attach 'img', pol.file_path
+            .expect 400, done
 
 
 

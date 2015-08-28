@@ -8,6 +8,9 @@ module.exports = ->
 
     debug 'Processing to delete the file: %j', amaging.file
 
+    # Set `action` to policy for allow action restriction
+    amaging.policy.set 'action', 'delete'
+
     unless amaging.file.exists()
       debug 'The process of deleting the file failed because it was not found.'
       return next httpError 404, 'File not found'

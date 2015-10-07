@@ -23,54 +23,14 @@ before_script:
   - apt-get update
   - apt-get install -y graphicsmagick imagemagick
 
-iojs-v3:
+node-v4:
   script:
     # Install node
-    - nvm install iojs-v3
+    - nvm install v4
 
     # Set private NPM registry
     - npm set registry http://npmregistry.igloo.be/
 
     # Run tests
-    - npm update
-    - npm install -g grunt-cli
-    - npm test
-
-iojs-v2:
-  script:
-    # Install node
-    - nvm install iojs-v2
-
-    # Set private NPM registry
-    - npm set registry http://npmregistry.igloo.be/
-
-    # Run tests
-    - npm update
-    - npm install -g grunt-cli
-    - npm test
-
-node-v0.10:
-  script:
-    # Install node
-    - nvm install v0.10
-
-    # Set private NPM registry
-    - npm set registry http://npmregistry.igloo.be/
-
-    # Run tests
-    - npm update
-    - npm install -g grunt-cli
-    - npm test
-
-node-v0.12:
-  script:
-    # Install node
-    - nvm install v0.12
-
-    # Set private NPM registry
-    - npm set registry http://npmregistry.igloo.be/
-
-    # Run tests
-    - npm update
-    - npm install -g grunt-cli
+    - npm install
     - npm test

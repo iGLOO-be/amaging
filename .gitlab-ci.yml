@@ -28,8 +28,9 @@ node-v4:
     # Install node
     - nvm install v4
 
-    # Set private NPM registry
-    - npm set registry http://npmregistry.igloo.be/
+    # Log on private NPM
+    - npm config set @igloo:registry https://npmregistry.igloo.be/
+    - npm config set //npmregistry.igloo.be/:_authToken=$NPM_AUTH_TOKEN
 
     # Run tests
     - npm install

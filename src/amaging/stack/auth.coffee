@@ -2,8 +2,8 @@
 crypto = require 'crypto'
 domain = require 'domain'
 debug = require('debug') 'amaging:auth'
-PolicyFactory = require 'igloo-amaging-policy'
-Policy = require 'igloo-amaging-policy/lib/policy'
+PolicyFactory = require '@igloo/igloo-amaging-policy'
+Policy = require '@igloo/igloo-amaging-policy/lib/policy'
 
 headerUserId = 'x-authentication'
 headerToken = 'x-authentication-token'

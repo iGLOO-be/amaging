@@ -1,6 +1,6 @@
 {
   "name": "@igloo/igloo-amaging",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "lib/amaging/server.js",
   "scripts": {
     "test": "grunt test",

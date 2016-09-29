@@ -9,8 +9,7 @@ before_script:
   - ln -s /cache/apt /var/cache/apt/archives
 
   # Link node_modules for cache
-  - mkdir -p /cache/node_modules
-  - ln -s /cache/node_modules ./node_modules
+  - mkdir -p /cache/v4/node_modules /cache/v6/node_modules
 
   # Setup NVM dir for cache
   - mkdir -p /cache/nvm
@@ -26,6 +25,7 @@ before_script:
 node-v4:
   stage: test
   script:
+    - ln -s /cache/v4/node_modules ./node_modules
     # Install node
     - nvm install v4
 
@@ -40,6 +40,7 @@ node-v4:
 node-v6:
   stage: test
   script:
+    - ln -s /cache/v6/node_modules ./node_modules
     # Install node
     - nvm install 6
 

@@ -23,6 +23,7 @@ describe 'Policy', ->
       request app
         .get '/test/policy/tente.jpg'
         .expect 404, done
+      return
 
     it 'Should return a 200 OK when adding an image in multipart (tente.jpg)', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -35,6 +36,7 @@ describe 'Policy', ->
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
         .expect 200, done
+      return
 
     it 'Should return the same hash as the expected tente.jpg hash', (done) ->
       request app
@@ -43,6 +45,7 @@ describe 'Policy', ->
         .end (err, res) ->
           return done err if err
           assertResImageEqualFile res, 'expected/tente.jpg', done
+      return
 
   ###
           EXPIRED POLICY
@@ -52,6 +55,7 @@ describe 'Policy', ->
       request app
         .get '/test/policy/expired.jpg'
         .expect 404, done
+      return
 
     it 'Should return a 403 when adding an image in multipart with a expired', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -64,11 +68,13 @@ describe 'Policy', ->
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
         .expect 403, done
+      return
 
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/expired.jpg'
         .expect 404, done
+      return
 
   ###
           INVALID POLICY
@@ -78,6 +84,7 @@ describe 'Policy', ->
       request app
         .get '/test/policy/invalid.jpg'
         .expect 404, done
+      return
 
     it 'Should return a 400 Bad Request when adding an image in multipart with a invalid', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -93,12 +100,13 @@ describe 'Policy', ->
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
         .expect 400, done
+      return
 
     it 'Should return a 404 not found when retreive the image that doesn\'t exist', (done) ->
       request app
         .get '/test/policy/invalid.jpg'
         .expect 404, done
-
+      return
 
   ###
           POLICY ERRORS
@@ -126,6 +134,7 @@ describe 'Policy', ->
             key: 'key'
             type: 'INVALID_KEY'
         , done
+      return
 
     it 'Should return a Forbidden when policy is expired', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -144,6 +153,7 @@ describe 'Policy', ->
           message: 'Not Authorized !'
           statusCode: 403
         , done
+      return
 
     it 'Should return a Forbidden when policy conditions are not correct', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -164,6 +174,7 @@ describe 'Policy', ->
           message: 'Not Authorized !'
           statusCode: 403
         , done
+      return
 
   ###
           ACTION RESTRICTION
@@ -183,6 +194,7 @@ describe 'Policy', ->
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
         .expect 200, done
+      return
 
     it 'Should return a 400 if creation is not allowed', (done) ->
       pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -198,6 +210,7 @@ describe 'Policy', ->
         .set 'x-authentication-token', pol.token
         .attach 'img', pol.file_path
         .expect 400, done
+      return
 
     it 'Should return a 200 if update is allowed', (done) ->
       # Creation
@@ -229,6 +242,7 @@ describe 'Policy', ->
             .set 'x-authentication-token', pol.token
             .attach 'img', pol.file_path
             .expect 200, done
+      return
 
     it 'Should return a 400 if update is not allowed', (done) ->
       # Creation
@@ -260,6 +274,7 @@ describe 'Policy', ->
             .set 'x-authentication-token', pol.token
             .attach 'img', pol.file_path
             .expect 400, done
+      return
 
     it 'Should return a 200 if delete is allowed', (done) ->
       # Creation
@@ -291,6 +306,7 @@ describe 'Policy', ->
             .set 'x-authentication-token', pol.token
             .attach 'img', pol.file_path
             .expect 200, done
+      return
 
     it 'Should return a 400 if delete is allowed', (done) ->
       # Creation
@@ -322,6 +338,7 @@ describe 'Policy', ->
             .set 'x-authentication-token', pol.token
             .attach 'img', pol.file_path
             .expect 400, done
+      return
 
 
 

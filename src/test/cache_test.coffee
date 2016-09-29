@@ -19,6 +19,7 @@ describe 'Cache Eviction by deleting file', () ->
     request app
       .get '/test/cache-eviction-delete.jpg'
       .expect 200, done
+    return
 
   describe 'GET: Apply image filter to create cache storage', () ->
     it 'Should return a 200 OK by bluring the image', (done) ->
@@ -27,6 +28,7 @@ describe 'Cache Eviction by deleting file', () ->
         .expect 200, (err) ->
           return done err if err
           done()
+      return
 
     it 'Should return a 200 OK by resizing the image', (done) ->
       request app
@@ -34,7 +36,7 @@ describe 'Cache Eviction by deleting file', () ->
         .expect 200, (err) ->
           return done err if err
           done()
-
+      return
 
   describe 'DELETE the original file (cache-eviction-delete.jpg) to erase the cache', () ->
     it 'Should return a 200 OK by erasing the original image', (done) ->
@@ -45,6 +47,7 @@ describe 'Cache Eviction by deleting file', () ->
         .expect 200, (err) ->
           return done err if err
           done()
+      return
 
   describe 'GET: Try to apply other changes to the file just erased', () ->
     it 'Should return a 404 not found because the image has been deleted', (done) ->
@@ -53,7 +56,7 @@ describe 'Cache Eviction by deleting file', () ->
         .expect 404, (err) ->
           return done err if err
           done()
-
+      return
 
 ###
         CACHE EVICTION UPDATE FILE
@@ -73,6 +76,7 @@ describe 'Cache Eviction by updating file', () ->
         .expect 200, (err) ->
           return done err if err
           done()
+      return
 
   describe 'GET: Apply image filter to create cache storage', () ->
     it 'Should return a 200 OK by changing the igloo', (done) ->
@@ -81,6 +85,7 @@ describe 'Cache Eviction by updating file', () ->
         .expect 200, (err) ->
           return done err if err
           done()
+      return
 
   describe 'UPDATE the original file (cache-eviction-update.jpg by tipi.jpg) to erase the cache', () ->
     it 'Should return a 200 OK by updating the original image', (done) ->
@@ -95,6 +100,7 @@ describe 'Cache Eviction by updating file', () ->
         .expect 200, (err) ->
           return done err if err
           done()
+      return
 
   describe 'GET: Apply image filter on the tipi and compare hash with the former igloo cached file', () ->
     it 'Should return the right hash of the image to check if the cache has been erased', (done) ->
@@ -103,3 +109,4 @@ describe 'Cache Eviction by updating file', () ->
         .end (err, res) ->
           return done err if err
           assertResImageEqualFile res, 'expected/410x410_tipi.jpg', done
+      return

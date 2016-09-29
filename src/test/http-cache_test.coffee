@@ -34,6 +34,7 @@ describe 'MANAGE HTTP CACHE', () ->
           assert.equal(res.headers.etag, Etag)
           assert.equal(res.headers['cache-control'], cacheControl)
           done()
+      return
 
   describe 'GET the image and create cache storage', () ->
     it 'Should return a 200 OK', (done) ->
@@ -51,6 +52,7 @@ describe 'MANAGE HTTP CACHE', () ->
             assert.equal(res.headers.etag, newEtag)
 
           done()
+      return
 
     ## Via cacheFile
     it 'Should return a 304 not modified (190x180)', (done) ->
@@ -65,6 +67,7 @@ describe 'MANAGE HTTP CACHE', () ->
             .expect 304, (err) ->
               return done err if err
               done()
+      return
 
     ## Via file
     it 'Should return a 304 not modified (ice.jpg)', (done) ->
@@ -72,6 +75,7 @@ describe 'MANAGE HTTP CACHE', () ->
         .get '/test/ice.jpg'
         .set 'if-none-match', Etag
         .expect 304, done
+      return
 
   ## with different ETag and should return 200
   describe 'GET the image with former Etags', () ->
@@ -80,6 +84,7 @@ describe 'MANAGE HTTP CACHE', () ->
         .get '/test/ice.jpg'
         .set 'if-none-match', newEtag
         .expect 200, done
+      return
 
     ## Via cacheFile
     it 'Should return a 200 OK (190x180)', (done) ->
@@ -87,3 +92,4 @@ describe 'MANAGE HTTP CACHE', () ->
         .get '/test/190x180&/ice.jpg'
         .set 'if-none-match', Etag
         .expect 200, done
+      return

@@ -24,31 +24,37 @@ describe 'GET a file\n', () ->
     request app
       .get '/notExist.png'
       .expect 404, done
+    return
 
   it 'Should return a 200 OK because the file exist', (done) ->
     request app
       .get '/test/igloo.jpg'
       .expect 200, done
+    return
 
   it 'Should return a 403 error Forbidden because of an non-existing cid', (done) ->
     request app
       .get '/notExits/file.png'
       .expect 403, done
+    return
 
   it 'Should return a 404 not found because the image doesn\'t exist', (done) ->
     request app
       .get '/test/file.png'
       .expect 404, done
+    return
 
   it 'Should return a 404 not found because the file doesn\'t exist', (done) ->
     request app
       .get '/test/igloo.json'
       .expect 404, done
+    return
 
   it 'Should return a 404 not found because no file specified', (done) ->
     request app
       .get '/test/'
       .expect 404, done
+    return
 
 ###
         HEAD
@@ -58,6 +64,7 @@ describe 'HEAD a file\n', () ->
     request app
       .head '/igl00.png'
       .expect 404, done
+    return
 
   it 'Should return a 200 OK with file info', (done) ->
     request app
@@ -68,7 +75,7 @@ describe 'HEAD a file\n', () ->
         expect(res.headers['content-length']).to.be.equals('17252')
         expect(res.headers['content-type']).to.be.equals('image/jpeg')
         done()
-
+    return
 
 ###
         WRITE
@@ -80,6 +87,7 @@ describe 'POST a new json file and check his Content-Type\n', () ->
       .expect 404, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 200 OK by adding a json file', (done) ->
     tok = requestJSONToken(JSON.stringify(
@@ -94,6 +102,7 @@ describe 'POST a new json file and check his Content-Type\n', () ->
       .expect 200, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return the json Content-Type and the content of the file.json', (done) ->
     request app
@@ -107,7 +116,7 @@ describe 'POST a new json file and check his Content-Type\n', () ->
         assert.equal(res.headers['content-length'], '13')
         assert.equal(res.headers['content-type'], 'application/json')
         done()
-
+    return
 
 
 describe 'POST a new image file\n', () ->
@@ -117,6 +126,7 @@ describe 'POST a new image file\n', () ->
       .expect 404, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 200 OK when adding an image (igloo.jpg)', (done) ->
     tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
@@ -130,6 +140,7 @@ describe 'POST a new image file\n', () ->
       .expect 200, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 200 OK when retreive igloo.jpg', (done) ->
     request app
@@ -138,7 +149,7 @@ describe 'POST a new image file\n', () ->
       .end (err, res) ->
         return done err if err
         assertResImageEqualFile res, 'expected/igloo.jpg', done
-
+    return
 
 
 describe 'POST : authentication\n', () ->
@@ -151,6 +162,7 @@ describe 'POST : authentication\n', () ->
       .expect 403, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 403 error NOT AUTHORIZED because of no api access provided', (done) ->
     request app
@@ -161,6 +173,7 @@ describe 'POST : authentication\n', () ->
       .expect 403, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 403 error NOT AUTHORIZED because of an altered token', (done) ->
     request app
@@ -172,7 +185,7 @@ describe 'POST : authentication\n', () ->
       .expect 403, (err) ->
         return done err if err
         done()
-
+    return
 
 
 ###
@@ -187,6 +200,7 @@ describe 'DELETE files just added\n', () ->
       .expect 200, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 404 not found by erasing the same image AGAIN', (done) ->
     request app
@@ -196,6 +210,7 @@ describe 'DELETE files just added\n', () ->
       .expect 404, (err) ->
         return done err if err
         done()
+    return
 
   it 'Should return a 404 if getting file', (done) ->
     request app
@@ -203,3 +218,4 @@ describe 'DELETE files just added\n', () ->
       .expect 404, (err) ->
         return done err if err
         done()
+    return

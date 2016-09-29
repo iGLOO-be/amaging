@@ -17,11 +17,13 @@ describe 'GET : Play with image filters', () ->
       .end (err, res) ->
         return done err if err
         assertResImageEqualFile res, 'expected/blur(5,2)_igloo.jpg', done
+    return
 
   it 'Should return a 200 OK by using an unknown filter', (done) ->
     request app
       .get '/test/unknown&/igloo.jpg'
       .expect 200, done
+    return
 
   it 'Should return 200 OK by using a filter on a non image file', (done) ->
     request app
@@ -31,3 +33,4 @@ describe 'GET : Play with image filters', () ->
         return done err if err
         assertResEqualFile res, 'expected/file.json'
         done()
+    return

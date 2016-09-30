@@ -1,4 +1,4 @@
-image: fridus/docker-rvm-nvm
+image: igloo/test-runner
 
 before_script:
   - source /etc/profile

@@ -5,6 +5,8 @@ async = require 'async'
 fs = require 'fs'
 mime = require 'mime'
 _ = require 'lodash'
+copy = require 'copy'
+rimraf = require 'rimraf'
 
 {getServer} = require './utils'
 server = getServer()
@@ -24,16 +26,21 @@ if env is 'local'
           storage:
             type: 'local'
             options:
-              path: path.join(__dirname, 'storage')
+              path: path.join(__dirname, '../../..', '.tmp', 'storage')
           cacheStorage:
             type: 'local'
             options:
-              path: path.join(__dirname, 'storage_cache')
+              path: path.join(__dirname, '../../..', '.tmp', 'storage_cache')
     , options
 
     app = server(options)
 
-    process.nextTick(done)
+    async.series([
+      (done) -> rimraf(options.customers.test.storage.options.path, done)
+      (done) -> rimraf(options.customers.test.cacheStorage.options.path, done)
+      (done) -> copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
+    ], done)
+
     return app
 
 else if env is 's3'

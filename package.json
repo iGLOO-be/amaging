@@ -4,7 +4,7 @@
   "main": "lib/amaging/server.js",
   "scripts": {
     "test": "npm run lint && npm run test:local",
-    "test:mocha": "mocha --require coffee-script/register src/test/*_test.coffee",
+    "test:mocha": "mocha --require coffee-script/register  --require coffee-coverage/register-istanbul src/test/*_test.coffee && istanbul report",
     "test:local": "TEST_ENV=local npm run test:mocha",
     "test:s3": "TEST_ENV=s3 npm run test:mocha",
     "lint": "coffeelint src",
@@ -16,9 +16,11 @@
   "devDependencies": {
     "aws-sdk": "~2.6.6",
     "chai": "~3.5.0",
+    "coffee-coverage": "^1.0.1",
     "coffee-script": "^1.11.0",
     "coffeelint": "^1.15.7",
     "copy": "^0.3.0",
+    "istanbul": "^0.4.5",
     "longjohn": "^0.2.9",
     "mocha": "^3.1.0",
     "nodemon": "^1.10.2",

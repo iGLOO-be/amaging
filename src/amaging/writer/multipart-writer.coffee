@@ -62,7 +62,7 @@ module.exports = ->
         debug('Check file')
 
         file = files[_.keys(files)[0]]
-        file.type = file.type || 'application/octet-stream'
+        file.type = file.type || mime.lookup(file.name)
 
         unless file
           debug('Abort due to missing file')

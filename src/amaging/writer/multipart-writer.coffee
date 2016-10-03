@@ -5,6 +5,7 @@ formidable = require 'formidable'
 path = require 'path'
 fs = require 'fs'
 _ = require 'lodash'
+mime = require 'mime'
 
 debug = require('debug') 'amaging:writer:multipart'
 

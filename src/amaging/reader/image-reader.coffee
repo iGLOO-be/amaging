@@ -1,5 +1,5 @@
 
-{httpError} = require '../lib/utils'
+{httpError, fileTypeOrLookup} = require '../lib/utils'
 
 GMFilterEngine = require '../../gm-filter/gm-filter'
 tmp = require 'tmp'
@@ -36,7 +36,8 @@ module.exports = ->
       amaging.file = amaging.cacheFile
       return next()
 
-    unless acceptType.indexOf(amaging.file.contentType()) > -1
+    fileType = fileTypeOrLookup(amaging.file.contentType(), amaging.file.filename)
+    unless acceptType.indexOf(fileType) > -1
       debug('Stop image reader cause the file is not an image')
       return next()
 

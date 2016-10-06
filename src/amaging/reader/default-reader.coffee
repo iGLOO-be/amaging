@@ -1,5 +1,5 @@
 
-{httpError} = require '../lib/utils'
+{httpError, fileTypeOrLookup} = require '../lib/utils'
 
 debug = require('debug') 'amaging:reader:default'
 
@@ -16,8 +16,10 @@ module.exports = ->
 
     debug('File exists!')
 
+    fileType = fileTypeOrLookup(amaging.file.contentType(), amaging.file.filename)
+
     res.setHeader('Content-Length', amaging.file.contentLength())
-    res.setHeader('Content-Type', amaging.file.contentType())
+    res.setHeader('Content-Type', fileType)
     res.setHeader('Etag', amaging.file.eTag())
     res.setHeader('Cache-Control', 'max-age=' + customer['maxAge'] + ', ' + customer['cacheControl'])
     res.setHeader('Last-Modified', amaging.file.lastModified())

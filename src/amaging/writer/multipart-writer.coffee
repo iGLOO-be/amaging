@@ -1,11 +1,10 @@
 
-{httpError} = require '../lib/utils'
+{httpError, fileTypeOrLookup} = require '../lib/utils'
 async = require 'async'
 formidable = require 'formidable'
 path = require 'path'
 fs = require 'fs'
 _ = require 'lodash'
-mime = require 'mime'
 
 debug = require('debug') 'amaging:writer:multipart'
 
@@ -63,7 +62,7 @@ module.exports = ->
         debug('Check file')
 
         file = files[_.keys(files)[0]]
-        file.type = file.type || mime.lookup(file.name)
+        file.type = fileTypeOrLookup(file.type, file.name)
 
         unless file
           debug('Abort due to missing file')

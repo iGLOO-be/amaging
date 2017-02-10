@@ -62,7 +62,6 @@ module.exports = ->
         debug('Check file')
 
         file = files[_.keys(files)[0]]
-        file.type = fileTypeOrLookup(file.type, file.name)
 
         unless file
           debug('Abort due to missing file')
@@ -71,6 +70,8 @@ module.exports = ->
         unless file.size
           debug('Abort due to missing file size')
           return done httpError 403, 'Missing file size'
+
+        file.type = fileTypeOrLookup(file.type, file.name)
 
         try
           amaging.policy.set('content-type', file.type)

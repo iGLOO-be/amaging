@@ -40,19 +40,19 @@ function S3StorageTest () {
         , done)
     })
 
-    it('Get file should return a 500', done =>
+    it('Get file should return a 500', () =>
       request(app)
         .get('/test/igloo.jpg')
-        .expect(500, 'Invalid HEAD response from S3. (Status: 403)', done)
+        .expect(500, 'Invalid HEAD response from S3. (Status: 403)')
     )
 
-    it('Head file should return a 500', done =>
+    it('Head file should return a 500', () =>
       request(app)
         .head('/test/igloo.jpg')
-        .expect(500, done)
+        .expect(500)
     )
 
-    return it('Put file should return a 500', function (done) {
+    return it('Put file should return a 500', function () {
       const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
       return request(app)
         .post('/test/igloo.jpg')
@@ -61,10 +61,7 @@ function S3StorageTest () {
         .set('x-authentication', tok.access)
         .set('x-authentication-token', tok.token)
         .send(tok.buffer)
-        .expect(500, 'Invalid HEAD response from S3. (Status: 403)', function (err) {
-          if (err) { return done(err) }
-          return done()
-        })
+        .expect(500, 'Invalid HEAD response from S3. (Status: 403)')
     })
   })
 }

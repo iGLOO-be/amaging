@@ -1,17 +1,17 @@
 
-const Filter = require('./base-filter');
+const Filter = require('./base-filter')
 
 class BorderFilter extends Filter {
-  constructor() {
-    super(...arguments);
-    this._match = this.option.match(/^border\((\d+),(\d+)\)$/);
+  constructor () {
+    super(...arguments)
+    this._match = this.option.match(/^border\((\d+),(\d+)\)$/)
   }
-  isMatching() { return this._match; }
-  applyOn(gm) {
+  isMatching () { return this._match }
+  applyOn (gm) {
     // http://www.graphicsmagick.org/GraphicsMagick.html#details-border
     // border(width, height)
-    return gm.border(this._match[1], this._match[2]);
+    return gm.border(this._match[1], this._match[2])
   }
 }
 
-module.exports = BorderFilter;
+module.exports = BorderFilter

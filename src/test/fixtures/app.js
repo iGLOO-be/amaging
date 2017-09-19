@@ -1,23 +1,23 @@
 
-const path = require('path');
-const AWS = require('aws-sdk');
-const async = require('async');
-const fs = require('fs');
-const mime = require('mime');
-const _ = require('lodash');
-const copy = require('copy');
-const rimraf = require('rimraf');
+const path = require('path')
+const AWS = require('aws-sdk')
+const async = require('async')
+const fs = require('fs')
+const mime = require('mime')
+const _ = require('lodash')
+const copy = require('copy')
+const rimraf = require('rimraf')
 
-const {getServer} = require('./utils');
-const server = getServer();
+const {getServer} = require('./utils')
+const server = getServer()
 
-const env = process.env.TEST_ENV;
+const env = process.env.TEST_ENV
 
-const storageDir = path.join(__dirname, 'storage');
+const storageDir = path.join(__dirname, 'storage')
 
 if (env === 'local') {
-  module.exports = function(options, done) {
-    if (!done) { done = options; }
+  module.exports = function (options, done) {
+    if (!done) { done = options }
     options = _.extend({
       customers: {
         test: {
@@ -39,22 +39,21 @@ if (env === 'local') {
         }
       }
     }
-    , options);
+    , options)
 
-    const app = server(options);
+    const app = server(options)
 
     async.series([
       done => rimraf(options.customers.test.storage.options.path, done),
       done => rimraf(options.customers.test.cacheStorage.options.path, done),
       done => copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
-    ], done);
+    ], done)
 
-    return app;
-  };
-
+    return app
+  }
 } else if (env === 's3') {
-  module.exports = function(options, done) {
-    if (!done) { done = options; }
+  module.exports = function (options, done) {
+    if (!done) { done = options }
     options = _.merge({
       customers: {
         test: {
@@ -84,13 +83,13 @@ if (env === 'local') {
         }
       }
     }
-    , options);
+    , options)
 
-    const app = server(options);
+    const app = server(options)
 
     if (options.__skip_populate) {
-      done();
-      return app;
+      done()
+      return app
     }
 
     const s3 = new AWS.S3({
@@ -100,31 +99,30 @@ if (env === 'local') {
       params: {
         Bucket: options.customers.test.storage.options.bucket
       }
-    });
+    })
 
-    let keys = null;
+    let keys = null
     async.series([
       done =>
         s3.listObjects(
           {Prefix: options.customers.test.storage.options.path}
-        , function(err, _keys) {
-          keys = _keys;
-          return done(err);
-        })
-      ,
-      function(done) {
+        , function (err, _keys) {
+          keys = _keys
+          return done(err)
+        }),
+      function (done) {
         if (!__guard__(keys != null ? keys.Contents : undefined, x => x.length)) {
-          return done();
+          return done()
         }
         return s3.deleteObjects({
           Delete: {
             Objects: (keys != null ? keys.Contents.map(k => ({Key: k.Key})) : undefined)
           }
         }
-        , done);
+        , done)
       },
-      function(done) {
-        const files = fs.readdirSync(storageDir);
+      function (done) {
+        const files = fs.readdirSync(storageDir)
         return async.each(files, (file, done) =>
           s3.putObject({
             ContentType: mime.lookup(file),
@@ -132,18 +130,17 @@ if (env === 'local') {
             Key: options.customers.test.storage.options.path + file
           }
           , done)
-        
-        , done);
+
+        , done)
       }
-    ], done);
+    ], done)
 
-    return app;
-  };
-
+    return app
+  }
 } else {
-  throw new Error('Invalid the test environment variable TEST_ENV. Valids: "local" or "s3".');
+  throw new Error('Invalid the test environment variable TEST_ENV. Valids: "local" or "s3".')
 }
 
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
+function __guard__ (value, transform) {
+  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

@@ -1,9 +1,9 @@
 
-const Filter = require('./base-filter');
+const Filter = require('./base-filter')
 
 class SepiaFilter extends Filter {
-  isMatching() { return this.option.match(/^sepia$/); }
-  applyOn(gm) { return gm.sepia(); }
+  isMatching () { return this.option.match(/^sepia$/) }
+  applyOn (gm) { return gm.sepia() }
 }
 
-module.exports = SepiaFilter;
+module.exports = SepiaFilter

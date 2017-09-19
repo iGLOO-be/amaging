@@ -1,13 +1,13 @@
 
-const Filter = require('./base-filter');
+const Filter = require('./base-filter')
 
 class ImplodeFilter extends Filter {
-  constructor() {
-    super(...arguments);
-    this._match = this.option.match(/^implode\((\d+)\)$/);
+  constructor () {
+    super(...arguments)
+    this._match = this.option.match(/^implode\((\d+)\)$/)
   }
-  isMatching() { return this._match; }
-  applyOn(gm) { return gm.implode(this._match[1]); }
+  isMatching () { return this._match }
+  applyOn (gm) { return gm.implode(this._match[1]) }
 }
 
-module.exports = ImplodeFilter;
+module.exports = ImplodeFilter

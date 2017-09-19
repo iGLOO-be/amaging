@@ -1,12 +1,12 @@
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 module.exports = options =>
-  function(req, res, next) {
-    const amaging = (req.amaging = (res.amaging = {}));
+  function (req, res, next) {
+    const amaging = (req.amaging = (res.amaging = {}))
 
     // TODO: do copy of options
-    amaging.options = options;
+    amaging.options = options
 
     // Default options
     amaging.options = _.merge({
@@ -16,11 +16,10 @@ module.exports = options =>
         etag: true
       }
     }
-    , amaging.options);
+    , amaging.options)
 
     amaging.auth =
-      {headers: []};
+      {headers: []}
 
-    return next();
+    return next()
   }
-;

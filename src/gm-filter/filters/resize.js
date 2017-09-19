@@ -1,5 +1,5 @@
 
-const Filter = require('./base-filter');
+const Filter = require('./base-filter')
 
 /*
 Flags:
@@ -10,21 +10,21 @@ Flags:
 */
 
 class ResizeFilter extends Filter {
-  constructor() {
-    super(...arguments);
-    this._match = this.option.match(/^(\d+)?(?:x(\d+))?(\^|<|>|!|%|@)*$/);
+  constructor () {
+    super(...arguments)
+    this._match = this.option.match(/^(\d+)?(?:x(\d+))?(\^|<|>|!|%|@)*$/)
     if (this._match) {
-      this._width = this._match[1] && parseInt(this._match[1]);
-      this._height = this._match[2] && parseInt(this._match[2]);
-      this._options = this._match[3];
+      this._width = this._match[1] && parseInt(this._match[1])
+      this._height = this._match[2] && parseInt(this._match[2])
+      this._options = this._match[3]
     }
   }
 
-  isMatching() { return this._match; }
+  isMatching () { return this._match }
 
-  applyOn(gm) {
-    return gm.resize(this._width, this._height, this._options);
+  applyOn (gm) {
+    return gm.resize(this._width, this._height, this._options)
   }
 }
 
-module.exports = ResizeFilter;
+module.exports = ResizeFilter

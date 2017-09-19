@@ -1,9 +1,9 @@
 
-const Filter = require('./base-filter');
+const Filter = require('./base-filter')
 
 class NegativeFilter extends Filter {
-  isMatching() { return this.option.match(/^negative$/); }
-  applyOn(gm) { return gm.negative(); }
+  isMatching () { return this.option.match(/^negative$/) }
+  applyOn (gm) { return gm.negative() }
 }
 
-module.exports = NegativeFilter;
+module.exports = NegativeFilter

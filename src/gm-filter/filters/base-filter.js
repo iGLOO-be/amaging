@@ -1,10 +1,10 @@
 
 class Filter {
-  constructor(option) {
-    this.option = option;
+  constructor (option) {
+    this.option = option
   }
 
-  isMatching() { return false; }
+  isMatching () { return false }
 }
 
-module.exports = Filter;
+module.exports = Filter

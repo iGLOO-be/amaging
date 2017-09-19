@@ -1,8 +1,7 @@
 
-require('longjohn');
+require('longjohn')
 
-const server = require('../../amaging/server');
-const path = require('path');
+const server = require('../../amaging/server')
 
 const app = server({
   customers: {
@@ -32,10 +31,10 @@ const app = server({
       }
     }
   }
-  });
+})
 
-app.listen(app.get('port'), function(err) {
-  if (err) { throw err; }
+app.listen(app.get('port'), function (err) {
+  if (err) { throw err }
 
-  return console.log(`Server listening ${app.get('port')}`);
-});
+  return console.log(`Server listening ${app.get('port')}`)
+})

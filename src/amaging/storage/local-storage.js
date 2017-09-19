@@ -1,28 +1,27 @@
 
-const AbstractStorage = require('./abstract-storage');
-const path = require('path');
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const _ = require('lodash');
-const rimraf = require('rimraf');
-
+const AbstractStorage = require('./abstract-storage')
+const path = require('path')
+const fs = require('fs')
+const mkdirp = require('mkdirp')
+const _ = require('lodash')
+const rimraf = require('rimraf')
 
 class LocalStorage extends AbstractStorage {
-  constructor(options) {
-    super();
+  constructor (options) {
+    super()
     this.options = _.extend(
       {path: '/'}
-    , options);
+    , options)
   }
 
-  readInfo(file, cb) {
-    return fs.stat(this._filepath(file), function(err, stat) {
+  readInfo (file, cb) {
+    return fs.stat(this._filepath(file), function (err, stat) {
       if (err && (err.code !== 'ENOENT')) {
-        return cb(err);
+        return cb(err)
       }
 
       if (!stat) {
-        return cb();
+        return cb()
       }
 
       return cb(null, {
@@ -30,38 +29,38 @@ class LocalStorage extends AbstractStorage {
         ETag: `"${stat.size}"`,
         LastModified: stat.mtime
       }
-      );
-    });
+      )
+    })
   }
 
-  requestReadStream(file, cb) {
-    return cb(null, fs.createReadStream(this._filepath(file)));
+  requestReadStream (file, cb) {
+    return cb(null, fs.createReadStream(this._filepath(file)))
   }
 
-  requestWriteStream(file, info, cb) {
+  requestWriteStream (file, info, cb) {
     return mkdirp(path.dirname(this._filepath(file)), err => {
-      if (err) { return cb(err); }
-      return cb(null, this.createWriteStream(file));
-    });
+      if (err) { return cb(err) }
+      return cb(null, this.createWriteStream(file))
+    })
   }
 
-  createWriteStream(file) {
-    return fs.createWriteStream(this._filepath(file));
+  createWriteStream (file) {
+    return fs.createWriteStream(this._filepath(file))
   }
 
-  deleteFile(file, cb) {
-    return fs.unlink(this._filepath(file), cb);
+  deleteFile (file, cb) {
+    return fs.unlink(this._filepath(file), cb)
   }
 
-  deleteCachedFiles(file, cb) {
-    return rimraf(this._filepath(file), cb);
+  deleteCachedFiles (file, cb) {
+    return rimraf(this._filepath(file), cb)
   }
 
   // Privates
 
-  _filepath(file) {
-    return path.join(this.options.path, file);
+  _filepath (file) {
+    return path.join(this.options.path, file)
   }
 }
 
-module.exports = LocalStorage;
+module.exports = LocalStorage

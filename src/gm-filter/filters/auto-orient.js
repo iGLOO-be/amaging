@@ -1,15 +1,15 @@
 
-const Filter = require('./base-filter');
+const Filter = require('./base-filter')
 
 class BlurFilter extends Filter {
-  constructor() {
-    super(...arguments);
-    this._match = this.option.match(/^autoOrient$/);
+  constructor () {
+    super(...arguments)
+    this._match = this.option.match(/^autoOrient$/)
   }
-  isMatching() { return this._match; }
-  applyOn(gm) {
-    return gm.autoOrient();
+  isMatching () { return this._match }
+  applyOn (gm) {
+    return gm.autoOrient()
   }
 }
 
-module.exports = BlurFilter;
+module.exports = BlurFilter

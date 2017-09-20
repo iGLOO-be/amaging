@@ -2,7 +2,7 @@
 const chai = require('chai')
 chai.should()
 
-const utils = require('../amaging/lib/utils')
+const utils = require('../lib/amaging/lib/utils')
 
 describe('utils.cleanAmagingFile', () =>
   it('Must clean ../', function () {

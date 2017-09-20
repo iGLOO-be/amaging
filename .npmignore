@@ -1,4 +1,5 @@
 /config
-/lib/test
-/lib/samples
+/test
+/samples
 /.gitignore
+/.tmp

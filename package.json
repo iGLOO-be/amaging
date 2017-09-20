@@ -4,7 +4,7 @@
   "main": "lib/amaging/server.js",
   "scripts": {
     "test": "npm run lint && npm run test:local",
-    "test:mocha": "mocha lib/test/*_test.js",
+    "test:mocha": "mocha",
     "test:local": "TEST_ENV=local npm run test:mocha",
     "test:s3": "TEST_ENV=s3 npm run test:mocha",
     "lint": "standard --env mocha",

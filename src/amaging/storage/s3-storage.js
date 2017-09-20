@@ -17,6 +17,9 @@ class S3Storage extends AbstractStorage {
     super()
     this.options = options
     this._S3_knox = new knox.createClient({ // eslint-disable-line new-cap
+      port: this.options.port,
+      endpoint: this.options.endpoint,
+      style: this.options.style,
       key: this.options.key,
       secret: this.options.secret,
       region: this.options.region,

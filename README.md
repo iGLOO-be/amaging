@@ -56,3 +56,27 @@ $ sudo apt-get install graphicsmagick
 ```sh
 $ sudo apt-get install cimg-dev libphash0-dev
 ```
+
+### Run S3 tests
+
+In order to test with S3, you need to start a Minio server:
+
+```
+MINIO_DOCKER_NAME=amaging-test-minio
+MINIO_ACCESS_KEY=foobar
+MINIO_SECRET_KEY=barfoobarfoo
+MINIO_BUCKET=barfoobarfoo
+
+docker stop $MINIO_DOCKER_NAME || true
+docker rm -v $MINIO_DOCKER_NAME || true
+docker run --name $MINIO_DOCKER_NAME -d -p 9000:9000 -e MINIO_ACCESS_KEY=$MINIO_ACCESS_KEY -e MINIO_SECRET_KEY=$MINIO_SECRET_KEY minio/minio server /data
+docker run --rm --link $MINIO_DOCKER_NAME:minio -e MINIO_BUCKET=$MINIO_BUCKET --entrypoint sh minio/mc -c "\
+  sleep 5 && \
+  mc config host add myminio http://minio:9000 \$MINIO_ENV_MINIO_ACCESS_KEY \$MINIO_ENV_MINIO_SECRET_KEY && \
+  mc rm -r --force myminio/\$MINIO_BUCKET || true && \
+  mc mb myminio/\$MINIO_BUCKET && \
+  mc policy download myminio/\$MINIO_BUCKET \
+"
+
+TEST_ENV=s3 npm run test
+```

@@ -63,21 +63,27 @@ if (env === 'local') {
           storage: {
             type: 's3',
             options: {
-              bucket: 'igloo-amaging-testbucket',
+              endpoint: '127.0.0.1',
+              port: 9000,
+              style: 'path',
+
+              bucket: process.env.MINIO_BUCKET,
               path: 'storage/main/',
-              key: 'AKIAIHK2HP6ME7U3Y3TA',
-              secret: '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',
-              region: 'eu-west-1'
+              key: process.env.MINIO_ACCESS_KEY,
+              secret: process.env.MINIO_SECRET_KEY
             }
           },
           cacheStorage: {
             type: 's3',
             options: {
-              bucket: 'igloo-amaging-testbucket',
+              endpoint: '127.0.0.1',
+              port: 9000,
+              style: 'path',
+
+              bucket: process.env.MINIO_BUCKET,
               path: 'storage/cache/',
-              key: 'AKIAIHK2HP6ME7U3Y3TA',
-              secret: '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',
-              region: 'eu-west-1'
+              key: process.env.MINIO_ACCESS_KEY,
+              secret: process.env.MINIO_SECRET_KEY
             }
           }
         }
@@ -96,6 +102,9 @@ if (env === 'local') {
       accessKeyId: options.customers.test.storage.options.key,
       secretAccessKey: options.customers.test.storage.options.secret,
       region: options.customers.test.storage.options.region,
+      endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
+      s3ForcePathStyle: 'true',
+      signatureVersion: 'v4',
       params: {
         Bucket: options.customers.test.storage.options.bucket
       }

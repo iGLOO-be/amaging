@@ -15,7 +15,7 @@ if (env === 'local') {
   newEtag = '"4667"'
 } else {
   Etag = '"1cc596b7a579db797f8aea80bba65415"'
-  newEtag = '"87e765c919874876f1f23f95541522f4"'
+  newEtag = '"ab093153e0081a27fef6b85262189695"'
 }
 
 before(done => { app = appFactory(done) })

@@ -12,7 +12,7 @@
     "start:s3": "nodemon src/samples/s3/sample.js"
   },
   "devDependencies": {
-    "aws-sdk": "~2.6.6",
+    "aws-sdk": "~2.60.0",
     "chai": "~3.5.0",
     "copy": "~0.3.1",
     "istanbul": "^0.4.5",

@@ -4,12 +4,12 @@
   "main": "lib/amaging/server.js",
   "scripts": {
     "test": "npm run lint && npm run test:local",
-    "test:mocha": "mocha src/test/*_test.js",
+    "test:mocha": "mocha lib/test/*_test.js",
     "test:local": "TEST_ENV=local npm run test:mocha",
     "test:s3": "TEST_ENV=s3 npm run test:mocha",
     "lint": "standard --env mocha",
-    "start": "nodemon src/samples/local/sample.js",
-    "start:s3": "nodemon src/samples/s3/sample.js"
+    "start": "nodemon lib/samples/local/sample.js",
+    "start:s3": "nodemon lib/samples/s3/sample.js"
   },
   "devDependencies": {
     "aws-sdk": "~2.60.0",

@@ -1,5 +1,5 @@
 {
-  "name": "@igloo/igloo-amaging",
+  "name": "@igloo-be/amaging",
   "version": "0.1.6",
   "main": "lib/amaging/server.js",
   "scripts": {

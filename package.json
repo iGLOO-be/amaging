@@ -11,6 +11,13 @@
     "start": "nodemon lib/samples/local/sample.js",
     "start:s3": "nodemon lib/samples/s3/sample.js"
   },
+  "homepage": "https://github.com/iGLOO-be/amaging",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iGLOO-be/amaging.git"
+  },
+  "author": "iGLOO <team@igloo.be>",
+  "license": "MIT",
   "devDependencies": {
     "aws-sdk": "~2.60.0",
     "chai": "~3.5.0",

@@ -175,10 +175,10 @@ const options =
   {url: `http://localhost:3000/${cid}/${fileName}`}
 
 const cb = (error, res, body) => console.log('REQUEST_CODE: ', res.headers, error)
-  // if !error && response.statusCode == 200
-  //   info = JSON.parse(body)
-  //   console.log 'INFO: ', info
-  // else
-  //   console.log 'REQUEST_ERROR: ', error
+// if !error && response.statusCode == 200
+//   info = JSON.parse(body)
+//   console.log 'INFO: ', info
+// else
+//   console.log 'REQUEST_ERROR: ', error
 
 request.head(options, cb)

@@ -135,7 +135,7 @@ describe('Policy', function () {
             type: 'INVALID_KEY'
           }
         }
-        , done)
+          , done)
     })
 
     it('Should return a Forbidden when policy is expired', function (done) {
@@ -155,7 +155,7 @@ describe('Policy', function () {
           message: 'Not Authorized !',
           statusCode: 403
         }
-        , done)
+          , done)
     })
 
     return it('Should return a Forbidden when policy conditions are not correct', function (done) {
@@ -177,7 +177,7 @@ describe('Policy', function () {
           message: 'Not Authorized !',
           statusCode: 403
         }
-        , done)
+          , done)
     })
   })
 

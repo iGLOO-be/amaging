@@ -134,7 +134,7 @@ if (env === 'local') {
         const files = fs.readdirSync(storageDir)
         return async.each(files, (file, done) =>
           s3.putObject({
-            ContentType: mime.lookup(file),
+            ContentType: mime.getType(file),
             Body: fs.createReadStream(path.join(storageDir, file)),
             Key: options.customers.test.storage.options.path + file
           }

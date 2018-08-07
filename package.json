@@ -19,7 +19,7 @@
   "author": "iGLOO <team@igloo.be>",
   "license": "MIT",
   "devDependencies": {
-    "aws-sdk": "~2.60.0",
+    "aws-sdk": "~2.287.0",
     "chai": "~3.5.0",
     "copy": "^0.3.2",
     "istanbul": "^0.4.5",

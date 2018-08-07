@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@igloo-be/amaging-policy": "^1.0.1",
-    "async": "~2.0.1",
+    "async": "~2.6.1",
     "babel-eslint": "^8.2.6",
     "boom": "^4.1.0",
     "cors": "^2.8.1",

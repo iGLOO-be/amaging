@@ -1,5 +1,5 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
 const conv = {
   northwest: 'NorthWest',
@@ -15,7 +15,7 @@ const conv = {
 
 const reg = /^gravity\((northwest|north|northeast|west|center|east|southwest|south|southeast)\)$/
 
-class GravityFilter extends Filter {
+export default class GravityFilter extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(reg)
@@ -25,5 +25,3 @@ class GravityFilter extends Filter {
     return gm.gravity(conv[this._match[1]])
   }
 }
-
-module.exports = GravityFilter

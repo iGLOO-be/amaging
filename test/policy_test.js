@@ -1,11 +1,10 @@
 
-const chai = require('chai')
+import request from 'supertest'
+
+import {requestPolicyFileToken, assertResImageEqualFile} from './fixtures/utils'
+import appFactory from './fixtures/app'
+import chai from 'chai'
 chai.should()
-
-const request = require('supertest')
-
-const {requestPolicyFileToken, assertResImageEqualFile} = require('./fixtures/utils')
-const appFactory = require('./fixtures/app')
 let app = null
 
 before(done => { app = appFactory(done) })

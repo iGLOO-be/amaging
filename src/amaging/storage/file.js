@@ -1,9 +1,9 @@
 
-const AbstractFile = require('./abstract-file')
+import AbstractFile from './abstract-file'
 
-const async = require('async')
+import async from 'async'
 
-class File extends AbstractFile {
+export default class File extends AbstractFile {
   static create (storage, cacheStorage, filename, cb) {
     const file = new File(storage, cacheStorage, filename)
     file.readInfo(cb)
@@ -42,5 +42,3 @@ class File extends AbstractFile {
     return this.cacheStorage.deleteCachedFiles(this._filepath(), cb)
   }
 }
-
-module.exports = File

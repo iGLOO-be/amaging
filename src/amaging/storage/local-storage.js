@@ -1,12 +1,12 @@
 
-const AbstractStorage = require('./abstract-storage')
-const path = require('path')
-const fs = require('fs')
-const mkdirp = require('mkdirp')
-const _ = require('lodash')
-const rimraf = require('rimraf')
+import AbstractStorage from './abstract-storage'
+import path from 'path'
+import fs from 'fs'
+import mkdirp from 'mkdirp'
+import _ from 'lodash'
+import rimraf from 'rimraf'
 
-class LocalStorage extends AbstractStorage {
+export default class LocalStorage extends AbstractStorage {
   constructor (options) {
     super()
     this.options = _.extend(

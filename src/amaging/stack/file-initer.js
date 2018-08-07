@@ -1,11 +1,11 @@
 
-const async = require('async')
+import async from 'async'
 
-const {httpError} = require('../lib/utils')
-const File = require('../storage/file')
-const CacheFile = require('../storage/cache-file')
+import { httpError } from '../lib/utils'
+import File from '../storage/file'
+import CacheFile from '../storage/cache-file'
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const { params } = req

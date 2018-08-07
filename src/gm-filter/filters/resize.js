@@ -1,5 +1,5 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
 /*
 Flags:
@@ -9,7 +9,7 @@ Flags:
     as minimum values rather than maximum values.
 */
 
-class ResizeFilter extends Filter {
+export default class ResizeFilter extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(/^(\d+)?(?:x(\d+))?(\^|<|>|!|%|@)*$/)
@@ -26,5 +26,3 @@ class ResizeFilter extends Filter {
     return gm.resize(this._width, this._height, this._options)
   }
 }
-
-module.exports = ResizeFilter

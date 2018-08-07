@@ -1,7 +1,7 @@
 
-const AbstractStorage = require('../storage/abstract-storage')
+import AbstractStorage from '../storage/abstract-storage'
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const { customer } = amaging

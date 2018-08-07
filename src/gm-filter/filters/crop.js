@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class CropFilter extends Filter {
+export default class CropFilter extends Filter {
   constructor () {
     super(...arguments)
 
@@ -20,5 +20,3 @@ class CropFilter extends Filter {
     return gm.crop(this._width, this._height, this._x, this._y)
   }
 }
-
-module.exports = CropFilter

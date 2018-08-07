@@ -1,17 +1,17 @@
 
-const AbstractStorage = require('./abstract-storage')
+import AbstractStorage from './abstract-storage'
 
-const debug = require('debug')('amaging:storage:s3')
-
-const async = require('async')
-const path = require('path')
-const knox = require('knox')
-const Boom = require('boom')
+import async from 'async'
+import path from 'path'
+import knox from 'knox'
+import Boom from 'boom'
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:storage:s3')
 
 const InvalidResponse = (method, response) =>
   new Boom(`Invalid ${method.toUpperCase()} response from S3. (Status: ${response.statusCode})`, { statusCode: 500, data: { response } })
 
-class S3Storage extends AbstractStorage {
+export default class S3Storage extends AbstractStorage {
   constructor (options) {
     super()
     this.options = options
@@ -99,8 +99,6 @@ class S3Storage extends AbstractStorage {
 }
 
 S3Storage.InvalidResponse = InvalidResponse
-
-module.exports = S3Storage
 
 function __guard__ (value, transform) {
   return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined

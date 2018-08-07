@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class ExtentFilter extends Filter {
+export default class ExtentFilter extends Filter {
   constructor () {
     super(...arguments)
 
@@ -20,5 +20,3 @@ class ExtentFilter extends Filter {
     return gm.extent(this._width, this._height, this._x, this._y)
   }
 }
-
-module.exports = ExtentFilter

@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class CompressFilter extends Filter {
+export default class CompressFilter extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(/^compress\('[A-Za-u]{3,8}?'\)$/)
@@ -12,5 +12,3 @@ class CompressFilter extends Filter {
     return gm.compress(this._match)
   }
 }
-
-module.exports = CompressFilter

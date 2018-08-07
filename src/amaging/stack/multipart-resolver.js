@@ -1,5 +1,5 @@
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     // if not multipart
     const contentType = req.headers['content-type']

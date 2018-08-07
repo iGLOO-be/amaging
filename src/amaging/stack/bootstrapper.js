@@ -1,7 +1,7 @@
 
-const _ = require('lodash')
+import _ from 'lodash'
 
-module.exports = options =>
+export default options =>
   function (req, res, next) {
     const amaging = (req.amaging = (res.amaging = {}))
 

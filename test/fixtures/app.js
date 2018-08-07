@@ -1,14 +1,14 @@
 
-const path = require('path')
-const AWS = require('aws-sdk')
-const async = require('async')
-const fs = require('fs')
-const mime = require('mime')
-const _ = require('lodash')
-const copy = require('copy')
-const rimraf = require('rimraf')
+import path from 'path'
+import AWS from 'aws-sdk'
+import async from 'async'
+import fs from 'fs'
+import mime from 'mime'
+import _ from 'lodash'
+import copy from 'copy'
+import rimraf from 'rimraf'
 
-const {getServer} = require('./utils')
+import { getServer } from './utils'
 const server = getServer()
 
 const env = process.env.TEST_ENV

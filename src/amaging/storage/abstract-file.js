@@ -1,10 +1,10 @@
 
-const mime = require('mime')
+import mime from 'mime'
 
 const optionsRegex = /^(.*)&\//
 const optionsSep = '&'
 
-class AbstractFile {
+export default class AbstractFile {
   constructor (storage, filename) {
     this.storage = storage
     const match = filename.match(optionsRegex)
@@ -64,5 +64,3 @@ class AbstractFile {
     return this.filename
   }
 }
-
-module.exports = AbstractFile

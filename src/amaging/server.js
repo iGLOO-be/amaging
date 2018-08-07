@@ -1,9 +1,9 @@
 
-const express = require('express')
-const cors = require('cors')
-const Boom = require('boom')
-const _ = require('lodash')
-const amagingFactory = require('./amaging')
+import express from 'express'
+import cors from 'cors'
+import Boom from 'boom'
+import _ from 'lodash'
+import amagingFactory from './amaging'
 
 export default function (options) {
   const app = express(options)

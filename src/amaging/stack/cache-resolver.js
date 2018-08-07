@@ -1,5 +1,6 @@
 
-const debug = require('debug')('amaging:cache-resolver')
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:cache-resolver')
 
 const doneCacheWith = function (res, file, headers, next) {
   if (!file) {
@@ -26,7 +27,7 @@ const doneCacheWith = function (res, file, headers, next) {
   }
 }
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const { headers } = req

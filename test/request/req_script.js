@@ -1,5 +1,5 @@
 
-const request = require('request')
+import request from 'request'
 // const crypto = require('crypto')
 
 // console.log '##########'

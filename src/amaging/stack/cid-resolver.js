@@ -1,7 +1,7 @@
 
-const {httpError} = require('../lib/utils')
+import { httpError } from '../lib/utils'
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const { params } = req

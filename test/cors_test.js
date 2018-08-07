@@ -1,10 +1,10 @@
 
-const chai = require('chai')
+import request from 'supertest'
+
+import appFactory from './fixtures/app'
+
+import chai from 'chai'
 const { assert } = chai
-
-const request = require('supertest')
-
-const appFactory = require('./fixtures/app')
 
 /*
         ENABLE CORS

@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class QualityFilter extends Filter {
+export default class QualityFilter extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(/^quality\((\d+)\)$/)
@@ -15,5 +15,3 @@ class QualityFilter extends Filter {
     return gm.quality(this._quality)
   }
 }
-
-module.exports = QualityFilter

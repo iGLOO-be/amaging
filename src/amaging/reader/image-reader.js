@@ -1,14 +1,15 @@
 
-const {fileTypeOrLookup} = require('../lib/utils')
+import { fileTypeOrLookup } from '../lib/utils'
 
-const GMFilterEngine = require('../../gm-filter/gm-filter')
-const tmp = require('tmp')
-const async = require('async')
-const fs = require('fs')
+import GMFilterEngine from '../../gm-filter/gm-filter'
+import tmp from 'tmp'
+import async from 'async'
+import fs from 'fs'
 
-const debug = require('debug')('amaging:reader:image')
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:reader:image')
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const { options } = amaging.file

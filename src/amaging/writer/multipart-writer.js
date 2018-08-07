@@ -1,11 +1,11 @@
 
-const {httpError, fileTypeOrLookup} = require('../lib/utils')
-const async = require('async')
-const formidable = require('formidable')
-const fs = require('fs')
-const _ = require('lodash')
+import { httpError, fileTypeOrLookup } from '../lib/utils'
+import async from 'async'
+import formidable from 'formidable'
+import fs from 'fs'
+import _ from 'lodash'
 
-const debug = require('debug')('amaging:writer:multipart')
+import debug from 'debug'
 
 const eraseTempFiles = function (files) {
   debug('Erase temp file')
@@ -15,7 +15,7 @@ const eraseTempFiles = function (files) {
     })
 }
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
 

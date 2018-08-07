@@ -1,9 +1,10 @@
-const {httpError} = require('../lib/utils')
-const crypto = require('crypto')
-const domain = require('domain') // eslint-disable-line
-const debug = require('debug')('amaging:auth')
-const PolicyFactory = require('@igloo-be/amaging-policy')
-const Policy = require('@igloo-be/amaging-policy/lib/policy')
+import {httpError} from '../lib/utils'
+import crypto from 'crypto'
+import domain from 'domain' // eslint-disable-line
+import PolicyFactory from '@igloo-be/amaging-policy'
+import Policy from '@igloo-be/amaging-policy/lib/policy'
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:auth')
 
 const headerUserId = 'x-authentication'
 const headerToken = 'x-authentication-token'
@@ -15,7 +16,7 @@ const hash = input =>
     .update(input)
     .digest('hex')
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const { params } = req

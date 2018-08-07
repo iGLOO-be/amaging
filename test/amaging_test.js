@@ -1,14 +1,15 @@
 
-const chai = require('chai')
+import request from 'supertest'
+import chai from 'chai'
+import appFactory from './fixtures/app'
+
 const { assert } = chai
 const { expect } = chai
 chai.should()
 
-const request = require('supertest')
+let app = null
 
 const {requestFileToken, requestJSONToken, requestDeleteToken, assertResImageEqualFile} = require('./fixtures/utils')
-const appFactory = require('./fixtures/app')
-let app = null
 
 before(done => { app = appFactory(done) })
 

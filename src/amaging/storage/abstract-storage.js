@@ -1,7 +1,7 @@
 
-const assert = require('assert')
+import assert from 'assert'
 
-class AbstractStorage {
+export default class AbstractStorage {
   static create (type, options) {
     const Storage = require(`./${type}-storage`)
     const storage = new Storage(options)
@@ -37,5 +37,3 @@ class AbstractStorage {
     return assert.ok(info.ContentType, 'ContentType property is mandatory in write info.')
   }
 }
-
-module.exports = AbstractStorage

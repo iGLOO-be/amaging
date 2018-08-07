@@ -1,16 +1,14 @@
 
-const chai = require('chai')
+import request from 'supertest'
+
+import { requestFileToken } from './fixtures/utils'
+import appFactory from './fixtures/app'
+import S3Storage from '../src/amaging/storage/s3-storage'
+import chai from 'chai'
 chai.should()
 
 const { expect } = chai
-
-const request = require('supertest')
-
-const {requestFileToken} = require('./fixtures/utils')
-const appFactory = require('./fixtures/app')
 let app = null
-
-const S3Storage = require('../src/amaging/storage/s3-storage')
 
 if (process.env.TEST_ENV !== 's3') {
   describe.skip('S3 Storage', S3StorageTest)

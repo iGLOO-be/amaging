@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class BlurFilter extends Filter {
+export default class AutoOrient extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(/^autoOrient$/)
@@ -11,5 +11,3 @@ class BlurFilter extends Filter {
     return gm.autoOrient()
   }
 }
-
-module.exports = BlurFilter

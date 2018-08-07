@@ -1,10 +1,11 @@
 
-const {httpError} = require('../lib/utils')
-const async = require('async')
+import { httpError } from '../lib/utils'
+import async from 'async'
 
-const debug = require('debug')('amaging:writer:default')
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:writer:default')
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
 

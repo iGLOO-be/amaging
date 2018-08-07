@@ -1,9 +1,10 @@
 
-const {httpError} = require('../lib/utils')
+import { httpError } from '../lib/utils'
 
-const debug = require('debug')('amaging:head-resolver')
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:head-resolver')
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
 

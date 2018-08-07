@@ -1,8 +1,8 @@
 
-const request = require('supertest')
+import request from 'supertest'
 
-const {assertResEqualFile, assertResImageEqualFile} = require('./fixtures/utils')
-const appFactory = require('./fixtures/app')
+import { assertResEqualFile, assertResImageEqualFile } from './fixtures/utils'
+import appFactory from './fixtures/app'
 let app = null
 
 before(done => { app = appFactory(done) })

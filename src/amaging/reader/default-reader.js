@@ -1,9 +1,10 @@
 
-const {httpError, fileTypeOrLookup} = require('../lib/utils')
+import { httpError, fileTypeOrLookup } from '../lib/utils'
 
-const debug = require('debug')('amaging:reader:default')
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:reader:default')
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
     const customer = amaging.options.cache

@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class BorderFilter extends Filter {
+export default class BorderFilter extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(/^border\((\d+),(\d+)\)$/)
@@ -13,5 +13,3 @@ class BorderFilter extends Filter {
     return gm.border(this._match[1], this._match[2])
   }
 }
-
-module.exports = BorderFilter

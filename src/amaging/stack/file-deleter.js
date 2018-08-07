@@ -1,8 +1,9 @@
 
-const {httpError} = require('../lib/utils')
-const debug = require('debug')('amaging:delete')
+import { httpError } from '../lib/utils'
+import debugFactory from 'debug'
+const debug = debugFactory('amaging:delete')
 
-module.exports = () =>
+export default () =>
   function (req, res, next) {
     const { amaging } = req
 

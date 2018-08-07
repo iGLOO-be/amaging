@@ -1,7 +1,7 @@
 
-const AbstractFile = require('./abstract-file')
+import AbstractFile from './abstract-file'
 
-class CacheFile extends AbstractFile {
+export default class CacheFile extends AbstractFile {
   static create (storage, filename, cb) {
     const file = new CacheFile(storage, filename)
     file.readInfo(cb)
@@ -14,5 +14,3 @@ class CacheFile extends AbstractFile {
     return this.filename + '/' + this.options.join('_')
   }
 }
-
-module.exports = CacheFile

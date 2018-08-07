@@ -1,10 +1,9 @@
 
-const gm = require('gm')
-const fs = require('fs')
-const path = require('path')
+import gm from 'gm'
+import fs from 'fs'
+import path from 'path'
 
-const filters = fs.readdirSync(path.join(__dirname, '/filters')).map(file => require(`./filters/${file}`))
-
+const filters = fs.readdirSync(path.join(__dirname, '/filters')).map(file => require(`./filters/${file}`).default)
 const filterMatchingOption = function (option) {
   for (let Filter of Array.from(filters)) {
     const filter = new Filter(option)
@@ -14,7 +13,7 @@ const filterMatchingOption = function (option) {
   }
 }
 
-class GMFilterEngine {
+export default class GMFilterEngine {
   constructor () {
     this.addOption = this.addOption.bind(this)
     this._filters = []
@@ -44,5 +43,3 @@ class GMFilterEngine {
     return _gm.write(file, cb)
   }
 }
-
-module.exports = GMFilterEngine

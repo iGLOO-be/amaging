@@ -1,9 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class EqualizeFilter extends Filter {
+export default class EqualizeFilter extends Filter {
   isMatching () { return this.option.match(/^equalize$/) }
   applyOn (gm) { return gm.equalize() }
 }
-
-module.exports = EqualizeFilter

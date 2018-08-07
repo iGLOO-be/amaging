@@ -1,6 +1,6 @@
 
-const request = require('request')
-const crypto = require('crypto')
+import request from 'request'
+import crypto from 'crypto'
 
 const cid = 'test'
 const userCID = 'apiaccess'

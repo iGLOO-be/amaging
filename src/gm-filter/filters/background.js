@@ -1,7 +1,7 @@
 
-const Filter = require('./base-filter')
+import Filter from './base-filter'
 
-class BackgroundFilter extends Filter {
+export default class BackgroundFilter extends Filter {
   constructor () {
     super(...arguments)
     this._match = this.option.match(/^background\(((?:[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}))\)$/)
@@ -13,5 +13,3 @@ class BackgroundFilter extends Filter {
     return gm.background(`#${this._match[1]}`)
   }
 }
-
-module.exports = BackgroundFilter

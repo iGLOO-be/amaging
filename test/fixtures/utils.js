@@ -102,16 +102,16 @@ var utils = {
     return assert.equal(parseInt(res.headers['content-length']), fileBuffer.length)
   },
 
-    // unless Buffer.isBuffer(res.body)
-    //   body = JSON.stringify(res.body)
-    // else
-    //   body = res.body.toString()
+  // unless Buffer.isBuffer(res.body)
+  //   body = JSON.stringify(res.body)
+  // else
+  //   body = res.body.toString()
 
-    // res_sha = utils.sha1(body)
-    // fileBuffer = fs.readFileSync(path.join(__dirname, '..', filePath))
+  // res_sha = utils.sha1(body)
+  // fileBuffer = fs.readFileSync(path.join(__dirname, '..', filePath))
 
-    // file_sha = utils.sha1(fileBuffer.toString())
-    // assert.equal(res_sha, file_sha)
+  // file_sha = utils.sha1(fileBuffer.toString())
+  // assert.equal(res_sha, file_sha)
 
   assertResImageEqualFile (res, filePath, done) {
     const expected = path.join(__dirname, '..', filePath)

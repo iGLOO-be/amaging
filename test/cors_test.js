@@ -28,32 +28,32 @@ describe('CORS Support', function () {
   it('CORS can be enabled with option cors = true', function (done) {
     const app = appFactory(
       {cors: true}
-    , function (err) {
-      if (err) { return done(err) }
-      request(app)
-        .options('/test/some/file')
-        .expect(204, function (err, res) {
-          if (err) { return done(err) }
-          assert.equal(res.headers['access-control-allow-origin'], '*')
-          assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD,PUT,PATCH,POST,DELETE')
-          return done(err)
-        })
-    })
+      , function (err) {
+        if (err) { return done(err) }
+        request(app)
+          .options('/test/some/file')
+          .expect(204, function (err, res) {
+            if (err) { return done(err) }
+            assert.equal(res.headers['access-control-allow-origin'], '*')
+            assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD,PUT,PATCH,POST,DELETE')
+            return done(err)
+          })
+      })
   })
 
   return it('CORS can be enabled with option cors = [empty object]', function (done) {
     const app = appFactory(
       {cors: {}}
-    , function (err) {
-      if (err) { return done(err) }
-      request(app)
-        .options('/test/some/file')
-        .expect(204, function (err, res) {
-          if (err) { return done(err) }
-          assert.equal(res.headers['access-control-allow-origin'], '*')
-          assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD,PUT,PATCH,POST,DELETE')
-          return done(err)
-        })
-    })
+      , function (err) {
+        if (err) { return done(err) }
+        request(app)
+          .options('/test/some/file')
+          .expect(204, function (err, res) {
+            if (err) { return done(err) }
+            assert.equal(res.headers['access-control-allow-origin'], '*')
+            assert.equal(res.headers['access-control-allow-methods'], 'GET,HEAD,PUT,PATCH,POST,DELETE')
+            return done(err)
+          })
+      })
   })
 })

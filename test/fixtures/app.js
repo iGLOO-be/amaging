@@ -39,7 +39,7 @@ if (env === 'local') {
         }
       }
     }
-    , options)
+      , options)
 
     const app = server(options)
 
@@ -89,7 +89,7 @@ if (env === 'local') {
         }
       }
     }
-    , options)
+      , options)
 
     const app = server(options)
 
@@ -115,10 +115,10 @@ if (env === 'local') {
       done =>
         s3.listObjects(
           {Prefix: options.customers.test.storage.options.path}
-        , function (err, _keys) {
-          keys = _keys
-          return done(err)
-        }),
+          , function (err, _keys) {
+            keys = _keys
+            return done(err)
+          }),
       function (done) {
         if (!__guard__(keys != null ? keys.Contents : undefined, x => x.length)) {
           return done()
@@ -128,19 +128,19 @@ if (env === 'local') {
             Objects: (keys != null ? keys.Contents.map(k => ({Key: k.Key})) : undefined)
           }
         }
-        , done)
+          , done)
       },
       function (done) {
         const files = fs.readdirSync(storageDir)
         return async.each(files, (file, done) =>
           s3.putObject({
-            ContentType: mime.lookup(file),
+            ContentType: mime.getType(file),
             Body: fs.createReadStream(path.join(storageDir, file)),
             Key: options.customers.test.storage.options.path + file
           }
-          , done)
+            , done)
 
-        , done)
+          , done)
       }
     ], done)
 

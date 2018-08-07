@@ -1,5 +1,5 @@
 
-const server = require('../../amaging/server')
+const server = require('../../lib/amaging/server')
 const path = require('path')
 
 const app = server({

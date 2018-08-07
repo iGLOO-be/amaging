@@ -133,7 +133,7 @@ var utils = {
   },
 
   getServer () {
-    return require(process.env.APP_SRV_COVERAGE || '../../lib/amaging/server')
+    return require(process.env.APP_SRV_COVERAGE || '../../src/amaging/server').default
   }
 }
 

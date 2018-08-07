@@ -5,7 +5,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const amagingFactory = require('./amaging')
 
-module.exports = function (options) {
+export default function (options) {
   const app = express(options)
   const amaging = amagingFactory(options)
 

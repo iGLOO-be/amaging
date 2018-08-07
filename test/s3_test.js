@@ -10,7 +10,7 @@ const {requestFileToken} = require('./fixtures/utils')
 const appFactory = require('./fixtures/app')
 let app = null
 
-const S3Storage = require('../lib/amaging/storage/s3-storage')
+const S3Storage = require('../src/amaging/storage/s3-storage')
 
 if (process.env.TEST_ENV !== 's3') {
   describe.skip('S3 Storage', S3StorageTest)

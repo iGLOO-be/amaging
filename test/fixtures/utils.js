@@ -94,7 +94,16 @@ export function encodeBase64 (policy) {
   return Buffer.from(policy, 'utf-8').toString('base64')
 }
 
-export function assertResEqualFile (res, filePath) {
+export function assertResEqualFilePromise (...args) {
+  return new Promise((resolve, reject) => {
+    assertResEqualFile(...args, (err, ...results) => {
+      if (err) return reject(err)
+      else resolve(...results)
+    })
+  })
+}
+
+export async function assertResEqualFile (res, filePath) {
   // Testing equality via SHA may randomly produced error.
   // I don't know why SHA are different in some case...
   // But size remains the same, so we switch to length equality.
@@ -112,6 +121,15 @@ export function assertResEqualFile (res, filePath) {
 
 // file_sha = utils.sha1(fileBuffer.toString())
 // assert.equal(res_sha, file_sha)
+
+export function assertResImageEqualFilePromise (...args) {
+  return new Promise((resolve, reject) => {
+    assertResImageEqualFile(...args, (err, ...results) => {
+      if (err) return reject(err)
+      else resolve(...results)
+    })
+  })
+}
 
 export function assertResImageEqualFile (res, filePath, done) {
   const expected = path.join(__dirname, '..', filePath)

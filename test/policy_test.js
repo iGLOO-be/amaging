@@ -1,7 +1,7 @@
 
 import request from 'supertest'
 
-import {requestPolicyFileToken, assertResImageEqualFile} from './fixtures/utils'
+import {requestPolicyFileToken, assertResImageEqualFile, assertResImageEqualFilePromise} from './fixtures/utils'
 import appFactory from './fixtures/app'
 import chai from 'chai'
 chai.should()
@@ -14,33 +14,30 @@ describe('Policy', function () {
           VALID POLICY
   */
   describe('POST a new image file with a valid policy', function () {
-    it('Should return a 404 not found when retreive the image that doesn\'t exist', function (done) {
-      request(app)
+    it('Should return a 404 not found when retreive the image that doesn\'t exist', async () => {
+      await request(app)
         .get('/test/policy/tente.jpg')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('Should return a 200 OK when adding an image in multipart (tente.jpg)', function (done) {
+    it('Should return a 200 OK when adding an image in multipart (tente.jpg)', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00'
       })
-      request(app)
+      await request(app)
         .post('/test/policy/tente.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(200, done)
+        .expect(200)
     })
 
-    return it('Should return the same hash as the expected tente.jpg hash', function (done) {
-      request(app)
+    return it('Should return the same hash as the expected tente.jpg hash', async () => {
+      const res = await request(app)
         .get('/test/policy/tente.jpg')
         .expect(200)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-          return assertResImageEqualFile(res, 'expected/tente.jpg', done)
-        })
+      await assertResImageEqualFilePromise(res, 'expected/tente.jpg')
     })
   })
 
@@ -48,29 +45,29 @@ describe('Policy', function () {
           EXPIRED POLICY
   */
   describe('POST a new image file with a expired policy', function () {
-    it('Should return a 404 not found when retreive the image that doesn\'t exist', function (done) {
-      request(app)
+    it('Should return a 404 not found when retreive the image that doesn\'t exist', async () => {
+      await request(app)
         .get('/test/policy/expired.jpg')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('Should return a 403 when adding an image in multipart with a expired', function (done) {
+    it('Should return a 403 when adding an image in multipart with a expired', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '1970-01-01T00:00:00'
       })
-      request(app)
+      await request(app)
         .post('/test/policy/expired.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(403, done)
+        .expect(403)
     })
 
-    return it('Should return a 404 not found when retreive the image that doesn\'t exist', function (done) {
-      request(app)
+    return it('Should return a 404 not found when retreive the image that doesn\'t exist', async () => {
+      await request(app)
         .get('/test/policy/expired.jpg')
-        .expect(404, done)
+        .expect(404)
     })
   })
 
@@ -78,32 +75,32 @@ describe('Policy', function () {
           INVALID POLICY
   */
   describe('POST a new image file with a invalid policy', function () {
-    it('Should return a 404 not found when retreive the image that doesn\'t exist', function (done) {
-      request(app)
+    it('Should return a 404 not found when retreive the image that doesn\'t exist', async () => {
+      await request(app)
         .get('/test/policy/invalid.jpg')
-        .expect(404, done)
+        .expect(404)
     })
 
-    it('Should return a 400 Bad Request when adding an image in multipart with a invalid', function (done) {
+    it('Should return a 400 Bad Request when adding an image in multipart with a invalid', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
         conditions: [
           ['eq', 'key', 'some-key']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/invalid.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(400, done)
+        .expect(400)
     })
 
-    return it('Should return a 404 not found when retreive the image that doesn\'t exist', function (done) {
-      request(app)
+    return it('Should return a 404 not found when retreive the image that doesn\'t exist', async () => {
+      await request(app)
         .get('/test/policy/invalid.jpg')
-        .expect(404, done)
+        .expect(404)
     })
   })
 
@@ -111,14 +108,14 @@ describe('Policy', function () {
           POLICY ERRORS
   */
   describe('Policy Error', function () {
-    it('Should return a Bad Request in policy is not validated', function (done) {
+    it('Should return a Bad Request in policy is not validated', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
         conditions: [
           ['eq', 'key', 'some-key']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/invalid.jpg')
         .set('accept', 'application/json')
         .set('x-authentication', 'apiaccess')
@@ -133,16 +130,15 @@ describe('Policy', function () {
             key: 'key',
             type: 'INVALID_KEY'
           }
-        }
-          , done)
+        })
     })
 
-    it('Should return a Forbidden when policy is expired', function (done) {
+    it('Should return a Forbidden when policy is expired', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '1970-01-01T00:00:00',
         conditions: []
       })
-      request(app)
+      await request(app)
         .post('/test/policy/invalid.jpg')
         .set('accept', 'application/json')
         .set('x-authentication', 'apiaccess')
@@ -153,18 +149,17 @@ describe('Policy', function () {
           error: 'Forbidden',
           message: 'Not Authorized !',
           statusCode: 403
-        }
-          , done)
+        })
     })
 
-    return it('Should return a Forbidden when policy conditions are not correct', function (done) {
+    return it('Should return a Forbidden when policy conditions are not correct', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '1970-01-01T00:00:00',
         conditions: [
           ['not-existing-validator', 'key', 'some-key']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/invalid.jpg')
         .set('accept', 'application/json')
         .set('x-authentication', 'apiaccess')
@@ -175,8 +170,7 @@ describe('Policy', function () {
           error: 'Forbidden',
           message: 'Not Authorized !',
           statusCode: 403
-        }
-          , done)
+        })
     })
   })
 
@@ -184,39 +178,39 @@ describe('Policy', function () {
           ACTION RESTRICTION
   */
   return describe('Policy Action Restriction', function () {
-    it('Should return a 200 if creation is allowed', function (done) {
+    it('Should return a 200 if creation is allowed', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
         conditions: [
           ['eq', 'action', 'create']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/action-restriction/creation-allowed.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('Should return a 400 if creation is not allowed', function (done) {
+    it('Should return a 400 if creation is not allowed', async () => {
       const pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
         conditions: [
           ['eq', 'action', 'update']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/action-restriction/creation-not-allowed.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(400, done)
+        .expect(400)
     })
 
-    it('Should return a 200 if update is allowed', function (done) {
+    it('Should return a 200 if update is allowed', async () => {
       // Creation
       let pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
@@ -224,32 +218,29 @@ describe('Policy', function () {
           ['eq', 'action', 'create']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/action-restriction/update-allowed.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(200, function (err) {
-          if (err) { return done(err) }
-
-          pol = requestPolicyFileToken('expected/tente.jpg', {
-            expiration: '2025-01-01T00:00:00',
-            conditions: [
-              ['eq', 'action', 'update']
-            ]
-          })
-          return request(app)
-            .post('/test/policy/action-restriction/update-allowed.jpg')
-            .set('x-authentication', 'apiaccess')
-            .set('x-authentication-policy', pol.policy)
-            .set('x-authentication-token', pol.token)
-            .attach('img', pol.file_path)
-            .expect(200, done)
-        })
+        .expect(200)
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'update']
+        ]
+      })
+      await request(app)
+        .post('/test/policy/action-restriction/update-allowed.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-policy', pol.policy)
+        .set('x-authentication-token', pol.token)
+        .attach('img', pol.file_path)
+        .expect(200)
     })
 
-    it('Should return a 400 if update is not allowed', function (done) {
+    it('Should return a 400 if update is not allowed', async () => {
       // Creation
       let pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
@@ -257,32 +248,29 @@ describe('Policy', function () {
           ['eq', 'action', 'create']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/action-restriction/update-not-allowed.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(200, function (err) {
-          if (err) { return done(err) }
-
-          pol = requestPolicyFileToken('expected/tente.jpg', {
-            expiration: '2025-01-01T00:00:00',
-            conditions: [
-              ['eq', 'action', 'create']
-            ]
-          })
-          return request(app)
-            .post('/test/policy/action-restriction/update-not-allowed.jpg')
-            .set('x-authentication', 'apiaccess')
-            .set('x-authentication-policy', pol.policy)
-            .set('x-authentication-token', pol.token)
-            .attach('img', pol.file_path)
-            .expect(400, done)
-        })
+        .expect(200)
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      await request(app)
+        .post('/test/policy/action-restriction/update-not-allowed.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-policy', pol.policy)
+        .set('x-authentication-token', pol.token)
+        .attach('img', pol.file_path)
+        .expect(400)
     })
 
-    it('Should return a 200 if delete is allowed', function (done) {
+    it('Should return a 200 if delete is allowed', async () => {
       // Creation
       let pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
@@ -290,32 +278,29 @@ describe('Policy', function () {
           ['eq', 'action', 'create']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/action-restriction/delete-allowed.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(200, function (err) {
-          if (err) { return done(err) }
-
-          pol = requestPolicyFileToken('expected/tente.jpg', {
-            expiration: '2025-01-01T00:00:00',
-            conditions: [
-              ['eq', 'action', 'delete']
-            ]
-          })
-          return request(app)
-            .del('/test/policy/action-restriction/delete-allowed.jpg')
-            .set('x-authentication', 'apiaccess')
-            .set('x-authentication-policy', pol.policy)
-            .set('x-authentication-token', pol.token)
-            .attach('img', pol.file_path)
-            .expect(200, done)
-        })
+        .expect(200)
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'delete']
+        ]
+      })
+      await request(app)
+        .del('/test/policy/action-restriction/delete-allowed.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-policy', pol.policy)
+        .set('x-authentication-token', pol.token)
+        .attach('img', pol.file_path)
+        .expect(200)
     })
 
-    return it('Should return a 400 if delete is allowed', function (done) {
+    return it('Should return a 400 if delete is allowed', async () => {
       // Creation
       let pol = requestPolicyFileToken('expected/tente.jpg', {
         expiration: '2025-01-01T00:00:00',
@@ -323,29 +308,26 @@ describe('Policy', function () {
           ['eq', 'action', 'create']
         ]
       })
-      request(app)
+      await request(app)
         .post('/test/policy/action-restriction/delete-not-allowed.jpg')
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
-        .expect(200, function (err) {
-          if (err) { return done(err) }
-
-          pol = requestPolicyFileToken('expected/tente.jpg', {
-            expiration: '2025-01-01T00:00:00',
-            conditions: [
-              ['eq', 'action', 'create']
-            ]
-          })
-          return request(app)
-            .del('/test/policy/action-restriction/delete-not-allowed.jpg')
-            .set('x-authentication', 'apiaccess')
-            .set('x-authentication-policy', pol.policy)
-            .set('x-authentication-token', pol.token)
-            .attach('img', pol.file_path)
-            .expect(400, done)
-        })
+        .expect(200)
+      pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'action', 'create']
+        ]
+      })
+      await request(app)
+        .del('/test/policy/action-restriction/delete-not-allowed.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-policy', pol.policy)
+        .set('x-authentication-token', pol.token)
+        .attach('img', pol.file_path)
+        .expect(400)
     })
   })
 })

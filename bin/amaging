@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var amaging = require('../lib/amaging/server');
+var amaging = require('../lib/amaging/server').default;
 var nconf = require('nconf');
 var path = require('path');
 

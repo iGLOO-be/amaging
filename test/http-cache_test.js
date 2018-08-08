@@ -1,13 +1,16 @@
 
-let Etag, newEtag
-const chai = require('chai')
+import request from 'supertest'
+
+import appFactory from './fixtures/app'
+
+import chai from 'chai'
+
 const { assert } = chai
-
-const request = require('supertest')
-const appFactory = require('./fixtures/app')
-
 const env = process.env.TEST_ENV
+
+let Etag, newEtag
 let app = null
+
 const cacheControl = 'max-age=0, private'
 
 if (env === 'local') {

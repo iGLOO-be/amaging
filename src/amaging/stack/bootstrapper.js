@@ -1,5 +1,5 @@
 
-import _ from 'lodash'
+import merge from 'lodash/merge'
 
 export default options =>
   function (req, res, next) {
@@ -9,7 +9,7 @@ export default options =>
     amaging.options = options
 
     // Default options
-    amaging.options = _.merge({
+    amaging.options = merge({
       cache: {
         cacheControl: 'private',
         maxAge: 0,

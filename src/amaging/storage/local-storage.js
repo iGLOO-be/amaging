@@ -3,13 +3,13 @@ import AbstractStorage from './abstract-storage'
 import path from 'path'
 import fs from 'fs'
 import mkdirp from 'mkdirp'
-import _ from 'lodash'
+import extend from 'lodash/extend'
 import rimraf from 'rimraf'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options) {
     super()
-    this.options = _.extend(
+    this.options = extend(
       {path: '/'}
       , options)
   }

@@ -2,7 +2,7 @@
 import express from 'express'
 import cors from 'cors'
 import Boom from 'boom'
-import _ from 'lodash'
+import isObject from 'lodash/isObject'
 import amagingFactory from './amaging'
 
 export default function (options) {
@@ -14,7 +14,7 @@ export default function (options) {
 
   if (options.cors) {
     app.use(cors(
-      _.isObject(options.cors)
+      isObject(options.cors)
         ? options.cors
         : {}
     ))

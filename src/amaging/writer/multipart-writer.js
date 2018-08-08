@@ -3,13 +3,13 @@ import { httpError, fileTypeOrLookup } from '../lib/utils'
 import async from 'async'
 import formidable from 'formidable'
 import fs from 'fs'
-import _ from 'lodash'
+import keys from 'lodash/keys'
 
 import debug from 'debug'
 
 const eraseTempFiles = function (files) {
   debug('Erase temp file')
-  return async.each(_.keys(files), (fileKey, done) => fs.unlink(files[fileKey].path, done)
+  return async.each(keys(files), (fileKey, done) => fs.unlink(files[fileKey].path, done)
     , function (err) {
       if (err) { throw err }
     })
@@ -66,7 +66,7 @@ export default () =>
       function (done) {
         debug('Check file')
 
-        file = files[_.keys(files)[0]]
+        file = files[keys(files)[0]]
 
         if (!file) {
           debug('Abort due to missing file')

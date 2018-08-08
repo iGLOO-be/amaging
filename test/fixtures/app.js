@@ -4,7 +4,8 @@ import AWS from 'aws-sdk'
 import async from 'async'
 import fs from 'fs'
 import mime from 'mime'
-import _ from 'lodash'
+import extend from 'lodash/extend'
+import merge from 'lodash/merge'
 import copy from 'copy'
 import rimraf from 'rimraf'
 
@@ -18,7 +19,7 @@ const storageDir = path.join(__dirname, 'storage')
 if (env === 'local') {
   module.exports = function (options, done) {
     if (!done) { done = options }
-    options = _.extend({
+    options = extend({
       customers: {
         test: {
           access: {
@@ -54,7 +55,7 @@ if (env === 'local') {
 } else if (env === 's3') {
   module.exports = function (options, done) {
     if (!done) { done = options }
-    options = _.merge({
+    options = merge({
       customers: {
         test: {
           access: {

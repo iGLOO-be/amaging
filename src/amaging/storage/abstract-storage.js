@@ -24,11 +24,11 @@ export default class AbstractStorage {
     throw new Error('Not Implemented')
   }
 
-  deleteFile (file) {
+  async deleteFile (file) {
     throw new Error('Not Implemented')
   }
 
-  deleteCachedFiles (file, cb) {
+  async deleteCachedFiles (file) {
     throw new Error('Not Implemented')
   }
 

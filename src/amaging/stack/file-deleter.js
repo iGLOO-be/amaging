@@ -4,7 +4,7 @@ import debugFactory from 'debug'
 const debug = debugFactory('amaging:delete')
 
 export default () =>
-  function (req, res, next) {
+  async function (req, res, next) {
     const { amaging } = req
 
     debug('Processing to delete the file: %j', amaging.file)
@@ -17,9 +17,9 @@ export default () =>
       return next(httpError(404, 'File not found'))
     }
 
-    return amaging.file.deleteFile(function (err) {
-      if (err) { return next(err) }
-      return res.send({
-        success: true})
+    await amaging.file.deleteFile()
+
+    res.send({
+      success: true
     })
   }

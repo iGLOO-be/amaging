@@ -24,21 +24,21 @@ export default class File extends AbstractFile {
           stream = _stream
           return done(err, this)
         })
-      }, // result @ is to avoid coffeelint alert "no_unnecessary_fat_arrows"
+      },
       done => {
-        return this.deleteCachedFiles(done)
+        this.deleteCachedFiles()
+          .then(v => done(null, v))
+          .catch(err => done(err))
       }
     ], err => cb(err, stream))
   }
 
-  deleteFile (cb) {
-    return super.deleteFile(err => {
-      if (err) { return cb(err) }
-      return this.deleteCachedFiles(cb)
-    })
+  async deleteFile () {
+    await super.deleteFile()
+    await this.deleteCachedFiles()
   }
 
-  deleteCachedFiles (cb) {
-    return this.cacheStorage.deleteCachedFiles(this._filepath(), cb)
+  async deleteCachedFiles () {
+    return this.cacheStorage.deleteCachedFiles(this._filepath())
   }
 }

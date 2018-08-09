@@ -4,7 +4,6 @@ import path from 'path'
 import fs from 'fs-extra'
 import mkdirp from 'mkdirp'
 import extend from 'lodash/extend'
-import rimraf from 'rimraf'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options) {
@@ -44,12 +43,13 @@ export default class LocalStorage extends AbstractStorage {
     return fs.createWriteStream(this._filepath(file))
   }
 
-  deleteFile (file, cb) {
-    return fs.unlink(this._filepath(file), cb)
+  async deleteFile (file) {
+    return fs.unlink(this._filepath(file))
   }
 
-  deleteCachedFiles (file, cb) {
-    return rimraf(this._filepath(file), cb)
+  async deleteCachedFiles (file) {
+    const res = await fs.remove(this._filepath(file))
+    return res
   }
 
   // Privates

@@ -23,6 +23,7 @@
   "devDependencies": {
     "aws-sdk": "~2.287.0",
     "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.2.6",
     "babel-preset-env": "^1.7.0",
     "chai": "~4.1.2",
     "copy": "^0.3.2",
@@ -31,13 +32,13 @@
     "mocha": "^5.2.0",
     "nodemon": "^1.18.3",
     "request": "~2.87.0",
+    "rimraf": "~2.6.2",
     "standard": "~11.0.1",
     "supertest": "~3.1.0"
   },
   "dependencies": {
     "@igloo-be/amaging-policy": "^1.0.1",
     "async": "~2.6.1",
-    "babel-eslint": "^8.2.6",
     "boom": "^7.2.0",
     "cors": "^2.8.1",
     "debug": "~3.1.0",
@@ -50,7 +51,6 @@
     "mime": "~2.3.1",
     "nconf": "^0.10.0",
     "p-event": "^2.1.0",
-    "rimraf": "~2.6.2",
     "tmp": "0.0.33"
   }
 }

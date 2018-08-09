@@ -27,8 +27,8 @@ export default class LocalStorage extends AbstractStorage {
     }
   }
 
-  requestReadStream (file, cb) {
-    return cb(null, fs.createReadStream(this._filepath(file)))
+  async requestReadStream (file) {
+    return fs.createReadStream(this._filepath(file))
   }
 
   async requestWriteStream (file, info) {

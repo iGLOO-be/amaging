@@ -44,8 +44,8 @@ export default class AbstractFile {
     return this.info && (typeof this.info === 'object')
   }
 
-  requestReadStream (cb) {
-    return this.storage.requestReadStream(this._filepath(), cb)
+  async requestReadStream () {
+    return this.storage.requestReadStream(this._filepath())
   }
 
   async requestWriteStream (info) {

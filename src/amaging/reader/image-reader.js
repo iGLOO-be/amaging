@@ -67,13 +67,13 @@ export default () =>
           return done(err)
         }),
       done =>
-        amaging.file.requestReadStream(function (err, read) {
-          if (err) { return done(err) }
-
-          const write = fs.createWriteStream(tmpFile)
-          read.pipe(write)
-          return read.on('end', done)
-        }),
+        amaging.file.requestReadStream()
+          .then(read => {
+            const write = fs.createWriteStream(tmpFile)
+            read.pipe(write)
+            read.on('end', done)
+          })
+          .catch(err => done(err)),
       done => gmFilter.runOn(tmpFile, done),
       done =>
         fs.stat(tmpFile, function (err, stats) {

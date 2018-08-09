@@ -5,6 +5,7 @@ import async from 'async'
 import path from 'path'
 import knox from 'knox'
 import Boom from 'boom'
+import { promisify } from 'util'
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:storage:s3')
 
@@ -26,21 +27,20 @@ export default class S3Storage extends AbstractStorage {
     })
   }
 
-  readInfo (file, cb) {
+  async readInfo (file, cb) {
     debug('Start reading info for "%s"', file)
 
-    return this._S3_knox.headFile(this._filepath(file), function (err, res) {
-      if (err) { return cb(err) }
-      if (res.statusCode === 404) { return cb() }
-      if (res.statusCode !== 200) { return cb(InvalidResponse('head', res)) }
+    const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, this._filepath(file))
 
-      return cb(null, {
-        ContentType: res.headers['content-type'],
-        ContentLength: res.headers['content-length'],
-        ETag: res.headers['etag'],
-        LastModified: res.headers['last-modified']
-      })
-    })
+    if (res.statusCode === 404) return
+    if (res.statusCode !== 200) throw InvalidResponse('head', res)
+
+    return {
+      ContentType: res.headers['content-type'],
+      ContentLength: res.headers['content-length'],
+      ETag: res.headers['etag'],
+      LastModified: res.headers['last-modified']
+    }
   }
 
   requestReadStream (file, cb) {

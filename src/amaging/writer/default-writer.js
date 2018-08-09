@@ -58,7 +58,9 @@ export default () =>
       },
       function (done) {
         debug('Read info.')
-        return amaging.file.readInfo(done)
+        amaging.file.readInfo()
+          .then(v => done(null, v))
+          .catch(err => done(err))
       }
     ], function (err) {
       if (err) { return next(err) }

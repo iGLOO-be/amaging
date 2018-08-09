@@ -107,7 +107,9 @@ export default () =>
       },
       function (done) {
         debug('Read info.')
-        return amaging.file.readInfo(done)
+        amaging.file.readInfo(done)
+          .then(v => done(null, v))
+          .catch(err => done(err))
       }
     ], function (err) {
       eraseTempFiles(files)

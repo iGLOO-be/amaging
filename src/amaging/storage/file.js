@@ -4,9 +4,9 @@ import AbstractFile from './abstract-file'
 import async from 'async'
 
 export default class File extends AbstractFile {
-  static create (storage, cacheStorage, filename, cb) {
+  static async create (storage, cacheStorage, filename) {
     const file = new File(storage, cacheStorage, filename)
-    file.readInfo(cb)
+    await file.readInfo()
     return file
   }
 

@@ -12,7 +12,7 @@ export default class AbstractStorage {
     this.options = options
   }
 
-  readInfo (file, cb) {
+  readInfo (file) {
     throw new Error('Not Implemented')
   }
 

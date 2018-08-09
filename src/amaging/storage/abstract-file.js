@@ -18,14 +18,10 @@ export default class AbstractFile {
     }
   }
 
-  readInfo (cb) {
-    return this.storage.readInfo(this._filepath(), (err, info) => {
-      if (err) { return cb(err) }
-
-      this.info = info
-
-      return cb()
-    })
+  async readInfo () {
+    const info = await this.storage.readInfo(this._filepath())
+    this.info = info
+    return info
   }
 
   contentLength () {

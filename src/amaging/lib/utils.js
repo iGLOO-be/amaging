@@ -5,15 +5,27 @@ import mime from 'mime'
 export function executeStack (stack, args, cb) {
   let inc = 0
 
-  var next = function (err) {
+  const next = function (err) {
     if (err) { return cb(err) }
 
     const current = stack[inc++]
 
     if (!current) { return cb() }
 
-    const arg = args.concat([ next ])
-    return current.apply(null, arg)
+    const arg = args.concat([
+      // next
+      (...args) => process.nextTick(() => next(...args))
+    ])
+    try {
+      const result = current.apply(null, arg)
+      if (result && result.catch) {
+        result.catch(err => {
+          cb(err)
+        })
+      }
+    } catch (err) {
+      cb(err)
+    }
   }
 
   return next()

@@ -1,7 +1,7 @@
 
 import AbstractStorage from './abstract-storage'
 import path from 'path'
-import fs from 'fs'
+import fs from 'fs-extra'
 import mkdirp from 'mkdirp'
 import extend from 'lodash/extend'
 import rimraf from 'rimraf'
@@ -14,23 +14,19 @@ export default class LocalStorage extends AbstractStorage {
       , options)
   }
 
-  readInfo (file, cb) {
-    return fs.stat(this._filepath(file), function (err, stat) {
-      if (err && (err.code !== 'ENOENT')) {
-        return cb(err)
-      }
-
-      if (!stat) {
-        return cb()
-      }
-
-      return cb(null, {
+  async readInfo (file, cb) {
+    try {
+      const stat = await fs.stat(this._filepath(file))
+      return {
         ContentLength: stat.size,
         ETag: `"${stat.size}"`,
         LastModified: stat.mtime
       }
-      )
-    })
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
+    }
   }
 
   requestReadStream (file, cb) {

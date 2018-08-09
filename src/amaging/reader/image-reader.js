@@ -96,7 +96,9 @@ export default () =>
       },
       done => fs.unlink(tmpFile, done),
       done =>
-        amaging.cacheFile.readInfo(err => done(err)),
+        amaging.cacheFile.readInfo()
+          .then(v => done(null, v))
+          .catch(err => done(err)),
       function (done) {
         // really bad no?
         amaging.file = amaging.cacheFile

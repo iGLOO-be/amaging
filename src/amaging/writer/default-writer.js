@@ -1,12 +1,12 @@
 
 import { httpError } from '../lib/utils'
-import async from 'async'
+import pEvent from 'p-event'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:writer:default')
 
 export default () =>
-  function (req, res, next) {
+  async function (req, res, next) {
     const { amaging } = req
 
     // Valid headers
@@ -35,41 +35,23 @@ export default () =>
       return next(httpError(403, 'Missing header(s)'))
     }
 
-    debug('Start rewriting file...')
+    debug('Start writing file...')
+    const stream = await amaging.file.requestWriteStream({
+      ContentLength: contentLength,
+      ContentType: contentType
+    })
 
-    let stream = null
-    return async.series([
-      function (done) {
-        debug('Request write stream.')
-        return amaging.file.requestWriteStream({
-          ContentLength: contentLength,
-          ContentType: contentType
-        }
-          , function (err, _stream) {
-          stream = _stream
-          return done(err)
-        })
-      },
-      function (done) {
-        debug('Pipe in stream.')
-        stream.on('close', done)
-        stream.on('error', done)
-        return req.pipe(stream)
-      },
-      function (done) {
-        debug('Read info.')
-        amaging.file.readInfo()
-          .then(v => done(null, v))
-          .catch(err => done(err))
-      }
-    ], function (err) {
-      if (err) { return next(err) }
+    debug('Got a write stream, lets pipe')
+    req.pipe(stream)
+    await pEvent(stream, 'close')
 
-      debug('End default writer.')
+    debug('Write done! Start read info')
+    await amaging.file.readInfo()
 
-      return res.send({
-        success: true,
-        file: amaging.file.info
-      })
+    debug('End default writer.')
+
+    res.send({
+      success: true,
+      file: amaging.file.info
     })
   }

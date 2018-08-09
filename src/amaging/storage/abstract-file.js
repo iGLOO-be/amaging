@@ -48,8 +48,8 @@ export default class AbstractFile {
     return this.storage.requestReadStream(this._filepath(), cb)
   }
 
-  requestWriteStream (info, cb) {
-    return this.storage.requestWriteStream(this._filepath(), info, cb)
+  async requestWriteStream (info) {
+    return this.storage.requestWriteStream(this._filepath(), info)
   }
 
   async deleteFile () {

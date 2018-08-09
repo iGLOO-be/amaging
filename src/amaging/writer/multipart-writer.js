@@ -1,22 +1,22 @@
 
 import { httpError, fileTypeOrLookup } from '../lib/utils'
-import async from 'async'
 import formidable from 'formidable'
-import fs from 'fs'
-import keys from 'lodash/keys'
+import fs from 'fs-extra'
+import pEvent from 'p-event'
 
 import debug from 'debug'
 
-const eraseTempFiles = function (files) {
+const eraseTempFiles = async function (files) {
   debug('Erase temp file')
-  return async.each(keys(files), (fileKey, done) => fs.unlink(files[fileKey].path, done)
-    , function (err) {
-      if (err) { throw err }
-    })
+  await Promise.all(
+    Object.keys(files).map(fileKey =>
+      fs.unlink(files[fileKey].path)
+    )
+  )
 }
 
 export default () =>
-  function (req, res, next) {
+  async function (req, res, next) {
     const { amaging } = req
 
     // Valid headers
@@ -35,8 +35,6 @@ export default () =>
 
     // # HANDLE MULTIPART
 
-    let stream, files, file
-
     const form = new formidable.IncomingForm()
     form.keepExtensions = true
 
@@ -54,70 +52,51 @@ export default () =>
       }
     })()
 
-    return async.series([
-      function (done) {
-        debug('Keep Refereces')
-        // keep references to fields and files
-        return form.parse(req, function (err, fields, _files) {
-          files = _files
-          return done(err)
-        })
-      },
-      function (done) {
-        debug('Check file')
-
-        file = files[keys(files)[0]]
-
-        if (!file) {
-          debug('Abort due to missing file')
-          return done(httpError(403, 'Missing file'))
-        }
-
-        if (!file.size) {
-          debug('Abort due to missing file size')
-          return done(httpError(403, 'Missing file size'))
-        }
-
-        file.type = fileTypeOrLookup(file.type, file.name)
-
-        try {
-          amaging.policy.set('content-type', file.type)
-          amaging.policy.set('content-length', file.size)
-        } catch (error) {
-          const err = error
-          return done(err)
-        }
-
-        debug('Request write stream.')
-
-        return amaging.file.requestWriteStream({
-          ContentLength: file.size,
-          ContentType: file.type
-        }
-          , function (err, _stream) {
-          stream = _stream
-          return done(err)
-        })
-      },
-      function (done) {
-        debug('Pipe in stream.')
-        const readStream = fs.createReadStream(file.path)
-        readStream.pipe(stream)
-        return readStream.on('end', done)
-      },
-      function (done) {
-        debug('Read info.')
-        amaging.file.readInfo(done)
-          .then(v => done(null, v))
-          .catch(err => done(err))
-      }
-    ], function (err) {
-      eraseTempFiles(files)
-      if (err) { return next(err) }
-
-      return res.send({
-        success: true,
-        file: amaging.file.info
+    debug('Keep Refereces')
+    // keep references to fields and files
+    const files = await new Promise((resolve, reject) => {
+      form.parse(req, function (err, fields, files) {
+        if (err) reject(err)
+        else resolve(files)
       })
+    })
+
+    debug('Check file')
+
+    const file = files[Object.keys(files)[0]]
+
+    if (!file) {
+      debug('Abort due to missing file')
+      throw httpError(403, 'Missing file')
+    }
+
+    if (!file.size) {
+      debug('Abort due to missing file size')
+      throw httpError(403, 'Missing file size')
+    }
+
+    file.type = fileTypeOrLookup(file.type, file.name)
+    amaging.policy.set('content-type', file.type)
+    amaging.policy.set('content-length', file.size)
+
+    debug('Request write stream.')
+    const stream = await amaging.file.requestWriteStream({
+      ContentLength: file.size,
+      ContentType: file.type
+    })
+
+    debug('Pipe in stream.')
+    const readStream = fs.createReadStream(file.path)
+    readStream.pipe(stream)
+    await pEvent(readStream, 'end')
+
+    debug('Read info.')
+    await amaging.file.readInfo()
+
+    await eraseTempFiles(files)
+
+    res.send({
+      success: true,
+      file: amaging.file.info
     })
   }

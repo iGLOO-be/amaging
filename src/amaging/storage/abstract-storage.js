@@ -20,7 +20,7 @@ export default class AbstractStorage {
     throw new Error('Not Implemented')
   }
 
-  requestWriteStream (file, info, cb) {
+  async requestWriteStream (file, info) {
     throw new Error('Not Implemented')
   }
 

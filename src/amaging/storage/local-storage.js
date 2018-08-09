@@ -2,7 +2,6 @@
 import AbstractStorage from './abstract-storage'
 import path from 'path'
 import fs from 'fs-extra'
-import mkdirp from 'mkdirp'
 import extend from 'lodash/extend'
 
 export default class LocalStorage extends AbstractStorage {
@@ -32,11 +31,9 @@ export default class LocalStorage extends AbstractStorage {
     return cb(null, fs.createReadStream(this._filepath(file)))
   }
 
-  requestWriteStream (file, info, cb) {
-    return mkdirp(path.dirname(this._filepath(file)), err => {
-      if (err) { return cb(err) }
-      return cb(null, this.createWriteStream(file))
-    })
+  async requestWriteStream (file, info) {
+    await fs.mkdirp(path.dirname(this._filepath(file)))
+    return this.createWriteStream(file)
   }
 
   createWriteStream (file) {
@@ -48,8 +45,7 @@ export default class LocalStorage extends AbstractStorage {
   }
 
   async deleteCachedFiles (file) {
-    const res = await fs.remove(this._filepath(file))
-    return res
+    return fs.remove(this._filepath(file))
   }
 
   // Privates

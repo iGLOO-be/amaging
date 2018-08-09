@@ -84,11 +84,12 @@ export default () =>
         amaging.cacheFile.requestWriteStream({
           ContentLength: tmpStats.size,
           ContentType: amaging.file.contentType()
-        }
-          , function (err, _writeStream) {
-          writeStream = _writeStream
-          return done(err)
-        }),
+        })
+          .then(v => {
+            writeStream = v
+            done(null, v)
+          })
+          .catch(err => done(err)),
       function (done) {
         const tmpRead = fs.createReadStream(tmpFile)
         tmpRead.pipe(writeStream)

@@ -33,10 +33,6 @@ export default class LocalStorage extends AbstractStorage {
 
   async requestWriteStream (file, info) {
     await fs.mkdirp(path.dirname(this._filepath(file)))
-    return this.createWriteStream(file)
-  }
-
-  createWriteStream (file) {
     return fs.createWriteStream(this._filepath(file))
   }
 

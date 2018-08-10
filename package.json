@@ -11,7 +11,8 @@
     "start": "nodemon samples/local/sample.js",
     "start:s3": "nodemon lib/samples/s3/sample.js",
     "build": "rm -rf lib && babel -d lib src",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "jest:migrate": "jest-codemods"
   },
   "homepage": "https://github.com/iGLOO-be/amaging",
   "repository": {
@@ -28,6 +29,8 @@
     "chai": "~4.1.2",
     "copy": "^0.3.2",
     "istanbul": "^0.4.5",
+    "jest": "^23.4.2",
+    "jest-codemods": "^0.15.0",
     "longjohn": "^0.2.9",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.3",

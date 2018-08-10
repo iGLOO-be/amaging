@@ -1,5 +1,5 @@
 
-import { requestMultipartFileToken, assertResImageEqualFile, assertResImageEqualFilePromise } from './fixtures/utils'
+import { requestMultipartFileToken, assertResImageEqualFilePromise } from './fixtures/utils'
 import appFactory from './fixtures/app'
 import request from 'supertest'
 import chai from 'chai'

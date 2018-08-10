@@ -21,14 +21,14 @@ if (env === 'local') {
   newEtag = '"ab093153e0081a27fef6b85262189695"'
 }
 
-before(done => { app = appFactory(done) })
+beforeAll(done => { app = appFactory(done) })
 
 /*
         CACHE HTTP
 */
-describe('MANAGE HTTP CACHE', function () {
+describe('MANAGE HTTP CACHE', () => {
   describe('GET the image', () =>
-    it('Should return a 200', async () => {
+    test('Should return a 200', async () => {
       const res = await request(app)
         .get('/test/ice.jpg')
         .expect(200)
@@ -37,8 +37,8 @@ describe('MANAGE HTTP CACHE', function () {
     })
   )
 
-  describe('GET the image and create cache storage', function () {
-    it('Should return a 200 OK', async () => {
+  describe('GET the image and create cache storage', () => {
+    test('Should return a 200 OK', async () => {
       const res = await request(app)
         .get('/test/190x180&/ice.jpg')
         .expect(200)
@@ -52,7 +52,7 @@ describe('MANAGE HTTP CACHE', function () {
     })
 
     // # Via cacheFile
-    it('Should return a 304 not modified (190x180)', async () => {
+    test('Should return a 304 not modified (190x180)', async () => {
       const res = await request(app)
         .get('/test/190x180&/ice.jpg')
         .expect(200)
@@ -63,17 +63,17 @@ describe('MANAGE HTTP CACHE', function () {
     })
 
     // # Via file
-    return it('Should return a 304 not modified (ice.jpg)', async () => {
+    return test('Should return a 304 not modified (ice.jpg)', async () => {
       await request(app)
         .get('/test/ice.jpg')
         .set('if-none-match', Etag)
         .expect(304)
-    })
+    });
   })
 
   // # with different ETag and should return 200
-  return describe('GET the image with former Etags', function () {
-    it('Should return a 200 OK (ice.jpg)', async () => {
+  return describe('GET the image with former Etags', () => {
+    test('Should return a 200 OK (ice.jpg)', async () => {
       await request(app)
         .get('/test/ice.jpg')
         .set('if-none-match', newEtag)
@@ -81,11 +81,11 @@ describe('MANAGE HTTP CACHE', function () {
     })
 
     // # Via cacheFile
-    return it('Should return a 200 OK (190x180)', async () => {
+    return test('Should return a 200 OK (190x180)', async () => {
       await request(app)
         .get('/test/190x180&/ice.jpg')
         .set('if-none-match', Etag)
         .expect(200)
-    })
-  })
+    });
+  });
 })

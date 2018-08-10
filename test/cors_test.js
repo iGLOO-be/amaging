@@ -10,8 +10,8 @@ const { assert } = chai
         ENABLE CORS
 */
 
-describe('CORS Support', function () {
-  it('CORS are not enabled by default', function (done) {
+describe('CORS Support', () => {
+  test('CORS are not enabled by default', done => {
     const app = appFactory(function (err) {
       if (err) { return done(err) }
       request(app)
@@ -25,7 +25,7 @@ describe('CORS Support', function () {
     })
   })
 
-  it('CORS can be enabled with option cors = true', function (done) {
+  test('CORS can be enabled with option cors = true', done => {
     const app = appFactory(
       {cors: true}
       , function (err) {
@@ -41,7 +41,7 @@ describe('CORS Support', function () {
       })
   })
 
-  return it('CORS can be enabled with option cors = [empty object]', function (done) {
+  return test('CORS can be enabled with option cors = [empty object]', done => {
     const app = appFactory(
       {cors: {}}
       , function (err) {
@@ -55,5 +55,5 @@ describe('CORS Support', function () {
             return done(err)
           })
       })
-  })
+  });
 })

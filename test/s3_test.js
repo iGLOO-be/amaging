@@ -1,4 +1,4 @@
-
+/* global beforeAll */
 import request from 'supertest'
 
 import { requestFileToken } from './fixtures/utils'
@@ -30,6 +30,7 @@ function S3StorageTest () {
           INVALID CREDENTIALS
   */
   describe('Invalid Credentials', () => {
+    // TODO: find why this test is not really skipped by jest ...
     beforeAll(done => {
       app = appFactory({
         __skip_populate: true,
@@ -71,6 +72,6 @@ function S3StorageTest () {
         .set('x-authentication-token', tok.token)
         .send(tok.buffer)
         .expect(500, 'Invalid HEAD response from S3. (Status: 403)')
-    });
+    })
   })
 }

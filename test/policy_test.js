@@ -1,3 +1,4 @@
+/* global beforeAll */
 
 import request from 'supertest'
 
@@ -47,7 +48,7 @@ describe('Policy', () => {
           .expect(200)
         await assertResImageEqualFilePromise(res, 'expected/tente.jpg')
       }
-    );
+    )
   })
 
   /*
@@ -86,7 +87,7 @@ describe('Policy', () => {
           .get('/test/policy/expired.jpg')
           .expect(404)
       }
-    );
+    )
   })
 
   /*
@@ -128,7 +129,7 @@ describe('Policy', () => {
           .get('/test/policy/invalid.jpg')
           .expect(404)
       }
-    );
+    )
   })
 
   /*
@@ -201,7 +202,7 @@ describe('Policy', () => {
             statusCode: 403
           })
       }
-    );
+    )
   })
 
   /*
@@ -358,8 +359,8 @@ describe('Policy', () => {
         .set('x-authentication-token', pol.token)
         .attach('img', pol.file_path)
         .expect(400)
-    });
-  });
+    })
+  })
 })
 
 // ###

@@ -1,3 +1,4 @@
+/* global beforeAll */
 
 import { requestMultipartFileToken, assertResImageEqualFilePromise } from './fixtures/utils'
 import appFactory from './fixtures/app'
@@ -43,7 +44,7 @@ describe('POST a new image file', () => {
         .expect(200)
       await assertResImageEqualFilePromise(res, 'expected/tente.jpg')
     }
-  );
+  )
 })
 
 /*
@@ -111,5 +112,5 @@ describe('Cache Eviction by updating file in multipart', () => {
         await assertResImageEqualFilePromise(res, 'expected/410x410_tente.jpg')
       }
     )
-  );
+  )
 })

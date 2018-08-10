@@ -1,3 +1,4 @@
+/* global beforeAll */
 
 import request from 'supertest'
 
@@ -68,7 +69,7 @@ describe('MANAGE HTTP CACHE', () => {
         .get('/test/ice.jpg')
         .set('if-none-match', Etag)
         .expect(304)
-    });
+    })
   })
 
   // # with different ETag and should return 200
@@ -86,6 +87,6 @@ describe('MANAGE HTTP CACHE', () => {
         .get('/test/190x180&/ice.jpg')
         .set('if-none-match', Etag)
         .expect(200)
-    });
-  });
+    })
+  })
 })

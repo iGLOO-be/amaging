@@ -1,3 +1,4 @@
+/* global beforeAll */
 
 import request from 'supertest'
 
@@ -32,7 +33,7 @@ describe('Cache Eviction by deleting file', () => {
       await request(app)
         .get('/test/100x100&/cache-eviction-delete.jpg')
         .expect(200)
-    });
+    })
   })
 
   describe('DELETE the original file (cache-eviction-delete.jpg) to erase the cache', () =>
@@ -54,7 +55,7 @@ describe('Cache Eviction by deleting file', () => {
           .expect(404)
       }
     )
-  );
+  )
 })
 
 /*
@@ -111,5 +112,5 @@ describe('Cache Eviction by updating file', () => {
         await assertResImageEqualFilePromise(res, 'expected/410x410_tipi.jpg')
       }
     )
-  );
+  )
 })

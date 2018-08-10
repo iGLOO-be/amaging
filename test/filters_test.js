@@ -1,3 +1,4 @@
+/* global beforeAll */
 
 import request from 'supertest'
 
@@ -29,5 +30,5 @@ describe('GET : Play with image filters', () => {
         .expect(200)
       await assertResEqualFile(res, 'expected/file.json')
     }
-  );
+  )
 })

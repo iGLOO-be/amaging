@@ -1,3 +1,4 @@
+/* global beforeAll */
 
 import request from 'supertest'
 import chai from 'chai'
@@ -58,7 +59,7 @@ describe('GET a file', () => {
     await request(app)
       .get('/test/')
       .expect(404)
-  });
+  })
 })
 
 /*
@@ -188,7 +189,7 @@ describe('POST : authentication\n', () => {
         .send('{"test":1}')
         .expect(403)
     }
-  );
+  )
 })
 
 /*
@@ -218,5 +219,5 @@ describe('DELETE files just added\n', () => {
     await request(app)
       .get('/test/delete.jpg')
       .expect(404)
-  });
+  })
 })

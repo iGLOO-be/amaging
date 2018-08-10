@@ -55,5 +55,5 @@ describe('CORS Support', () => {
             return done(err)
           })
       })
-  });
+  })
 })

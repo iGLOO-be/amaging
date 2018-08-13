@@ -1,7 +1,7 @@
 
 require('longjohn')
 
-const server = require('../../amaging/server')
+const server = require('../../amaging/server').default
 
 const app = server({
   customers: {

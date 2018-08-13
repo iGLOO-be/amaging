@@ -50,5 +50,3 @@ export default class LocalStorage extends AbstractStorage {
     return path.join(this.options.path, file)
   }
 }
-
-module.exports = LocalStorage

@@ -31,10 +31,14 @@ export default () =>
 
     debug('Pipe stream in response.')
     stream.pipe(res)
+    debug('Stream piped !')
 
     try {
+      debug('waiting for end of stream')
       await pEvent(stream, 'end')
+      debug('stream ended !')
     } catch (err) {
+      debug('catch error from stream', err)
       if ((err.code !== 'ENOENT') && (err.code !== 'NotFound') && (err.code !== 'NoSuchKey')) {
         throw err
       }

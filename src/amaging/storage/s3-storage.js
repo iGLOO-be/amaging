@@ -1,7 +1,6 @@
 
 import AbstractStorage from './abstract-storage'
 
-import async from 'async'
 import path from 'path'
 import knox from 'knox'
 import Boom from 'boom'
@@ -27,7 +26,7 @@ export default class S3Storage extends AbstractStorage {
     })
   }
 
-  async readInfo (file, cb) {
+  async readInfo (file) {
     debug('Start reading info for "%s"', file)
 
     const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, this._filepath(file))
@@ -43,12 +42,12 @@ export default class S3Storage extends AbstractStorage {
     }
   }
 
-  requestReadStream (file, cb) {
+  async requestReadStream (file) {
     debug('Create readStream for "%s"', file)
-    return this._S3_knox.getFile(this._filepath(file), (err, s3Res) => cb(err, s3Res))
+    return promisify(this._S3_knox.getFile).call(this._S3_knox, this._filepath(file))
   }
 
-  requestWriteStream (file, info, cb) {
+  async requestWriteStream (file, info) {
     this._validWriteInfo(info)
 
     const headers = {
@@ -64,33 +63,21 @@ export default class S3Storage extends AbstractStorage {
       }
     })
 
-    return cb(null, stream)
+    return stream
   }
 
-  deleteFile (file, cb) {
-    return this._S3_knox.deleteFile(this._filepath(file), cb)
+  async deleteFile (file) {
+    return promisify(this._S3_knox.deleteFile).call(this._S3_knox, this._filepath(file))
   }
 
-  deleteCachedFiles (file, cb) {
-    let keys = null
-    return async.series([
-      done => {
-        debug('Begin listing keys')
+  async deleteCachedFiles (file, cb) {
+    debug('Begin listing keys')
+    const keys = await promisify(this._S3_knox.list).call(this._S3_knox, { prefix: this._filepath(file) })
 
-        return this._S3_knox.list({ prefix: this._filepath(file) }, function (err, _keys) {
-          keys = _keys
-          return done(err)
-        })
-      },
-      done => {
-        debug('Proceed to delete')
-        if (!__guard__(keys != null ? keys.Contents : undefined, x => x.length)) {
-          return done()
-        }
-
-        return this._S3_knox.deleteMultiple(keys != null ? keys.Contents.map(k => k.Key) : undefined, (err, res) => done(err))
-      }
-    ], cb)
+    debug('Proceed to delete')
+    if (keys && keys.Contents && Array.isArray(keys.Contents)) {
+      await promisify(this._S3_knox.deleteMultiple).call(this._S3_knox, keys.Contents.map(k => k.Key))
+    }
   }
 
   _filepath (file) {
@@ -99,7 +86,3 @@ export default class S3Storage extends AbstractStorage {
 }
 
 S3Storage.InvalidResponse = InvalidResponse
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
-}

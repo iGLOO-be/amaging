@@ -3,7 +3,7 @@ import assert from 'assert'
 
 export default class AbstractStorage {
   static create (type, options) {
-    const Storage = require(`./${type}-storage`)
+    const Storage = require(`./${type}-storage`).default
     const storage = new Storage(options)
     return storage
   }

@@ -25,6 +25,7 @@ export default class File extends AbstractFile {
   }
 
   async deleteCachedFiles () {
+    // TODO @martin : Move cache eviction to another place
     return this.cacheStorage.deleteCachedFiles(this._filepath())
   }
 }

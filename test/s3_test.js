@@ -11,7 +11,7 @@ const { expect } = chai
 let app = null
 
 if (process.env.TEST_ENV !== 's3') {
-  describe.skip('S3 Storage', S3StorageTest)
+  describe.skip('S3 Storage', () => {})
 } else {
   describe('S3 Storage', S3StorageTest)
 }
@@ -55,14 +55,16 @@ function S3StorageTest () {
     test('Get file should return a 500', () =>
       request(app)
         .get('/test/igloo.jpg')
-        .expect(500, 'Invalid HEAD response from S3. (Status: 403)'))
+        .expect(500, 'Invalid HEAD response from S3. (Status: 403)')
+    )
 
     test('Head file should return a 500', () =>
       request(app)
         .head('/test/igloo.jpg')
-        .expect(500))
+        .expect(500)
+    )
 
-    return test('Put file should return a 500', () => {
+    test('Put file should return a 500', () => {
       const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
       return request(app)
         .post('/test/igloo.jpg')

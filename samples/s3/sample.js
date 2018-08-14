@@ -1,7 +1,7 @@
 
 require('longjohn')
 
-const server = require('../../amaging/server').default
+const server = require('../../lib/amaging/server').default
 
 const app = server({
   customers: {
@@ -14,8 +14,8 @@ const app = server({
         options: {
           bucket: 'igloo-amaging-testbucket',
           path: 'storage/main/',
-          key: 'AKIAIHK2HP6ME7U3Y3TA',
-          secret: '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',
+          key: process.env.AWS_ACCESS_KEY_ID,
+          secret: process.env.AWS_SECRET_ACCESS_KEY,
           region: 'eu-west-1'
         }
       },
@@ -24,8 +24,8 @@ const app = server({
         options: {
           bucket: 'igloo-amaging-testbucket',
           path: 'storage/cache/',
-          key: 'AKIAIHK2HP6ME7U3Y3TA',
-          secret: '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',
+          key: process.env.AWS_ACCESS_KEY_ID,
+          secret: process.env.AWS_SECRET_ACCESS_KEY,
           region: 'eu-west-1'
         }
       }

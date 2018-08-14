@@ -45,8 +45,11 @@ export default () =>
     req.pipe(stream)
     await pEvent(stream, 'close')
 
-    debug('Write done! Start read info')
-    await amaging.file.readInfo()
+    debug('Read info of new file and remove cached files')
+    await Promise.all([
+      amaging.file.readInfo(),
+      amaging.cacheStorage.deleteFilesFromPrefix(amaging.file.path)
+    ])
 
     debug('End default writer.')
 

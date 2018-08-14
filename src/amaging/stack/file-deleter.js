@@ -17,7 +17,10 @@ export default () =>
       return next(httpError(404, 'File not found'))
     }
 
-    await amaging.file.deleteFile()
+    await Promise.all([
+      amaging.file.deleteFile(),
+      amaging.cacheStorage.deleteFilesFromPrefix(amaging.file.path)
+    ])
 
     res.send({
       success: true

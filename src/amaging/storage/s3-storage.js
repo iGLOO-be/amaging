@@ -70,7 +70,7 @@ export default class S3Storage extends AbstractStorage {
     return promisify(this._S3_knox.deleteFile).call(this._S3_knox, this._filepath(file))
   }
 
-  async deleteCachedFiles (file, cb) {
+  async deleteFilesFromPrefix (file) {
     debug('Begin listing keys')
     const keys = await promisify(this._S3_knox.list).call(this._S3_knox, { prefix: this._filepath(file) })
 

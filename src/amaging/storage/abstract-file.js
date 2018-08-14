@@ -16,10 +16,12 @@ export default class AbstractFile {
       this.options = []
       this.filename = filename
     }
+
+    this.path = this.filename
   }
 
   async readInfo () {
-    const info = await this.storage.readInfo(this._filepath())
+    const info = await this.storage.readInfo(this.path)
     this.info = info
     return info
   }
@@ -45,18 +47,14 @@ export default class AbstractFile {
   }
 
   async requestReadStream () {
-    return this.storage.requestReadStream(this._filepath())
+    return this.storage.requestReadStream(this.path)
   }
 
   async requestWriteStream (info) {
-    return this.storage.requestWriteStream(this._filepath(), info)
+    return this.storage.requestWriteStream(this.path, info)
   }
 
   async deleteFile () {
-    return this.storage.deleteFile(this._filepath())
-  }
-
-  _filepath () {
-    return this.filename
+    return this.storage.deleteFile(this.path)
   }
 }

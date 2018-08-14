@@ -40,7 +40,7 @@ export default class LocalStorage extends AbstractStorage {
     return fs.unlink(this._filepath(file))
   }
 
-  async deleteCachedFiles (file) {
+  async deleteFilesFromPrefix (file) {
     return fs.remove(this._filepath(file))
   }
 

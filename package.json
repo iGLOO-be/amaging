@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npm run lint && npm run test:local",
     "test:mocha": "mocha -r babel-core/register",
-    "test:jest": "jest -i",
+    "test:jest": "jest",
     "test:local": "TEST_ENV=local npm run test:jest",
     "test:s3": "TEST_ENV=s3 npm run test:jest",
     "lint": "eslint --ignore-path .gitignore .",
@@ -40,7 +40,8 @@
     "request": "~2.87.0",
     "rimraf": "~2.6.2",
     "standard": "~11.0.1",
-    "supertest": "~3.1.0"
+    "supertest": "~3.1.0",
+    "uuid": "^3.3.2"
   },
   "dependencies": {
     "@igloo-be/amaging-policy": "^1.0.1",

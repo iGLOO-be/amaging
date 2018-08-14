@@ -43,7 +43,7 @@ export default class AbstractFile {
   }
 
   exists () {
-    return this.info && (typeof this.info === 'object')
+    return !!this.info
   }
 
   async requestReadStream () {
@@ -56,5 +56,13 @@ export default class AbstractFile {
 
   async deleteFile () {
     return this.storage.deleteFile(this.path)
+  }
+
+  toJSON () {
+    const json = {
+      path: this.path
+    }
+    Object.assign(json, this.info)
+    return json
   }
 }

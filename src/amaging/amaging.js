@@ -14,6 +14,7 @@ import defaultReader from './reader/default-reader'
 import imageReader from './reader/image-reader'
 import defaultWriter from './writer/default-writer'
 import mutlipartWriter from './writer/multipart-writer'
+import listResolver from './stack/list-resolver'
 
 const handler = stack =>
   function (req, res, next) {
@@ -28,6 +29,7 @@ export default options =>
       cidResolver(),
       storageIniter(),
       fileIniter(),
+      listResolver(),
       cacheResolver(),
       imageReader(),
       defaultReader()

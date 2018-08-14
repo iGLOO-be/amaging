@@ -15,7 +15,19 @@ export default class LocalStorage extends AbstractStorage {
   async readInfo (file, cb) {
     try {
       const stat = await fs.stat(this._filepath(file))
+
+      if (stat.isDirectory()) {
+        return {
+          isDirectory: true,
+          ContentType: 'application/x-directory',
+          ContentLength: 0,
+          ETag: `"${0}"`,
+          LastModified: stat.mtime
+        }
+      }
+
       return {
+        isDirectory: false,
         ContentLength: stat.size,
         ETag: `"${stat.size}"`,
         LastModified: stat.mtime
@@ -42,6 +54,10 @@ export default class LocalStorage extends AbstractStorage {
 
   async deleteFilesFromPrefix (file) {
     return fs.remove(this._filepath(file))
+  }
+
+  async list (prefix) {
+    return fs.readdir(this._filepath(prefix))
   }
 
   // Privates

@@ -3,7 +3,7 @@ import assert from 'assert'
 
 export default class AbstractStorage {
   static create (type, options) {
-    const Storage = require(`./${type}-storage`)
+    const Storage = require(`./${type}-storage`).default
     const storage = new Storage(options)
     return storage
   }
@@ -12,23 +12,23 @@ export default class AbstractStorage {
     this.options = options
   }
 
-  readInfo (file, cb) {
+  async readInfo (file) {
     throw new Error('Not Implemented')
   }
 
-  requestReadStream (file, cb) {
+  async requestReadStream (file) {
     throw new Error('Not Implemented')
   }
 
-  requestWriteStream (file, info, cb) {
+  async requestWriteStream (file, info) {
     throw new Error('Not Implemented')
   }
 
-  deleteFile (file) {
+  async deleteFile (file) {
     throw new Error('Not Implemented')
   }
 
-  deleteCachedFiles (file, cb) {
+  async deleteCachedFiles (file) {
     throw new Error('Not Implemented')
   }
 

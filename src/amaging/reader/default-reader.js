@@ -1,11 +1,12 @@
 
+import pEvent from 'p-event'
 import { httpError, fileTypeOrLookup } from '../lib/utils'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:reader:default')
 
 export default () =>
-  function (req, res, next) {
+  async function (req, res, next) {
     const { amaging } = req
     const customer = amaging.options.cache
 
@@ -26,17 +27,21 @@ export default () =>
     res.setHeader('Cache-Control', `max-age=${customer['maxAge']}, ${customer['cacheControl']}`)
     res.setHeader('Last-Modified', amaging.file.lastModified())
 
-    return amaging.file.requestReadStream(function (err, stream) {
-      if (err) { return next(err) }
+    const stream = await amaging.file.requestReadStream()
 
-      debug('Pipe stream in response.')
-      stream.on('error', function (err) {
-        if ((err.code !== 'ENOENT') && (err.code !== 'NotFound') && (err.code !== 'NoSuchKey')) {
-          return next(err)
-        } else {
-          return next(httpError(404, 'File not found'))
-        }
-      })
-      return stream.pipe(res)
-    })
+    debug('Pipe stream in response.')
+    stream.pipe(res)
+    debug('Stream piped !')
+
+    try {
+      debug('waiting for end of stream')
+      await pEvent(stream, 'end')
+      debug('stream ended !')
+    } catch (err) {
+      debug('catch error from stream', err)
+      if ((err.code !== 'ENOENT') && (err.code !== 'NotFound') && (err.code !== 'NoSuchKey')) {
+        throw err
+      }
+      throw httpError(404, 'File not found')
+    }
   }

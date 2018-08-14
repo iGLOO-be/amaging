@@ -18,14 +18,10 @@ export default class AbstractFile {
     }
   }
 
-  readInfo (cb) {
-    return this.storage.readInfo(this._filepath(), (err, info) => {
-      if (err) { return cb(err) }
-
-      this.info = info
-
-      return cb()
-    })
+  async readInfo () {
+    const info = await this.storage.readInfo(this._filepath())
+    this.info = info
+    return info
   }
 
   contentLength () {
@@ -48,16 +44,16 @@ export default class AbstractFile {
     return this.info && (typeof this.info === 'object')
   }
 
-  requestReadStream (cb) {
-    return this.storage.requestReadStream(this._filepath(), cb)
+  async requestReadStream () {
+    return this.storage.requestReadStream(this._filepath())
   }
 
-  requestWriteStream (info, cb) {
-    return this.storage.requestWriteStream(this._filepath(), info, cb)
+  async requestWriteStream (info) {
+    return this.storage.requestWriteStream(this._filepath(), info)
   }
 
-  deleteFile (cb) {
-    return this.storage.deleteFile(this._filepath(), cb)
+  async deleteFile () {
+    return this.storage.deleteFile(this._filepath())
   }
 
   _filepath () {

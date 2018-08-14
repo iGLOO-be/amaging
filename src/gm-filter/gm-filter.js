@@ -35,11 +35,16 @@ export default class GMFilterEngine {
     return this._filters.length > 0
   }
 
-  runOn (file, cb) {
+  async runOn (file) {
     const _gm = gm(file)
 
     this._filters.forEach(filter => filter.applyOn(_gm))
 
-    return _gm.write(file, cb)
+    return new Promise((resolve, reject) => {
+      _gm.write(file, (err, res) => {
+        if (err) reject(err)
+        else resolve(res)
+      })
+    })
   }
 }

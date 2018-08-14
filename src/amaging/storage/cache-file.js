@@ -2,9 +2,9 @@
 import AbstractFile from './abstract-file'
 
 export default class CacheFile extends AbstractFile {
-  static create (storage, filename, cb) {
+  static async create (storage, filename) {
     const file = new CacheFile(storage, filename)
-    file.readInfo(cb)
+    await file.readInfo()
     return file
   }
 

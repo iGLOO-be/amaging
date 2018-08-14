@@ -1,12 +1,10 @@
 
 import AbstractFile from './abstract-file'
 
-import async from 'async'
-
 export default class File extends AbstractFile {
-  static create (storage, cacheStorage, filename, cb) {
+  static async create (storage, cacheStorage, filename) {
     const file = new File(storage, cacheStorage, filename)
-    file.readInfo(cb)
+    await file.readInfo()
     return file
   }
 
@@ -15,30 +13,19 @@ export default class File extends AbstractFile {
     this.cacheStorage = cacheStorage
   }
 
-  requestWriteStream (info, cb) {
-    let stream = null
-
-    return async.series([
-      done => {
-        return AbstractFile.prototype.requestWriteStream.call(this, info, (err, _stream) => {
-          stream = _stream
-          return done(err, this)
-        })
-      }, // result @ is to avoid coffeelint alert "no_unnecessary_fat_arrows"
-      done => {
-        return this.deleteCachedFiles(done)
-      }
-    ], err => cb(err, stream))
+  async requestWriteStream (info) {
+    const stream = await super.requestWriteStream(info)
+    await this.deleteCachedFiles()
+    return stream
   }
 
-  deleteFile (cb) {
-    return super.deleteFile(err => {
-      if (err) { return cb(err) }
-      return this.deleteCachedFiles(cb)
-    })
+  async deleteFile () {
+    await super.deleteFile()
+    await this.deleteCachedFiles()
   }
 
-  deleteCachedFiles (cb) {
-    return this.cacheStorage.deleteCachedFiles(this._filepath(), cb)
+  async deleteCachedFiles () {
+    // TODO @martin : Move cache eviction to another place
+    return this.cacheStorage.deleteCachedFiles(this._filepath())
   }
 }

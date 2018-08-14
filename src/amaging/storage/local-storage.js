@@ -1,10 +1,8 @@
 
 import AbstractStorage from './abstract-storage'
 import path from 'path'
-import fs from 'fs'
-import mkdirp from 'mkdirp'
+import fs from 'fs-extra'
 import extend from 'lodash/extend'
-import rimraf from 'rimraf'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options) {
@@ -14,46 +12,36 @@ export default class LocalStorage extends AbstractStorage {
       , options)
   }
 
-  readInfo (file, cb) {
-    return fs.stat(this._filepath(file), function (err, stat) {
-      if (err && (err.code !== 'ENOENT')) {
-        return cb(err)
-      }
-
-      if (!stat) {
-        return cb()
-      }
-
-      return cb(null, {
+  async readInfo (file, cb) {
+    try {
+      const stat = await fs.stat(this._filepath(file))
+      return {
         ContentLength: stat.size,
         ETag: `"${stat.size}"`,
         LastModified: stat.mtime
       }
-      )
-    })
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
+    }
   }
 
-  requestReadStream (file, cb) {
-    return cb(null, fs.createReadStream(this._filepath(file)))
+  async requestReadStream (file) {
+    return fs.createReadStream(this._filepath(file))
   }
 
-  requestWriteStream (file, info, cb) {
-    return mkdirp(path.dirname(this._filepath(file)), err => {
-      if (err) { return cb(err) }
-      return cb(null, this.createWriteStream(file))
-    })
-  }
-
-  createWriteStream (file) {
+  async requestWriteStream (file, info) {
+    await fs.mkdirp(path.dirname(this._filepath(file)))
     return fs.createWriteStream(this._filepath(file))
   }
 
-  deleteFile (file, cb) {
-    return fs.unlink(this._filepath(file), cb)
+  async deleteFile (file) {
+    return fs.unlink(this._filepath(file))
   }
 
-  deleteCachedFiles (file, cb) {
-    return rimraf(this._filepath(file), cb)
+  async deleteCachedFiles (file) {
+    return fs.remove(this._filepath(file))
   }
 
   // Privates
@@ -62,5 +50,3 @@ export default class LocalStorage extends AbstractStorage {
     return path.join(this.options.path, file)
   }
 }
-
-module.exports = LocalStorage

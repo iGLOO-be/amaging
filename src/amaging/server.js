@@ -3,7 +3,10 @@ import express from 'express'
 import cors from 'cors'
 import Boom from 'boom'
 import isObject from 'lodash/isObject'
+import debugFactory from 'debug'
 import amagingFactory from './amaging'
+
+const debug = debugFactory('amaging:server')
 
 export default function (options) {
   const app = express(options)
@@ -39,6 +42,8 @@ export default function (options) {
   })
 
   app.use(function (err, req, res, next) {
+    debug('Error', err)
+
     if (!err.isBoom) { return next(err) }
     res.status(err.output.statusCode)
     return res.format({

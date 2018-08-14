@@ -3,6 +3,7 @@ import AbstractStorage from './abstract-storage'
 import path from 'path'
 import fs from 'fs-extra'
 import extend from 'lodash/extend'
+import File from '../storage/file'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options) {
@@ -57,7 +58,17 @@ export default class LocalStorage extends AbstractStorage {
   }
 
   async list (prefix) {
-    return fs.readdir(this._filepath(prefix))
+    const files = await fs.readdir(this._filepath(prefix))
+    if (files && Array.isArray(files)) {
+      return Promise.all(files.map(file => (
+        File.create(
+          this,
+          null,
+          file
+        )
+      )))
+    }
+    return []
   }
 
   // Privates

@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 import { cleanAmagingFile } from '../src/amaging/lib/utils'
 import chai from 'chai'

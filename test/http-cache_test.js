@@ -1,4 +1,4 @@
-/* global beforeAll */
+/* eslint-env jest */
 
 import request from 'supertest'
 
@@ -7,7 +7,7 @@ import appFactory from './fixtures/app'
 import chai from 'chai'
 
 const { assert } = chai
-const env = process.env.TEST_ENV
+const env = process.env.TEST_ENV || 'local'
 
 let Etag, newEtag
 let app = null

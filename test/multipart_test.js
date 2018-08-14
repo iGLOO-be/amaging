@@ -1,4 +1,4 @@
-/* global beforeAll */
+/* eslint-env jest */
 
 import { requestMultipartFileToken, assertResImageEqualFilePromise } from './fixtures/utils'
 import appFactory from './fixtures/app'

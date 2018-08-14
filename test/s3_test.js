@@ -1,4 +1,5 @@
-/* global beforeAll */
+/* eslint-env jest */
+
 import request from 'supertest'
 
 import { requestFileToken } from './fixtures/utils'

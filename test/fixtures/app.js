@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 import path from 'path'
 import AWS from 'aws-sdk'
@@ -13,7 +14,7 @@ import uuid from 'uuid'
 import { getServer } from './utils'
 const server = getServer()
 
-const env = process.env.TEST_ENV
+const env = process.env.TEST_ENV || 'local'
 
 const storageDir = path.join(__dirname, 'storage')
 

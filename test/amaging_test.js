@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 import request from 'supertest'
 import chai from 'chai'
@@ -9,43 +10,52 @@ let app = null
 
 const {requestFileToken, requestJSONToken, requestDeleteToken, assertResImageEqualFilePromise} = require('./fixtures/utils')
 
-before(done => { app = appFactory(done) })
+beforeAll(done => { app = appFactory(done) })
 
 /*
         READ
 */
-describe('GET a file', function () {
-  it('Should return a 404 error because of an unexpected url', async () => {
+describe('GET a file', () => {
+  test('Should return a 404 error because of an unexpected url', async () => {
     await request(app)
       .get('/notExist.png')
       .expect(404)
   })
 
-  it('Should return a 200 OK because the file exist', async () => {
+  test('Should return a 200 OK because the file exist', async () => {
     await request(app)
       .get('/test/igloo.jpg')
       .expect(200)
   })
 
-  it('Should return a 403 error Forbidden because of an non-existing cid', async () => {
-    await request(app)
-      .get('/notExits/file.png')
-      .expect(403)
-  })
+  test(
+    'Should return a 403 error Forbidden because of an non-existing cid',
+    async () => {
+      await request(app)
+        .get('/notExits/file.png')
+        .expect(403)
+    }
+  )
 
-  it('Should return a 404 not found because the image doesn\'t exist', async () => {
-    await request(app)
-      .get('/test/file.png')
-      .expect(404)
-  })
+  test(
+    'Should return a 404 not found because the image doesn\'t exist',
+    async () => {
+      await request(app)
+        .get('/test/file.png')
+        .expect(404)
+    }
+  )
 
-  it('Should return a 404 not found because the file doesn\'t exist', async () => {
-    await request(app)
-      .get('/test/igloo.json')
-      .expect(404)
-  })
+  test(
+    'Should return a 404 not found because the file doesn\'t exist',
+    async () => {
+      await request(app)
+        .get('/test/igloo.json')
+        .expect(404)
+    }
+  )
 
-  return it('Should return a 404 not found because no file specified', async () => {
+  return test('Should return a 404 not found because no file specified', async () => {
     await request(app)
       .get('/test/')
       .expect(404)
@@ -55,14 +65,14 @@ describe('GET a file', function () {
 /*
         HEAD
 */
-describe('HEAD a file', function () {
-  it('Should return a 404 error because the file doesn\'t exist', async () => {
+describe('HEAD a file', () => {
+  test('Should return a 404 error because the file doesn\'t exist', async () => {
     await request(app)
       .head('/igl00.png')
       .expect(404)
   })
 
-  it('Should return a 200 OK with file info', async () => {
+  test('Should return a 200 OK with file info', async () => {
     await request(app)
       .head('/test/igloo.jpg')
       .expect(200)
@@ -74,14 +84,17 @@ describe('HEAD a file', function () {
 /*
         WRITE
 */
-describe('POST a new json file and check his Content-Type', function () {
-  it('Should return a 404 not found when retreive the file that doesn\'t exist', async () => {
-    await request(app)
-      .get('/test/notExist.json')
-      .expect(404)
-  })
+describe('POST a new json file and check his Content-Type', () => {
+  test(
+    'Should return a 404 not found when retreive the file that doesn\'t exist',
+    async () => {
+      await request(app)
+        .get('/test/notExist.json')
+        .expect(404)
+    }
+  )
 
-  it('Should return a 200 OK by adding a json file', async () => {
+  test('Should return a 200 OK by adding a json file', async () => {
     const tok = requestJSONToken(JSON.stringify({
       test: true
     }), 'file.json')
@@ -94,27 +107,33 @@ describe('POST a new json file and check his Content-Type', function () {
       .expect(200)
   })
 
-  it('Should return the json Content-Type and the content of the file.json', async () => {
-    await request(app)
-      .get('/test/file.json')
-      .set('Accept', 'application/json')
-      .expect(200)
-      .expect('Content-Length', '13')
-      .expect('Content-Type', 'application/json')
-      .expect({
-        test: true
-      })
-  })
+  test(
+    'Should return the json Content-Type and the content of the file.json',
+    async () => {
+      await request(app)
+        .get('/test/file.json')
+        .set('Accept', 'application/json')
+        .expect(200)
+        .expect('Content-Length', '13')
+        .expect('Content-Type', 'application/json')
+        .expect({
+          test: true
+        })
+    }
+  )
 })
 
-describe('POST a new image file\n', function () {
-  it('Should return a 404 not found when retreive the image that doesn\'t exist', async () => {
-    await request(app)
-      .get('/test/test.jpg')
-      .expect(404)
-  })
+describe('POST a new image file\n', () => {
+  test(
+    'Should return a 404 not found when retreive the image that doesn\'t exist',
+    async () => {
+      await request(app)
+        .get('/test/test.jpg')
+        .expect(404)
+    }
+  )
 
-  it('Should return a 200 OK when adding an image (igloo.jpg)', async () => {
+  test('Should return a 200 OK when adding an image (igloo.jpg)', async () => {
     const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
     await request(app)
       .post('/test/igloo.jpg')
@@ -126,7 +145,7 @@ describe('POST a new image file\n', function () {
       .expect(200)
   })
 
-  it('Should return a 200 OK when retreive igloo.jpg', async () => {
+  test('Should return a 200 OK when retreive igloo.jpg', async () => {
     const res = await request(app)
       .get('/test/igloo.jpg')
       .expect(200)
@@ -134,41 +153,50 @@ describe('POST a new image file\n', function () {
   })
 })
 
-describe('POST : authentication\n', function () {
-  it('Should return a 403 error NOT AUTHORIZED because of no token provided', async () => {
-    await request(app)
-      .post('/test/file.json')
-      .type('application/json')
-      .set('x-authentication', 'apiaccess')
-      .send('{"test_no_token":1}')
-      .expect(403)
-  })
+describe('POST : authentication\n', () => {
+  test(
+    'Should return a 403 error NOT AUTHORIZED because of no token provided',
+    async () => {
+      await request(app)
+        .post('/test/file.json')
+        .type('application/json')
+        .set('x-authentication', 'apiaccess')
+        .send('{"test_no_token":1}')
+        .expect(403)
+    }
+  )
 
-  it('Should return a 403 error NOT AUTHORIZED because of no api access provided', async () => {
-    await request(app)
-      .post('/test/file.json')
-      .type('application/json')
-      .set('x-authentication-token', 'fake-token')
-      .send('{"test_no_token":1}')
-      .expect(403)
-  })
+  test(
+    'Should return a 403 error NOT AUTHORIZED because of no api access provided',
+    async () => {
+      await request(app)
+        .post('/test/file.json')
+        .type('application/json')
+        .set('x-authentication-token', 'fake-token')
+        .send('{"test_no_token":1}')
+        .expect(403)
+    }
+  )
 
-  return it('Should return a 403 error NOT AUTHORIZED because of an altered token', async () => {
-    await request(app)
-      .post('/test/file.json')
-      .type('application/json')
-      .set('x-authentication', 'apiaccess')
-      .set('x-authentication-token', 'fake-token')
-      .send('{"test":1}')
-      .expect(403)
-  })
+  return test(
+    'Should return a 403 error NOT AUTHORIZED because of an altered token',
+    async () => {
+      await request(app)
+        .post('/test/file.json')
+        .type('application/json')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-token', 'fake-token')
+        .send('{"test":1}')
+        .expect(403)
+    }
+  )
 })
 
 /*
         DELETE
 */
-describe('DELETE files just added\n', function () {
-  it('Should return a 200 OK by erasing the image', async () => {
+describe('DELETE files just added\n', () => {
+  test('Should return a 200 OK by erasing the image', async () => {
     await request(app)
       .del('/test/delete.jpg')
       .set('x-authentication', 'apiaccess')
@@ -176,15 +204,18 @@ describe('DELETE files just added\n', function () {
       .expect(200)
   })
 
-  it('Should return a 404 not found by erasing the same image AGAIN', async () => {
-    await request(app)
-      .del('/test/delete.jpg')
-      .set('x-authentication', 'apiaccess')
-      .set('x-authentication-token', requestDeleteToken('delete.jpg'))
-      .expect(404)
-  })
+  test(
+    'Should return a 404 not found by erasing the same image AGAIN',
+    async () => {
+      await request(app)
+        .del('/test/delete.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-token', requestDeleteToken('delete.jpg'))
+        .expect(404)
+    }
+  )
 
-  return it('Should return a 404 if getting file', async () => {
+  return test('Should return a 404 if getting file', async () => {
     await request(app)
       .get('/test/delete.jpg')
       .expect(404)

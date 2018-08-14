@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 import request from 'supertest'
 
@@ -11,13 +12,13 @@ const { expect } = chai
 let app = null
 
 if (process.env.TEST_ENV !== 's3') {
-  describe.skip('S3 Storage', S3StorageTest)
+  describe.skip('S3 Storage', () => {})
 } else {
   describe('S3 Storage', S3StorageTest)
 }
 
 describe('S3 Storage - unit test', () => {
-  it('S3Storage.InvalidResponse', () => {
+  test('S3Storage.InvalidResponse', () => {
     const err = S3Storage.InvalidResponse('verb', { foo: true, statusCode: 123 })
     expect(err.isBoom).to.equal(true)
     expect(err.message).to.equal('Invalid VERB response from S3. (Status: 123)')
@@ -29,8 +30,9 @@ function S3StorageTest () {
   /*
           INVALID CREDENTIALS
   */
-  describe('Invalid Credentials', function () {
-    before(done => {
+  describe('Invalid Credentials', () => {
+    // TODO: find why this test is not really skipped by jest ...
+    beforeAll(done => {
       app = appFactory({
         __skip_populate: true,
         customers: {
@@ -51,19 +53,19 @@ function S3StorageTest () {
         , done)
     })
 
-    it('Get file should return a 500', () =>
+    test('Get file should return a 500', () =>
       request(app)
         .get('/test/igloo.jpg')
         .expect(500, 'Invalid HEAD response from S3. (Status: 403)')
     )
 
-    it('Head file should return a 500', () =>
+    test('Head file should return a 500', () =>
       request(app)
         .head('/test/igloo.jpg')
         .expect(500)
     )
 
-    return it('Put file should return a 500', function () {
+    test('Put file should return a 500', () => {
       const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
       return request(app)
         .post('/test/igloo.jpg')

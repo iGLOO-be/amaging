@@ -1,3 +1,4 @@
+/* eslint-env jest */
 
 import path from 'path'
 import AWS from 'aws-sdk'
@@ -8,17 +9,19 @@ import extend from 'lodash/extend'
 import merge from 'lodash/merge'
 import copy from 'copy'
 import rimraf from 'rimraf'
+import uuid from 'uuid'
 
 import { getServer } from './utils'
 const server = getServer()
 
-const env = process.env.TEST_ENV
+const env = process.env.TEST_ENV || 'local'
 
 const storageDir = path.join(__dirname, 'storage')
 
 if (env === 'local') {
   module.exports = function (options, done) {
     if (!done) { done = options }
+    const testID = uuid()
     options = extend({
       customers: {
         test: {
@@ -28,13 +31,13 @@ if (env === 'local') {
           storage: {
             type: 'local',
             options: {
-              path: path.join(__dirname, '../../..', '.tmp', 'storage')
+              path: path.join(__dirname, '../..', '.tmp', 'storage', testID)
             }
           },
           cacheStorage: {
             type: 'local',
             options: {
-              path: path.join(__dirname, '../../..', '.tmp', 'storage_cache')
+              path: path.join(__dirname, '../..', '.tmp', 'storage_cache', testID)
             }
           }
         }

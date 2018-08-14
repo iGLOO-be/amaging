@@ -54,12 +54,6 @@ describe('GET a file', () => {
         .expect(404)
     }
   )
-
-  return test('Should return a 404 not found because no file specified', async () => {
-    await request(app)
-      .get('/test/')
-      .expect(404)
-  })
 })
 
 /*

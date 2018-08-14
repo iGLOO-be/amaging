@@ -1,0 +1,132 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GET a file Should match snapshot of files in storage  1`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "cache-eviction-delete.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage  2`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "cache-eviction-update.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage  3`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "delete.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage  4`] = `
+Object {
+  "ContentLength": 13,
+  "ETag": "\\"13\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "file.json",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage  5`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "ice.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage  6`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "igloo.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "cache-eviction-delete.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 2`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "cache-eviction-update.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 3`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "delete.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 4`] = `
+Object {
+  "ContentLength": 13,
+  "ETag": "\\"13\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "file.json",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 5`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "ice.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 6`] = `
+Object {
+  "ContentLength": 17252,
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "isDirectory": false,
+  "path": "igloo.jpg",
+}
+`;
+
+exports[`GET a file Should match snapshot of files in storage 7`] = `
+Object {
+  "ContentLength": 0,
+  "ContentType": "application/x-directory",
+  "ETag": "\\"0\\"",
+  "LastModified": Any<String>,
+  "isDirectory": true,
+  "path": "sub-folder",
+}
+`;

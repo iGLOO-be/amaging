@@ -13,7 +13,7 @@ export default class LocalStorage extends AbstractStorage {
       , options)
   }
 
-  async readInfo (file, cb) {
+  async readInfo (file) {
     try {
       const stat = await fs.stat(this._filepath(file))
 
@@ -64,7 +64,7 @@ export default class LocalStorage extends AbstractStorage {
         File.create(
           this,
           null,
-          file
+          path.join(prefix, file)
         )
       )))
     }

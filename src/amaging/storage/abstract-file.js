@@ -17,13 +17,15 @@ export default class AbstractFile {
       this.filename = filename
     }
 
-    this.path = this.filename
+    this.path = this.filename.charAt(0) === '/' ? this.filename : '/' + this.filename
   }
 
   async readInfo () {
     const info = await this.storage.readInfo(this.path)
-    this.info = info
-    return info
+    this.info = Object.assign({}, info, {
+      ContentType: info.ContentType || mime.getType(this.filename)
+    })
+    return this.info
   }
 
   contentLength () {
@@ -31,7 +33,7 @@ export default class AbstractFile {
   }
 
   contentType () {
-    return (this.info != null ? this.info.ContentType : undefined) || mime.getType(this.filename)
+    return (this.info != null ? this.info.ContentType : undefined)
   }
 
   eTag () {

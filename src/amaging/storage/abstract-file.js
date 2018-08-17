@@ -26,7 +26,7 @@ export default class AbstractFile {
     const info = await this.storage.readInfo(this.path)
     if (info) {
       this.info = Object.assign({}, info, {
-        ContentType: info.ContentType || mime.getType(this.filename)
+        ContentType: info.ContentType || mime.getType(this.filename) || 'application/octet-stream'
       })
     }
     return this.info

@@ -75,6 +75,18 @@ Object {
 exports[`GET a file Should list files in storage in root 7`] = `
 Object {
   "ContentLength": 0,
+  "ContentType": "application/octet-stream",
+  "ETag": "\\"0\\"",
+  "LastModified": Any<String>,
+  "basename": "some-file-with-unknown-ext.ozo",
+  "isDirectory": false,
+  "path": "/some-file-with-unknown-ext.ozo",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 8`] = `
+Object {
+  "ContentLength": 0,
   "ContentType": "application/x-directory",
   "ETag": "\\"0\\"",
   "LastModified": Any<String>,

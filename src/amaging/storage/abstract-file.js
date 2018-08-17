@@ -1,5 +1,6 @@
 
 import mime from 'mime'
+import path from 'path'
 
 const optionsRegex = /^(.*)&\//
 const optionsSep = '&'
@@ -17,6 +18,7 @@ export default class AbstractFile {
       this.filename = filename
     }
 
+    this.basename = path.basename(this.filename)
     this.path = this.filename.charAt(0) === '/' ? this.filename : '/' + this.filename
   }
 
@@ -62,7 +64,8 @@ export default class AbstractFile {
 
   toJSON () {
     const json = {
-      path: this.path
+      path: this.path,
+      basename: this.basename
     }
     Object.assign(json, this.info)
     return json

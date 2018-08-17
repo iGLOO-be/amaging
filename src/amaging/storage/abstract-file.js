@@ -24,9 +24,11 @@ export default class AbstractFile {
 
   async readInfo () {
     const info = await this.storage.readInfo(this.path)
-    this.info = Object.assign({}, info, {
-      ContentType: info.ContentType || mime.getType(this.filename)
-    })
+    if (info) {
+      this.info = Object.assign({}, info, {
+        ContentType: info.ContentType || mime.getType(this.filename)
+      })
+    }
     return this.info
   }
 

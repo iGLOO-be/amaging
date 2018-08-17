@@ -12,15 +12,22 @@ beforeAll(done => { app = appFactory(done) })
 */
 
 describe('GET a file', () => {
-  test('Should match snapshot of files in storage', async () => {
+  const listTest = async (path) => {
     const res = await request(app)
-      .get('/test/')
+      .get(`/test${path}`)
     expect(res.body).toEqual(expect.any(Array))
     res.body.forEach(file => {
       expect(file).toMatchSnapshot({
         LastModified: expect.any(String)
       })
     })
+  }
+
+  test('Should list files in storage in root', async () => {
+    await listTest('/')
+  })
+  test('Should list files in storage in sub folder', async () => {
+    await listTest('/sub-folder/')
   })
 
   test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {

@@ -8,7 +8,7 @@ chai.should()
 
 let app = null
 
-const {requestFileToken, requestJSONToken, requestDeleteToken, assertResImageEqualFilePromise} = require('./fixtures/utils')
+const {requestFileToken, requestJSONToken, requestDeleteToken} = require('./fixtures/utils')
 
 beforeAll(done => { app = appFactory(done) })
 

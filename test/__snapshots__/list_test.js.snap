@@ -74,9 +74,9 @@ Object {
 
 exports[`GET a file Should list files in storage in root 7`] = `
 Object {
-  "ContentLength": 0,
+  "ContentLength": 10,
   "ContentType": "application/octet-stream",
-  "ETag": "\\"0\\"",
+  "ETag": "\\"10\\"",
   "LastModified": Any<String>,
   "basename": "some-file-with-unknown-ext.ozo",
   "isDirectory": false,

@@ -57,6 +57,22 @@ describe('Policy', () => {
     )
 
     test(
+      'Should return a 200 OK when adding an unknown-type in raw body',
+      async () => {
+        const pol = requestPolicyFileToken('fixtures/storage/some-file-with-unknown-ext.ozo', {
+          expiration: '2025-01-01T00:00:00'
+        })
+        await request(app)
+          .post('/test/policy/some-file-with-unknown-ext.ozo')
+          .set('x-authentication', 'apiaccess')
+          .set('x-authentication-policy', pol.policy)
+          .set('x-authentication-token', pol.token)
+          .send(require('fs').readFileSync(pol.file_path))
+          .expect(200)
+      }
+    )
+
+    test(
       'Should return the same hash as the expected tente.jpg hash',
       async () => {
         const res = await request(app)

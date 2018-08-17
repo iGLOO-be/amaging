@@ -11,7 +11,7 @@ export default () =>
 
     // Valid headers
     const contentLength = req.headers['content-length']
-    const contentType = req.headers['content-type']
+    const contentType = req.headers['content-type'] || 'application/octet-stream'
 
     debug('Start default writer with %j', {
       contentLength,
@@ -26,13 +26,13 @@ export default () =>
         : 'create'
     )
 
-    if (contentType.match(/^multipart\/form-data/)) {
-      return next()
-    }
-
-    if (!contentLength || !contentType) {
+    if (!contentLength) {
       debug('Abort default writer due to missing headers')
       return next(httpError(403, 'Missing header(s)'))
+    }
+
+    if (contentType.match(/^multipart\/form-data/)) {
+      return next()
     }
 
     debug('Start writing file...')

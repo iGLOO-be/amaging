@@ -1,9 +1,13 @@
 /* eslint-env jest */
 
 import request from 'supertest'
+import crypto from 'crypto'
 
 import appFactory from './fixtures/app'
 let app = null
+
+const ACCESS_KEY = 'apiaccess'
+const SECRET_KEY = '4ec2b79b81ee67e305b1eb4329ef2cd1'
 
 beforeAll(done => { app = appFactory(done) })
 
@@ -12,9 +16,33 @@ beforeAll(done => { app = appFactory(done) })
 */
 
 describe('GET a file', () => {
+  const createPolicy = (secret, data) => {
+    const policy = Buffer.from(JSON.stringify(data)).toString('base64')
+
+    const sign = crypto.createHmac('sha1', secret)
+    sign.update(policy)
+    const token = sign.digest('hex').toLowerCase()
+
+    return {
+      policy,
+      token
+    }
+  }
+  // allow everything
+  const policy = createPolicy(SECRET_KEY, {
+    expiration: new Date(new Date().getTime() + 1000 * 60),
+    conditions: []
+  })
+
+
   const listTest = async (path) => {
     const res = await request(app)
       .get(`/test${path}`)
+      .set( 'x-authentication', 'apiaccess')
+      .set('x-authentication-token', policy.token)
+      .set('x-authentication-policy', policy.policy)
+      // console.log('policy --- ', policy)
+      // console.log('res.body --- ', res.body)
     expect(res.body).toEqual(expect.any(Array))
     res.body.forEach(file => {
       expect(file).toMatchSnapshot({
@@ -22,6 +50,14 @@ describe('GET a file', () => {
       })
     })
   }
+
+
+
+  test('Should return a 403 because no auth', async () => {
+    await request(app)
+      .get(`/test/`)
+      .expect(403)
+  })
 
   test('Should list files in storage in root', async () => {
     await listTest('/')
@@ -33,6 +69,12 @@ describe('GET a file', () => {
   test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {
     await request(app)
       .get('/test')
+      .expect(404)
+  })
+
+  test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {
+    await request(app)
+      .get('/test/a')
       .expect(404)
   })
 })

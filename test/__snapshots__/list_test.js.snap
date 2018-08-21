@@ -107,3 +107,39 @@ Object {
   "path": "/sub-folder/ice.jpg",
 }
 `;
+
+exports[`GET a file Should list files when policy allow \`key\` 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;
+
+exports[`GET a file Should list files when policy allow \`list\` action 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;
+
+exports[`GET a file Should list files when policy allow \`list\` action 2`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;

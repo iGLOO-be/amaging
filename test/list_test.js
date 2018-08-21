@@ -17,6 +17,7 @@ beforeAll(done => { app = appFactory(done) })
 
 describe('GET a file', () => {
   const createPolicy = (secret, data) => {
+    data.expiration = new Date(new Date().getTime() + 1000 * 60)
     const policy = Buffer.from(JSON.stringify(data)).toString('base64')
 
     const sign = crypto.createHmac('sha1', secret)
@@ -28,18 +29,18 @@ describe('GET a file', () => {
       token
     }
   }
-  // allow everything
-  const policy = createPolicy(SECRET_KEY, {
-    expiration: new Date(new Date().getTime() + 1000 * 60),
-    conditions: []
-  })
 
-  const listTest = async (path) => {
+  const listTest = async (path, policyConditions = []) => {
+    const policy = createPolicy(SECRET_KEY, {
+      conditions: policyConditions
+    })
+
     const res = await request(app)
       .get(`/test${path}`)
       .set('x-authentication', ACCESS_KEY)
       .set('x-authentication-token', policy.token)
       .set('x-authentication-policy', policy.policy)
+      .expect(200)
     expect(res.body).toEqual(expect.any(Array))
     res.body.forEach(file => {
       expect(file).toMatchSnapshot({
@@ -53,12 +54,53 @@ describe('GET a file', () => {
       .get(`/test/`)
       .expect(403)
   })
+  test('Should return a 400 when policy does not allow `list` action', async () => {
+    const policy = createPolicy(SECRET_KEY, {
+      conditions: [
+        ['eq', 'action', 'foo']
+      ]
+    })
+
+    await request(app)
+      .get(`/test/foo/bar/`)
+      .set('x-authentication', ACCESS_KEY)
+      .set('x-authentication-token', policy.token)
+      .set('x-authentication-policy', policy.policy)
+      .expect(400, 'Invalid value for key: action')
+  })
+  test('Should return a 400 when policy does not allow `key`', async () => {
+    const policy = createPolicy(SECRET_KEY, {
+      conditions: [
+        ['eq', 'key', 'foo']
+      ]
+    })
+
+    await request(app)
+      .get(`/test/foo/bar/`)
+      .set('x-authentication', ACCESS_KEY)
+      .set('x-authentication-token', policy.token)
+      .set('x-authentication-policy', policy.policy)
+      .expect(400, 'Invalid value for key: key')
+  })
 
   test('Should list files in storage in root', async () => {
     await listTest('/')
   })
   test('Should list files in storage in sub folder', async () => {
     await listTest('/sub-folder/')
+  })
+  test('Should list files when policy allow `list` action', async () => {
+    await listTest('/sub-folder/', [
+      ['eq', 'action', 'list']
+    ])
+    await listTest('/sub-folder/', [
+      ['eq', 'action', 'list', 'create']
+    ])
+  })
+  test('Should list files when policy allow `key`', async () => {
+    await listTest('/sub-folder/', [
+      ['eq', 'key', 'sub-folder/']
+    ])
   })
 
   test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {

@@ -22,9 +22,6 @@ export default () =>
     // Set `action` to policy for allow action restriction
     amaging.policy.set('action', 'list')
 
-    // Set `key` to policy
-    amaging.policy.set('key', prefix)
-
     if (!amaging.file.isDirectory()) {
       throw httpError(404, 'Directory not found.')
     }

@@ -34,15 +34,12 @@ describe('GET a file', () => {
     conditions: []
   })
 
-
   const listTest = async (path) => {
     const res = await request(app)
       .get(`/test${path}`)
-      .set( 'x-authentication', 'apiaccess')
+      .set('x-authentication', ACCESS_KEY)
       .set('x-authentication-token', policy.token)
       .set('x-authentication-policy', policy.policy)
-      // console.log('policy --- ', policy)
-      // console.log('res.body --- ', res.body)
     expect(res.body).toEqual(expect.any(Array))
     res.body.forEach(file => {
       expect(file).toMatchSnapshot({
@@ -50,8 +47,6 @@ describe('GET a file', () => {
       })
     })
   }
-
-
 
   test('Should return a 403 because no auth', async () => {
     await request(app)

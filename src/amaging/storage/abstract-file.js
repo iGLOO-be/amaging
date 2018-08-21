@@ -52,6 +52,10 @@ export default class AbstractFile {
     return !!this.info
   }
 
+  isDirectory () {
+    return (this.info != null ? this.info.isDirectory : undefined)
+  }
+
   async requestReadStream () {
     return this.storage.requestReadStream(this.path)
   }

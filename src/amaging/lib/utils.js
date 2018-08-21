@@ -31,6 +31,20 @@ export function executeStack (stack, args, cb) {
   return next()
 }
 
+export async function executeMiddleware (fn, ...args) {
+  let _err
+
+  await fn(...args, (err) => {
+    if (err) {
+      _err = err
+    }
+  })
+
+  if (_err) {
+    throw _err
+  }
+}
+
 export function httpError (status, message) {
   return new Boom(message, {statusCode: status})
 }

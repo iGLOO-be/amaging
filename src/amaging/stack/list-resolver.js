@@ -1,5 +1,7 @@
 
 import debugFactory from 'debug'
+import auth from './auth'
+import {httpError, executeMiddleware} from '../lib/utils'
 const debug = debugFactory('amaging:list-resolver')
 
 export default () =>
@@ -14,7 +16,20 @@ export default () =>
       return next()
     }
 
-    debug('Start getting list from storage', params.file)
+    // Apply auth stack
+    await executeMiddleware(auth(), req, res)
+
+    // Set `action` to policy for allow action restriction
+    amaging.policy.set('action', 'list')
+
+    // Set `key` to policy
+    amaging.policy.set('key', prefix)
+
+    if (!amaging.file.isDirectory()) {
+      throw httpError(404, 'Directory not found.')
+    }
+
+    debug('Start getting list from storage', prefix)
     const files = await amaging.storage.list(prefix)
     res.send(files)
   }

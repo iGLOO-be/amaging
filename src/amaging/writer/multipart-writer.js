@@ -90,10 +90,12 @@ export default () =>
     readStream.pipe(stream)
     await pEvent(readStream, 'end')
 
-    debug('Read info.')
-    await amaging.file.readInfo()
-
-    await eraseTempFiles(files)
+    debug('Read info of new file and remove cached files')
+    await Promise.all([
+      amaging.file.readInfo(),
+      amaging.cacheStorage.deleteFilesFromPrefix(amaging.file.path),
+      eraseTempFiles(files)
+    ])
 
     res.send({
       success: true,

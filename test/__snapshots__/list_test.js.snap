@@ -1,0 +1,145 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GET a file Should list files in storage in root 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "cache-eviction-delete.jpg",
+  "isDirectory": false,
+  "path": "/cache-eviction-delete.jpg",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 2`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "cache-eviction-update.jpg",
+  "isDirectory": false,
+  "path": "/cache-eviction-update.jpg",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 3`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "delete.jpg",
+  "isDirectory": false,
+  "path": "/delete.jpg",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 4`] = `
+Object {
+  "ContentLength": 13,
+  "ContentType": "application/json",
+  "ETag": "\\"13\\"",
+  "LastModified": Any<String>,
+  "basename": "file.json",
+  "isDirectory": false,
+  "path": "/file.json",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 5`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/ice.jpg",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 6`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "igloo.jpg",
+  "isDirectory": false,
+  "path": "/igloo.jpg",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 7`] = `
+Object {
+  "ContentLength": 10,
+  "ContentType": "application/octet-stream",
+  "ETag": "\\"10\\"",
+  "LastModified": Any<String>,
+  "basename": "some-file-with-unknown-ext.ozo",
+  "isDirectory": false,
+  "path": "/some-file-with-unknown-ext.ozo",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 8`] = `
+Object {
+  "ContentLength": 0,
+  "ContentType": "application/x-directory",
+  "ETag": "\\"0\\"",
+  "LastModified": Any<String>,
+  "basename": "sub-folder",
+  "isDirectory": true,
+  "path": "/sub-folder",
+}
+`;
+
+exports[`GET a file Should list files in storage in sub folder 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;
+
+exports[`GET a file Should list files when policy allow \`key\` 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;
+
+exports[`GET a file Should list files when policy allow \`list\` action 1`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;
+
+exports[`GET a file Should list files when policy allow \`list\` action 2`] = `
+Object {
+  "ContentLength": 17252,
+  "ContentType": "image/jpeg",
+  "ETag": "\\"17252\\"",
+  "LastModified": Any<String>,
+  "basename": "ice.jpg",
+  "isDirectory": false,
+  "path": "/sub-folder/ice.jpg",
+}
+`;

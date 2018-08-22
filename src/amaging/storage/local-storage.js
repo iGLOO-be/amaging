@@ -3,6 +3,7 @@ import AbstractStorage from './abstract-storage'
 import path from 'path'
 import fs from 'fs-extra'
 import extend from 'lodash/extend'
+import File from '../storage/file'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options) {
@@ -12,10 +13,22 @@ export default class LocalStorage extends AbstractStorage {
       , options)
   }
 
-  async readInfo (file, cb) {
+  async readInfo (file) {
     try {
       const stat = await fs.stat(this._filepath(file))
+
+      if (stat.isDirectory()) {
+        return {
+          isDirectory: true,
+          ContentType: 'application/x-directory',
+          ContentLength: 0,
+          ETag: `"${0}"`,
+          LastModified: stat.mtime
+        }
+      }
+
       return {
+        isDirectory: false,
         ContentLength: stat.size,
         ETag: `"${stat.size}"`,
         LastModified: stat.mtime
@@ -40,8 +53,22 @@ export default class LocalStorage extends AbstractStorage {
     return fs.unlink(this._filepath(file))
   }
 
-  async deleteCachedFiles (file) {
+  async deleteFilesFromPrefix (file) {
     return fs.remove(this._filepath(file))
+  }
+
+  async list (prefix) {
+    const files = await fs.readdir(this._filepath(prefix))
+    if (files && Array.isArray(files)) {
+      return Promise.all(files.map(file => (
+        File.create(
+          this,
+          null,
+          path.join(prefix, file)
+        )
+      )))
+    }
+    return []
   }
 
   // Privates

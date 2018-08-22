@@ -1,5 +1,6 @@
 
 import mime from 'mime'
+import path from 'path'
 
 const optionsRegex = /^(.*)&\//
 const optionsSep = '&'
@@ -16,12 +17,19 @@ export default class AbstractFile {
       this.options = []
       this.filename = filename
     }
+
+    this.basename = path.basename(this.filename)
+    this.path = this.filename.charAt(0) === '/' ? this.filename : '/' + this.filename
   }
 
   async readInfo () {
-    const info = await this.storage.readInfo(this._filepath())
-    this.info = info
-    return info
+    const info = await this.storage.readInfo(this.path)
+    if (info) {
+      this.info = Object.assign({}, info, {
+        ContentType: info.ContentType || mime.getType(this.filename) || 'application/octet-stream'
+      })
+    }
+    return this.info
   }
 
   contentLength () {
@@ -29,7 +37,7 @@ export default class AbstractFile {
   }
 
   contentType () {
-    return (this.info != null ? this.info.ContentType : undefined) || mime.getType(this.filename)
+    return (this.info != null ? this.info.ContentType : undefined)
   }
 
   eTag () {
@@ -41,22 +49,31 @@ export default class AbstractFile {
   }
 
   exists () {
-    return this.info && (typeof this.info === 'object')
+    return !!this.info
+  }
+
+  isDirectory () {
+    return (this.info != null ? this.info.isDirectory : undefined)
   }
 
   async requestReadStream () {
-    return this.storage.requestReadStream(this._filepath())
+    return this.storage.requestReadStream(this.path)
   }
 
   async requestWriteStream (info) {
-    return this.storage.requestWriteStream(this._filepath(), info)
+    return this.storage.requestWriteStream(this.path, info)
   }
 
   async deleteFile () {
-    return this.storage.deleteFile(this._filepath())
+    return this.storage.deleteFile(this.path)
   }
 
-  _filepath () {
-    return this.filename
+  toJSON () {
+    const json = {
+      path: this.path,
+      basename: this.basename
+    }
+    Object.assign(json, this.info)
+    return json
   }
 }

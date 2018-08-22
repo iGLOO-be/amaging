@@ -17,6 +17,11 @@ export default () =>
       return next(httpError(404, 'File not found'))
     }
 
+    if (amaging.file.isDirectory()) {
+      debug('Stop default reader cause to file is a directory.')
+      return next(httpError(404, 'File not found'))
+    }
+
     debug('File exists!')
 
     const fileType = fileTypeOrLookup(amaging.file.contentType(), amaging.file.filename)

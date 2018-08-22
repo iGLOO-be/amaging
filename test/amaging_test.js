@@ -8,7 +8,7 @@ chai.should()
 
 let app = null
 
-const {requestFileToken, requestJSONToken, requestDeleteToken, assertResImageEqualFilePromise} = require('./fixtures/utils')
+const {requestFileToken, requestJSONToken, requestDeleteToken} = require('./fixtures/utils')
 
 beforeAll(done => { app = appFactory(done) })
 
@@ -54,12 +54,6 @@ describe('GET a file', () => {
         .expect(404)
     }
   )
-
-  return test('Should return a 404 not found because no file specified', async () => {
-    await request(app)
-      .get('/test/')
-      .expect(404)
-  })
 })
 
 /*
@@ -133,7 +127,19 @@ describe('POST a new image file\n', () => {
     }
   )
 
-  test('Should return a 200 OK when adding an image (igloo.jpg)', async () => {
+  test('Should return a 200 OK when add an image', async () => {
+    const tok = requestFileToken('expected/igloo.jpg', 'some-new-image.jpg', 'image/jpeg')
+    await request(app)
+      .post('/test/some-new-image.jpg')
+      .type(tok.contentType)
+      .set('Content-Length', tok.length)
+      .set('x-authentication', tok.access)
+      .set('x-authentication-token', tok.token)
+      .send(tok.buffer)
+      .expect(200)
+  })
+
+  test('Should return a 200 OK when overwrite an image', async () => {
     const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
     await request(app)
       .post('/test/igloo.jpg')
@@ -145,11 +151,16 @@ describe('POST a new image file\n', () => {
       .expect(200)
   })
 
-  test('Should return a 200 OK when retreive igloo.jpg', async () => {
-    const res = await request(app)
-      .get('/test/igloo.jpg')
+  test('Should return a 200 OK when add an unkown-type file', async () => {
+    const tok = requestFileToken('fixtures/storage/some-file-with-unknown-ext.ozo', 'some-new-file-with-unkown-ext.zoz', 'application/octet-stream')
+    await request(app)
+      .post('/test/some-new-file-with-unkown-ext.zoz')
+      .type(tok.contentType)
+      .set('Content-Length', tok.length)
+      .set('x-authentication', tok.access)
+      .set('x-authentication-token', tok.token)
+      .send(tok.buffer)
       .expect(200)
-    await assertResImageEqualFilePromise(res, 'expected/igloo.jpg')
   })
 })
 

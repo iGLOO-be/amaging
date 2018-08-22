@@ -10,7 +10,8 @@ export default class CacheFile extends AbstractFile {
 
   // todo: not fetch info if no options
 
-  _filepath () {
-    return this.filename + '/' + this.options.join('_')
+  constructor (storage, filename) {
+    super(storage, filename)
+    this.path = this.filename + '/' + this.options.join('_')
   }
 }

@@ -1,5 +1,6 @@
 
 import AbstractStorage from './abstract-storage'
+import File from '../storage/file'
 
 import path from 'path'
 import knox from 'knox'
@@ -35,6 +36,7 @@ export default class S3Storage extends AbstractStorage {
     if (res.statusCode !== 200) throw InvalidResponse('head', res)
 
     return {
+      isDirectory: res.headers['content-type'] === 'application/x-directory',
       ContentType: res.headers['content-type'],
       ContentLength: res.headers['content-length'],
       ETag: res.headers['etag'],
@@ -70,7 +72,7 @@ export default class S3Storage extends AbstractStorage {
     return promisify(this._S3_knox.deleteFile).call(this._S3_knox, this._filepath(file))
   }
 
-  async deleteCachedFiles (file, cb) {
+  async deleteFilesFromPrefix (file) {
     debug('Begin listing keys')
     const keys = await promisify(this._S3_knox.list).call(this._S3_knox, { prefix: this._filepath(file) })
 
@@ -78,6 +80,20 @@ export default class S3Storage extends AbstractStorage {
     if (keys && keys.Contents && Array.isArray(keys.Contents)) {
       await promisify(this._S3_knox.deleteMultiple).call(this._S3_knox, keys.Contents.map(k => k.Key))
     }
+  }
+
+  async list (prefix) {
+    const keys = await promisify(this._S3_knox.list).call(this._S3_knox, { prefix: this._filepath(prefix), delimiter: '/' })
+    if (keys && keys.Contents && Array.isArray(keys.Contents)) {
+      return Promise.all(keys.Contents.map(file => (
+        File.create(
+          this,
+          null,
+          file.Key.replace(this.options.path, '')
+        )
+      )))
+    }
+    return []
   }
 
   _filepath (file) {

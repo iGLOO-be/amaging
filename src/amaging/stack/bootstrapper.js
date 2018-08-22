@@ -15,8 +15,7 @@ export default options =>
         maxAge: 0,
         etag: true
       }
-    }
-      , amaging.options)
+    }, amaging.options)
 
     amaging.auth =
       {headers: []}

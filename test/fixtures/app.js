@@ -42,8 +42,7 @@ if (env === 'local') {
           }
         }
       }
-    }
-      , options)
+    }, options)
 
     const app = server(options)
 
@@ -92,8 +91,7 @@ if (env === 'local') {
           }
         }
       }
-    }
-      , options)
+    }, options)
 
     const app = server(options)
 
@@ -131,8 +129,7 @@ if (env === 'local') {
           Delete: {
             Objects: (keys != null ? keys.Contents.map(k => ({Key: k.Key})) : undefined)
           }
-        }
-          , done)
+        }, done)
       },
       function (done) {
         const files = fs.readdirSync(storageDir)
@@ -141,10 +138,8 @@ if (env === 'local') {
             ContentType: mime.getType(file),
             Body: fs.createReadStream(path.join(storageDir, file)),
             Key: options.customers.test.storage.options.path + file
-          }
-            , done)
-
-          , done)
+          }, done)
+        , done)
       }
     ], done)
 

@@ -8,7 +8,7 @@ chai.should()
 
 let app = null
 
-const {requestFileToken, requestJSONToken, requestDeleteToken} = require('./fixtures/utils')
+const {requestFileToken, requestJSONToken, requestDeleteToken, requestJWT} = require('./fixtures/utils')
 
 beforeAll(done => { app = appFactory(done) })
 
@@ -97,6 +97,18 @@ describe('POST a new json file and check his Content-Type', () => {
       .type(tok.contentType)
       .set('x-authentication', tok.access)
       .set('x-authentication-token', tok.token)
+      .send(tok.buffer)
+      .expect(200)
+  })
+
+  test('Should return a 200 OK by adding a json file with a JWT token', async () => {
+    const tok = await requestJWT(JSON.stringify({
+      test: true
+    }), 'file.json')
+    await request(app)
+      .post('/test/file.json')
+      .type(tok.contentType)
+      .set('Authorization', tok.authorization)
       .send(tok.buffer)
       .expect(200)
   })

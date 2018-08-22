@@ -49,8 +49,7 @@ function S3StorageTest () {
             }
           }
         }
-      }
-        , done)
+      }, done)
     })
 
     test('Get file should return a 500', () =>

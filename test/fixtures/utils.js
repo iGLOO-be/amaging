@@ -4,6 +4,7 @@ import path from 'path'
 import crypto from 'crypto'
 import gm from 'gm'
 import tmp from 'tmp'
+import { sign } from '@igloo-be/amaging-policy'
 
 import chai from 'chai'
 const { assert } = chai
@@ -72,6 +73,15 @@ export function requestJSONToken (data, file) {
     token,
     contentType,
     length: buffer.length
+  }
+}
+
+export async function requestJWT (data, file) {
+  return {
+    buffer: data,
+    contentType: 'application/json',
+    contentLength: data.length,
+    authorization: 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT()
   }
 }
 

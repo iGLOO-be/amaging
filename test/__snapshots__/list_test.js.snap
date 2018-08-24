@@ -2,6 +2,18 @@
 
 exports[`GET a file Should list files in storage in root 1`] = `
 Object {
+  "ContentLength": 0,
+  "ContentType": "application/x-directory",
+  "ETag": Any<String>,
+  "LastModified": Any<String>,
+  "basename": "sub-folder",
+  "isDirectory": true,
+  "path": "/sub-folder",
+}
+`;
+
+exports[`GET a file Should list files in storage in root 2`] = `
+Object {
   "ContentLength": 17252,
   "ContentType": "image/jpeg",
   "ETag": Any<String>,
@@ -12,7 +24,7 @@ Object {
 }
 `;
 
-exports[`GET a file Should list files in storage in root 2`] = `
+exports[`GET a file Should list files in storage in root 3`] = `
 Object {
   "ContentLength": 17252,
   "ContentType": "image/jpeg",
@@ -24,7 +36,7 @@ Object {
 }
 `;
 
-exports[`GET a file Should list files in storage in root 3`] = `
+exports[`GET a file Should list files in storage in root 4`] = `
 Object {
   "ContentLength": 17252,
   "ContentType": "image/jpeg",
@@ -36,7 +48,7 @@ Object {
 }
 `;
 
-exports[`GET a file Should list files in storage in root 4`] = `
+exports[`GET a file Should list files in storage in root 5`] = `
 Object {
   "ContentLength": 13,
   "ContentType": "application/json",
@@ -48,7 +60,7 @@ Object {
 }
 `;
 
-exports[`GET a file Should list files in storage in root 5`] = `
+exports[`GET a file Should list files in storage in root 6`] = `
 Object {
   "ContentLength": 17252,
   "ContentType": "image/jpeg",
@@ -60,7 +72,7 @@ Object {
 }
 `;
 
-exports[`GET a file Should list files in storage in root 6`] = `
+exports[`GET a file Should list files in storage in root 7`] = `
 Object {
   "ContentLength": 17252,
   "ContentType": "image/jpeg",
@@ -72,7 +84,7 @@ Object {
 }
 `;
 
-exports[`GET a file Should list files in storage in root 7`] = `
+exports[`GET a file Should list files in storage in root 8`] = `
 Object {
   "ContentLength": 10,
   "ContentType": "application/octet-stream",
@@ -81,18 +93,6 @@ Object {
   "basename": "some-file-with-unknown-ext.ozo",
   "isDirectory": false,
   "path": "/some-file-with-unknown-ext.ozo",
-}
-`;
-
-exports[`GET a file Should list files in storage in root 8`] = `
-Object {
-  "ContentLength": 0,
-  "ContentType": "application/x-directory",
-  "ETag": Any<String>,
-  "LastModified": Any<String>,
-  "basename": "sub-folder",
-  "isDirectory": true,
-  "path": "/sub-folder",
 }
 `;
 

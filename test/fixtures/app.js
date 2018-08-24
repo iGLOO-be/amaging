@@ -59,6 +59,14 @@ if (env === 'local') {
   module.exports = function (options, done) {
     if (!done) { done = options }
     const testID = uuid()
+
+    const isMinio = process.env.MINIO_ENDPOINT && process.env.MINIO_PORT
+    const minioConfig = isMinio ? {
+      endpoint: process.env.MINIO_ENDPOINT,
+      port: process.env.MINIO_PORT,
+      style: 'path'
+    } : {}
+
     options = merge({
       customers: {
         test: {
@@ -68,27 +76,23 @@ if (env === 'local') {
           storage: {
             type: 's3',
             options: {
-              endpoint: '127.0.0.1',
-              port: 9000,
-              style: 'path',
+              ...minioConfig,
 
-              bucket: process.env.MINIO_BUCKET,
+              bucket: process.env.S3_BUCKET,
               path: `storage/main/${testID}/`,
-              key: process.env.MINIO_ACCESS_KEY,
-              secret: process.env.MINIO_SECRET_KEY
+              key: process.env.S3_ACCESS_KEY,
+              secret: process.env.S3_SECRET_KEY
             }
           },
           cacheStorage: {
             type: 's3',
             options: {
-              endpoint: '127.0.0.1',
-              port: 9000,
-              style: 'path',
+              ...minioConfig,
 
-              bucket: process.env.MINIO_BUCKET,
+              bucket: process.env.S3_BUCKET,
               path: `storage/cache/${testID}/`,
-              key: process.env.MINIO_ACCESS_KEY,
-              secret: process.env.MINIO_SECRET_KEY
+              key: process.env.S3_ACCESS_KEY,
+              secret: process.env.S3_SECRET_KEY
             }
           }
         }
@@ -106,9 +110,11 @@ if (env === 'local') {
       accessKeyId: options.customers.test.storage.options.key,
       secretAccessKey: options.customers.test.storage.options.secret,
       region: options.customers.test.storage.options.region,
-      endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
-      s3ForcePathStyle: 'true',
-      signatureVersion: 'v4',
+      ...isMinio && {
+        endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
+        s3ForcePathStyle: 'true',
+        signatureVersion: 'v4'
+      },
       params: {
         Bucket: options.customers.test.storage.options.bucket
       }

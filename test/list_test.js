@@ -9,13 +9,13 @@ let app = null
 const ACCESS_KEY = 'apiaccess'
 const SECRET_KEY = '4ec2b79b81ee67e305b1eb4329ef2cd1'
 
-beforeAll(done => { app = appFactory(done) })
-
 /*
         LIST FILES IN A DIR
 */
 
 describe('GET a file', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   const createPolicy = (secret, data) => {
     data.expiration = new Date(new Date().getTime() + 1000 * 60)
     const policy = Buffer.from(JSON.stringify(data)).toString('base64')

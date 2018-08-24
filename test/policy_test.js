@@ -8,9 +8,9 @@ import chai from 'chai'
 chai.should()
 let app = null
 
-beforeAll(done => { app = appFactory(done) })
-
 describe('Policy', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   /*
           VALID POLICY
   */
@@ -37,6 +37,11 @@ describe('Policy', () => {
           .set('x-authentication-token', pol.token)
           .attach('img', pol.file_path)
           .expect(200)
+
+        const res = await request(app)
+          .get('/test/policy/tente.jpg')
+          .expect(200)
+        await assertResImageEqualFilePromise(res, 'expected/tente.jpg')
       }
     )
 
@@ -69,16 +74,6 @@ describe('Policy', () => {
           .set('x-authentication-token', pol.token)
           .send(require('fs').readFileSync(pol.file_path))
           .expect(200)
-      }
-    )
-
-    test(
-      'Should return the same hash as the expected tente.jpg hash',
-      async () => {
-        const res = await request(app)
-          .get('/test/policy/tente.jpg')
-          .expect(200)
-        await assertResImageEqualFilePromise(res, 'expected/tente.jpg')
       }
     )
   })

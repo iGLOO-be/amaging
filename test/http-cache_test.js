@@ -22,12 +22,12 @@ if (env === 'local') {
   newEtag = '"ab093153e0081a27fef6b85262189695"'
 }
 
-beforeAll(done => { app = appFactory(done) })
-
 /*
         CACHE HTTP
 */
 describe('MANAGE HTTP CACHE', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   describe('GET the image', () =>
     test('Should return a 200', async () => {
       const res = await request(app)
@@ -73,7 +73,7 @@ describe('MANAGE HTTP CACHE', () => {
   })
 
   // # with different ETag and should return 200
-  return describe('GET the image with former Etags', () => {
+  describe('GET the image with former Etags', () => {
     test('Should return a 200 OK (ice.jpg)', async () => {
       await request(app)
         .get('/test/ice.jpg')

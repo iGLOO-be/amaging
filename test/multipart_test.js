@@ -8,12 +8,12 @@ chai.should()
 
 let app = null
 
-beforeAll(done => { app = appFactory(done) })
-
 /*
         ADD IMAGE IN MULTIPART
 */
 describe('POST a new image file', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test(
     'Should return a 404 not found when retreive the image that doesn\'t exist',
     async () => {
@@ -33,12 +33,6 @@ describe('POST a new image file', () => {
         .set('x-authentication-token', tok.token)
         .attach('img', tok.file_path)
         .expect(200)
-    }
-  )
-
-  return test(
-    'Should return the same hash as the expected tente.jpg hash',
-    async () => {
       const res = await request(app)
         .get('/test/tente.jpg')
         .expect(200)
@@ -50,7 +44,9 @@ describe('POST a new image file', () => {
 /*
         BIG IMAGE IN MULTIPART
 */
-describe('Upload large file to potentialy generate errors', () =>
+describe('Upload large file to potentialy generate errors', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test(
     'Should return a 404 not found when retreive the image that doesn\'t exist',
     async () => {
@@ -59,12 +55,14 @@ describe('Upload large file to potentialy generate errors', () =>
         .expect(404)
     }
   )
-)
+})
 
 /*
         CACHE EVICTION UPDATE FILE MULTIPART
 */
 describe('Cache Eviction by updating file in multipart', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   describe('POST an image', () =>
     test(
       'Should return a 200 OK when adding an image in multipart (cache-eviction-update.jpg)',
@@ -76,16 +74,11 @@ describe('Cache Eviction by updating file in multipart', () => {
           .set('x-authentication-token', tok.token)
           .attach('img', tok.file_path)
           .expect(200)
+        await request(app)
+          .get('/test/410x410&/multipart-cache-eviction-update.jpg')
+          .expect(200)
       }
     )
-  )
-
-  describe('GET: Apply image filter to create cache storage', () =>
-    test('Should return a 200 OK by changing the igloo', async () => {
-      await request(app)
-        .get('/test/410x410&/multipart-cache-eviction-update.jpg')
-        .expect(200)
-    })
   )
 
   describe('UPDATE the original file (cache-eviction-update.jpg by tente.jpg) to erase the cache', () =>
@@ -99,14 +92,6 @@ describe('Cache Eviction by updating file in multipart', () => {
           .set('x-authentication-token', tok.token)
           .attach('img', tok.file_path)
           .expect(200)
-      }
-    )
-  )
-
-  return describe('GET: Apply image filter on the tipi and compare hash with the former igloo cached file', () =>
-    test(
-      'Should return the right hash of the image to check if the cache has been erased',
-      async () => {
         const res = await request(app)
           .get('/test/410x410&/multipart-cache-eviction-update.jpg')
         await assertResImageEqualFilePromise(res, 'expected/410x410_tente.jpg')

@@ -61,10 +61,10 @@ export default class S3Storage extends AbstractStorage {
         throw InvalidResponse('head', { statusCode: 403 })
       } else if (err.code === 'NotFound') {
         // Check if it is a directory
-        const res = await promisify(this._S3_knox.list).call(this._S3_knox, {
-          prefix: path.join(filePath, '..') + '/',
-          delimiter: '/'
-        })
+        const res = await this._s3.listObjects({
+          Prefix: path.join(filePath, '..') + '/',
+          Delimiter: '/'
+        }).promise()
 
         const prefixes = (res && res.CommonPrefixes) || []
 

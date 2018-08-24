@@ -78,25 +78,21 @@ if (env === 'local') {
           },
           storage: {
             type: 's3',
-            options: {
-              ...minioConfig,
-
+            options: Object.assign({
               bucket: process.env.S3_BUCKET,
               path: `storage/main/${testID}/`,
               key: process.env.S3_ACCESS_KEY,
               secret: process.env.S3_SECRET_KEY
-            }
+            }, minioConfig)
           },
           cacheStorage: {
             type: 's3',
-            options: {
-              ...minioConfig,
-
+            options: Object.assign({
               bucket: process.env.S3_BUCKET,
               path: `storage/cache/${testID}/`,
               key: process.env.S3_ACCESS_KEY,
               secret: process.env.S3_SECRET_KEY
-            }
+            }, minioConfig)
           }
         }
       }
@@ -108,26 +104,32 @@ if (env === 'local') {
       return app
     }
 
-    const s3 = new AWS.S3({
+    const s3 = new AWS.S3(Object.assign({
       accessKeyId: options.customers.test.storage.options.key,
       secretAccessKey: options.customers.test.storage.options.secret,
       region: options.customers.test.storage.options.region,
-      ...isMinio && {
-        endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
-        s3ForcePathStyle: 'true',
-        signatureVersion: 'v4'
-      },
       params: {
         Bucket: options.customers.test.storage.options.bucket
       }
-    })
+    }, isMinio && {
+      endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
+      s3ForcePathStyle: 'true',
+      signatureVersion: 'v4'
+    }))
 
     const keys = await s3.listObjects({Prefix: options.customers.test.storage.options.path}).promise()
-    await s3.deleteObjects({
-      Delete: {
-        Objects: keys.Contents.map(k => ({Key: k.Key}))
-      }
-    }).promise()
+    if (keys.Contents.length > 0) {
+      console.log('try delete', {
+        Delete: {
+          Objects: keys.Contents.map(k => ({Key: k.Key}))
+        }
+      })
+      await s3.deleteObjects({
+        Delete: {
+          Objects: keys.Contents.map(k => ({Key: k.Key}))
+        }
+      }).promise()
+    }
 
     const files = await globby('**/*', {
       cwd: storageDir,

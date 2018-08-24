@@ -10,6 +10,7 @@ import merge from 'lodash/merge'
 import copy from 'copy'
 import rimraf from 'rimraf'
 import uuid from 'uuid'
+import globby from 'globby'
 
 import { getServer } from './utils'
 const server = getServer()
@@ -19,8 +20,7 @@ const env = process.env.TEST_ENV || 'local'
 const storageDir = path.join(__dirname, 'storage')
 
 if (env === 'local') {
-  module.exports = function (options, done) {
-    if (!done) { done = options }
+  module.exports = async function (options) {
     const testID = uuid()
     options = extend({
       customers: {
@@ -46,17 +46,30 @@ if (env === 'local') {
 
     const app = server(options)
 
-    async.series([
-      done => rimraf(options.customers.test.storage.options.path, done),
-      done => rimraf(options.customers.test.cacheStorage.options.path, done),
-      done => copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
-    ], done)
+    await new Promise((resolve, reject) => {
+      async.series([
+        done => rimraf(options.customers.test.storage.options.path, done),
+        done => rimraf(options.customers.test.cacheStorage.options.path, done),
+        done => copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
+      ], (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
+    })
 
     return app
   }
 } else if (env === 's3') {
-  module.exports = function (options, done) {
-    if (!done) { done = options }
+  module.exports = async function (options) {
+    const testID = uuid()
+
+    const isMinio = process.env.MINIO_ENDPOINT && process.env.MINIO_PORT
+    const minioConfig = isMinio ? {
+      endpoint: process.env.MINIO_ENDPOINT,
+      port: process.env.MINIO_PORT,
+      style: 'path'
+    } : {}
+
     options = merge({
       customers: {
         test: {
@@ -65,29 +78,21 @@ if (env === 'local') {
           },
           storage: {
             type: 's3',
-            options: {
-              endpoint: '127.0.0.1',
-              port: 9000,
-              style: 'path',
-
-              bucket: process.env.MINIO_BUCKET,
-              path: 'storage/main/',
-              key: process.env.MINIO_ACCESS_KEY,
-              secret: process.env.MINIO_SECRET_KEY
-            }
+            options: Object.assign({
+              bucket: process.env.S3_BUCKET,
+              path: `storage/main/${testID}/`,
+              key: process.env.S3_ACCESS_KEY,
+              secret: process.env.S3_SECRET_KEY
+            }, minioConfig)
           },
           cacheStorage: {
             type: 's3',
-            options: {
-              endpoint: '127.0.0.1',
-              port: 9000,
-              style: 'path',
-
-              bucket: process.env.MINIO_BUCKET,
-              path: 'storage/cache/',
-              key: process.env.MINIO_ACCESS_KEY,
-              secret: process.env.MINIO_SECRET_KEY
-            }
+            options: Object.assign({
+              bucket: process.env.S3_BUCKET,
+              path: `storage/cache/${testID}/`,
+              key: process.env.S3_ACCESS_KEY,
+              secret: process.env.S3_SECRET_KEY
+            }, minioConfig)
           }
         }
       }
@@ -96,59 +101,51 @@ if (env === 'local') {
     const app = server(options)
 
     if (options.__skip_populate) {
-      done()
       return app
     }
 
-    const s3 = new AWS.S3({
+    const s3 = new AWS.S3(Object.assign({
       accessKeyId: options.customers.test.storage.options.key,
       secretAccessKey: options.customers.test.storage.options.secret,
       region: options.customers.test.storage.options.region,
-      endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
-      s3ForcePathStyle: 'true',
-      signatureVersion: 'v4',
       params: {
         Bucket: options.customers.test.storage.options.bucket
       }
+    }, isMinio && {
+      endpoint: `http://${options.customers.test.storage.options.endpoint}:${options.customers.test.storage.options.port}`,
+      s3ForcePathStyle: 'true',
+      signatureVersion: 'v4'
+    }))
+
+    const keys = await s3.listObjects({Prefix: options.customers.test.storage.options.path}).promise()
+    if (keys.Contents.length > 0) {
+      console.log('try delete', {
+        Delete: {
+          Objects: keys.Contents.map(k => ({Key: k.Key}))
+        }
+      })
+      await s3.deleteObjects({
+        Delete: {
+          Objects: keys.Contents.map(k => ({Key: k.Key}))
+        }
+      }).promise()
+    }
+
+    const files = await globby('**/*', {
+      cwd: storageDir,
+      onlyFiles: true
     })
 
-    let keys = null
-    async.series([
-      done =>
-        s3.listObjects(
-          {Prefix: options.customers.test.storage.options.path}
-          , function (err, _keys) {
-            keys = _keys
-            return done(err)
-          }),
-      function (done) {
-        if (!__guard__(keys != null ? keys.Contents : undefined, x => x.length)) {
-          return done()
-        }
-        return s3.deleteObjects({
-          Delete: {
-            Objects: (keys != null ? keys.Contents.map(k => ({Key: k.Key})) : undefined)
-          }
-        }, done)
-      },
-      function (done) {
-        const files = fs.readdirSync(storageDir)
-        return async.each(files, (file, done) =>
-          s3.putObject({
-            ContentType: mime.getType(file),
-            Body: fs.createReadStream(path.join(storageDir, file)),
-            Key: options.customers.test.storage.options.path + file
-          }, done)
-        , done)
-      }
-    ], done)
+    await Promise.all(files.map(file => (
+      s3.putObject({
+        ContentType: mime.getType(file),
+        Body: fs.createReadStream(path.join(storageDir, file)),
+        Key: options.customers.test.storage.options.path + file
+      }).promise()
+    )))
 
     return app
   }
 } else {
   throw new Error('Invalid the test environment variable TEST_ENV. Valids: "local" or "s3".')
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

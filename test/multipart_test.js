@@ -6,17 +6,14 @@ import request from 'supertest'
 import chai from 'chai'
 chai.should()
 
-let app = null
-
 /*
         ADD IMAGE IN MULTIPART
 */
 describe('POST a new image file', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test(
     'Should return a 404 not found when retreive the image that doesn\'t exist',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/tente.jpg')
         .expect(404)
@@ -27,6 +24,7 @@ describe('POST a new image file', () => {
     'Should return a 200 OK when adding an image in multipart (tente.jpg)',
     async () => {
       const tok = requestMultipartFileToken('expected/tente.jpg', 'tente.jpg')
+      const app = await appFactory()
       await request(app)
         .post('/test/tente.jpg')
         .set('x-authentication', tok.access)
@@ -45,11 +43,10 @@ describe('POST a new image file', () => {
         BIG IMAGE IN MULTIPART
 */
 describe('Upload large file to potentialy generate errors', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test(
     'Should return a 404 not found when retreive the image that doesn\'t exist',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/zombies.jpg')
         .expect(404)
@@ -61,13 +58,12 @@ describe('Upload large file to potentialy generate errors', () => {
         CACHE EVICTION UPDATE FILE MULTIPART
 */
 describe('Cache Eviction by updating file in multipart', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   describe('POST an image', () =>
     test(
       'Should return a 200 OK when adding an image in multipart (cache-eviction-update.jpg)',
       async () => {
         const tok = requestMultipartFileToken('expected/igloo.jpg', 'multipart-cache-eviction-update.jpg')
+        const app = await appFactory()
         await request(app)
           .post('/test/multipart-cache-eviction-update.jpg')
           .set('x-authentication', 'apiaccess')
@@ -86,6 +82,7 @@ describe('Cache Eviction by updating file in multipart', () => {
       'Should return a 200 OK by updating the original image in multipart',
       async () => {
         const tok = requestMultipartFileToken('expected/tente.jpg', 'multipart-cache-eviction-update.jpg')
+        const app = await appFactory()
         await request(app)
           .put('/test/multipart-cache-eviction-update.jpg')
           .set('x-authentication', 'apiaccess')

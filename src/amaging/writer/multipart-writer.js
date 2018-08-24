@@ -82,7 +82,7 @@ export default () =>
     debug('Request write stream.')
     const stream = await amaging.file.requestWriteStream({
       ContentLength: file.size,
-      ContentType: file.type
+      ContentType: file.type || 'application/octet-stream'
     })
 
     debug('Pipe in stream.')

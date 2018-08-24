@@ -30,15 +30,36 @@ export default class S3Storage extends AbstractStorage {
   async readInfo (file) {
     debug('Start reading info for "%s"', file)
 
-    const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, this._filepath(file))
+    const filePath = this._filepath(file)
+    const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, filePath)
 
-    if (res.statusCode === 404) return
+    if (res.statusCode === 404) {
+      // Check if it is a directory
+      const res = await promisify(this._S3_knox.list).call(this._S3_knox, {
+        prefix: path.join(filePath, '..') + '/',
+        delimiter: '/'
+      })
+
+      const prefixes = (res && res.CommonPrefixes) || []
+
+      if (prefixes.find(v => v.Prefix === filePath) || prefixes.find(v => v.Prefix === filePath + '/')) {
+        return {
+          isDirectory: true,
+          ContentType: 'application/x-directory',
+          ContentLength: 0,
+          ETag: null,
+          LastModified: null
+        }
+      } else {
+        return
+      }
+    }
     if (res.statusCode !== 200) throw InvalidResponse('head', res)
 
     return {
       isDirectory: res.headers['content-type'] === 'application/x-directory',
       ContentType: res.headers['content-type'],
-      ContentLength: res.headers['content-length'],
+      ContentLength: parseInt(res.headers['content-length']),
       ETag: res.headers['etag'],
       LastModified: res.headers['last-modified']
     }
@@ -85,13 +106,24 @@ export default class S3Storage extends AbstractStorage {
   async list (prefix) {
     const keys = await promisify(this._S3_knox.list).call(this._S3_knox, { prefix: this._filepath(prefix), delimiter: '/' })
     if (keys && keys.Contents && Array.isArray(keys.Contents)) {
-      return Promise.all(keys.Contents.map(file => (
-        File.create(
-          this,
-          null,
-          file.Key.replace(this.options.path, '')
-        )
-      )))
+      const [files, directories] = await Promise.all([
+        Promise.all(keys.Contents.map(file => (
+          File.create(
+            this,
+            null,
+            file.Key.replace(this.options.path, '').replace(/\/$/, '')
+          )
+        ))),
+        Promise.all((keys.CommonPrefixes || []).map(file => (
+          File.create(
+            this,
+            null,
+            file.Prefix.replace(this.options.path, '').replace(/\/$/, '')
+          )
+        )))
+      ])
+
+      return [...directories, ...files]
     }
     return []
   }

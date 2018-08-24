@@ -9,7 +9,6 @@ import chai from 'chai'
 chai.should()
 
 const { expect } = chai
-let app = null
 
 if (process.env.TEST_ENV !== 's3') {
   describe.skip('S3 Storage', () => {})
@@ -31,9 +30,8 @@ function S3StorageTest () {
           INVALID CREDENTIALS
   */
   describe('Invalid Credentials', () => {
-    // TODO: find why this test is not really skipped by jest ...
-    beforeAll(done => {
-      app = appFactory({
+    test('Get file should return a 500', async () => {
+      const app = await appFactory({
         __skip_populate: true,
         customers: {
           test: {
@@ -49,22 +47,53 @@ function S3StorageTest () {
             }
           }
         }
-      }, done)
-    })
-
-    test('Get file should return a 500', () =>
-      request(app)
+      })
+      await request(app)
         .get('/test/igloo.jpg')
         .expect(500, 'Invalid HEAD response from S3. (Status: 403)')
-    )
+    })
 
-    test('Head file should return a 500', () =>
-      request(app)
+    test('Head file should return a 500', async () => {
+      const app = await appFactory({
+        __skip_populate: true,
+        customers: {
+          test: {
+            storage: {
+              options: {
+                secret: 'false'
+              }
+            },
+            cacheStorage: {
+              options: {
+                secret: 'false'
+              }
+            }
+          }
+        }
+      })
+      await request(app)
         .head('/test/igloo.jpg')
         .expect(500)
-    )
+    })
 
-    test('Put file should return a 500', () => {
+    test('Put file should return a 500', async () => {
+      const app = await appFactory({
+        __skip_populate: true,
+        customers: {
+          test: {
+            storage: {
+              options: {
+                secret: 'false'
+              }
+            },
+            cacheStorage: {
+              options: {
+                secret: 'false'
+              }
+            }
+          }
+        }
+      })
       const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
       return request(app)
         .post('/test/igloo.jpg')

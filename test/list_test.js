@@ -4,7 +4,6 @@ import request from 'supertest'
 import crypto from 'crypto'
 
 import appFactory from './fixtures/app'
-let app = null
 
 const ACCESS_KEY = 'apiaccess'
 const SECRET_KEY = '4ec2b79b81ee67e305b1eb4329ef2cd1'
@@ -14,8 +13,6 @@ const SECRET_KEY = '4ec2b79b81ee67e305b1eb4329ef2cd1'
 */
 
 describe('GET a file', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   const createPolicy = (secret, data) => {
     data.expiration = new Date(new Date().getTime() + 1000 * 60)
     const policy = Buffer.from(JSON.stringify(data)).toString('base64')
@@ -35,6 +32,7 @@ describe('GET a file', () => {
       conditions: policyConditions
     })
 
+    const app = await appFactory()
     const res = await request(app)
       .get(`/test${path}`)
       .set('x-authentication', ACCESS_KEY)
@@ -42,14 +40,16 @@ describe('GET a file', () => {
       .set('x-authentication-policy', policy.policy)
       .expect(200)
     expect(res.body).toEqual(expect.any(Array))
-    res.body.forEach(file => {
-      expect(file).toMatchSnapshot({
-        LastModified: expect.any(String)
-      })
-    })
+
+    expect(res.body.map(file => ({
+      ...file,
+      LastModified: null,
+      ETag: null
+    }))).toMatchSnapshot()
   }
 
   test('Should return a 403 because no auth', async () => {
+    const app = await appFactory()
     await request(app)
       .get(`/test/`)
       .expect(403)
@@ -61,6 +61,7 @@ describe('GET a file', () => {
       ]
     })
 
+    const app = await appFactory()
     await request(app)
       .get(`/test/foo/bar/`)
       .set('x-authentication', ACCESS_KEY)
@@ -75,6 +76,7 @@ describe('GET a file', () => {
       ]
     })
 
+    const app = await appFactory()
     await request(app)
       .get(`/test/foo/bar/`)
       .set('x-authentication', ACCESS_KEY)
@@ -104,14 +106,23 @@ describe('GET a file', () => {
   })
 
   test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {
+    const app = await appFactory()
     await request(app)
       .get('/test')
       .expect(404)
   })
 
   test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {
+    const app = await appFactory()
     await request(app)
       .get('/test/a')
+      .expect(404)
+  })
+
+  test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {
+    const app = await appFactory()
+    await request(app)
+      .get('/test/a/b/a/qsdqsd/qdae/aze')
       .expect(404)
   })
 })

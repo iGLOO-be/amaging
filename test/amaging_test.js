@@ -7,23 +7,21 @@ import appFactory from './fixtures/app'
 
 chai.should()
 
-let app = null
-
 const {requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot} = require('./fixtures/utils')
 
 /*
         READ
 */
 describe('GET a file', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test('Should return a 404 error because of an unexpected url', async () => {
+    const app = await appFactory()
     await request(app)
       .get('/notExist.png')
       .expect(404)
   })
 
   test('Should return a 200 OK because the file exist', async () => {
+    const app = await appFactory()
     await request(app)
       .get('/test/igloo.jpg')
       .expect(200)
@@ -32,6 +30,7 @@ describe('GET a file', () => {
   test(
     'Should return a 403 error Forbidden because of an non-existing cid',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/notExits/file.png')
         .expect(403)
@@ -41,6 +40,7 @@ describe('GET a file', () => {
   test(
     'Should return a 404 not found because the image doesn\'t exist',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/file.png')
         .expect(404)
@@ -50,6 +50,7 @@ describe('GET a file', () => {
   test(
     'Should return a 404 not found because the file doesn\'t exist',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/igloo.json')
         .expect(404)
@@ -61,15 +62,15 @@ describe('GET a file', () => {
         HEAD
 */
 describe('HEAD a file', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test('Should return a 404 error because the file doesn\'t exist', async () => {
+    const app = await appFactory()
     await request(app)
       .head('/igl00.png')
       .expect(404)
   })
 
   test('Should return a 200 OK with file info', async () => {
+    const app = await appFactory()
     await request(app)
       .head('/test/igloo.jpg')
       .expect(200)
@@ -82,11 +83,10 @@ describe('HEAD a file', () => {
         WRITE
 */
 describe('POST a new json file and check his Content-Type', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test(
     'Should return a 404 not found when retreive the file that doesn\'t exist',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/notExist.json')
         .expect(404)
@@ -94,6 +94,7 @@ describe('POST a new json file and check his Content-Type', () => {
   )
 
   test('Should return a 200 OK by adding a json file', async () => {
+    const app = await appFactory()
     const tok = requestJSONToken(JSON.stringify({
       test: true
     }), 'file.json')
@@ -107,6 +108,7 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return a 200 OK by adding a json file with a JWT token', async () => {
+    const app = await appFactory()
     const data = { test: true }
     const filePath = '/test/file.json'
     await request(app)
@@ -121,6 +123,7 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return a 403 with an expired token', async () => {
+    const app = await appFactory()
     const data = { test: true }
     const filePath = '/test/expired-token.json'
     expectRequestToMatchSnapshot(
@@ -136,6 +139,7 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return a 403 with an invalid secret', async () => {
+    const app = await appFactory()
     const data = { test: true }
     const filePath = '/test/bad-secret.json'
     expectRequestToMatchSnapshot(
@@ -151,6 +155,7 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return a 403 with an invalid access key', async () => {
+    const app = await appFactory()
     const data = { test: true }
     const filePath = '/test/bad-access-key.json'
     expectRequestToMatchSnapshot(
@@ -166,6 +171,7 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return a 403 with an invalid conditions', async () => {
+    const app = await appFactory()
     const data = { test: true }
     const filePath = '/test/bad-access-key.json'
     expectRequestToMatchSnapshot(
@@ -186,6 +192,7 @@ describe('POST a new json file and check his Content-Type', () => {
   test(
     'Should return the json Content-Type and the content of the file.json',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/file.json')
         .set('Accept', 'application/json')
@@ -200,11 +207,10 @@ describe('POST a new json file and check his Content-Type', () => {
 })
 
 describe('POST a new image file\n', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test(
     'Should return a 404 not found when retreive the image that doesn\'t exist',
     async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/test.jpg')
         .expect(404)
@@ -212,6 +218,7 @@ describe('POST a new image file\n', () => {
   )
 
   test('Should return a 200 OK when add an image', async () => {
+    const app = await appFactory()
     const tok = requestFileToken('expected/igloo.jpg', 'some-new-image.jpg', 'image/jpeg')
     await request(app)
       .post('/test/some-new-image.jpg')
@@ -224,6 +231,7 @@ describe('POST a new image file\n', () => {
   })
 
   test('Should return a 200 OK when overwrite an image', async () => {
+    const app = await appFactory()
     const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
     await request(app)
       .post('/test/igloo.jpg')
@@ -236,6 +244,7 @@ describe('POST a new image file\n', () => {
   })
 
   test('Should return a 200 OK when add an unkown-type file', async () => {
+    const app = await appFactory()
     const tok = requestFileToken('fixtures/storage/some-file-with-unknown-ext.ozo', 'some-new-file-with-unkown-ext.zoz', 'application/octet-stream')
     await request(app)
       .post('/test/some-new-file-with-unkown-ext.zoz')
@@ -249,11 +258,10 @@ describe('POST a new image file\n', () => {
 })
 
 describe('POST : authentication\n', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test(
     'Should return a 403 error NOT AUTHORIZED because of no token provided',
     async () => {
+      const app = await appFactory()
       await request(app)
         .post('/test/file.json')
         .type('application/json')
@@ -266,6 +274,7 @@ describe('POST : authentication\n', () => {
   test(
     'Should return a 403 error NOT AUTHORIZED because of no api access provided',
     async () => {
+      const app = await appFactory()
       await request(app)
         .post('/test/file.json')
         .type('application/json')
@@ -278,6 +287,7 @@ describe('POST : authentication\n', () => {
   test(
     'Should return a 403 error NOT AUTHORIZED because of an altered token',
     async () => {
+      const app = await appFactory()
       await request(app)
         .post('/test/file.json')
         .type('application/json')
@@ -293,9 +303,8 @@ describe('POST : authentication\n', () => {
         DELETE
 */
 describe('DELETE files just added\n', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   test('Should return a 200 OK by erasing the image', async () => {
+    const app = await appFactory()
     await request(app)
       .del('/test/delete.jpg')
       .set('x-authentication', 'apiaccess')

@@ -6,7 +6,6 @@ import path from 'path'
 import knox from 'knox'
 import AWS from 'aws-sdk'
 import Boom from 'boom'
-import { promisify } from 'util'
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:storage:s3')
 

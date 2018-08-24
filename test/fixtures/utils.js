@@ -1,13 +1,17 @@
+/* eslint-env jest */
 
 import fs from 'fs'
 import path from 'path'
 import crypto from 'crypto'
 import gm from 'gm'
 import tmp from 'tmp'
-import { sign } from '@igloo-be/amaging-policy'
 
 import chai from 'chai'
 const { assert } = chai
+
+export function expectRequestToMatchSnapshot ({ body, status, text }) {
+  expect({ body, status, text }).toMatchSnapshot()
+}
 
 export function sha1 (data) {
   return crypto.createHash('sha1')
@@ -73,15 +77,6 @@ export function requestJSONToken (data, file) {
     token,
     contentType,
     length: buffer.length
-  }
-}
-
-export async function requestJWT (data, file) {
-  return {
-    buffer: data,
-    contentType: 'application/json',
-    contentLength: data.length,
-    authorization: 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT()
   }
 }
 

@@ -6,6 +6,7 @@ import path from 'path'
 import knox from 'knox'
 import AWS from 'aws-sdk'
 import Boom from 'boom'
+import stream from 'stream'
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:storage:s3')
 
@@ -89,22 +90,16 @@ export default class S3Storage extends AbstractStorage {
   }
 
   async requestWriteStream (file, info) {
+    const pass = new stream.PassThrough()
+
     this._validWriteInfo(info)
+    this._s3.upload({ Key: this._filepath(file), Body: pass })
+      .promise()
+      .then(() => {
+        pass.emit('close')
+      })
 
-    const headers = {
-      'content-type': info.ContentType,
-      'content-length': info.ContentLength
-    }
-
-    const stream = this._S3_knox.put(this._filepath(file), headers)
-
-    stream.on('response', function (res) {
-      if (res.statusCode !== 200) {
-        return stream.emit('error', InvalidResponse('put', res))
-      }
-    })
-
-    return stream
+    return pass
   }
 
   async deleteFile (file) {

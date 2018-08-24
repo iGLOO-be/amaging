@@ -131,7 +131,11 @@ export default class S3Storage extends AbstractStorage {
   }
 
   async list (prefix) {
-    const keys = await promisify(this._S3_knox.list).call(this._S3_knox, { prefix: this._filepath(prefix), delimiter: '/' })
+    const keys = await this._s3.listObjects({
+      Prefix: this._filepath(prefix),
+      Delimiter: '/'
+    }).promise()
+
     if (keys && keys.Contents && Array.isArray(keys.Contents)) {
       const [files, directories] = await Promise.all([
         Promise.all(keys.Contents.map(file => (

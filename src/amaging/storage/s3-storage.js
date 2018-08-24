@@ -4,6 +4,7 @@ import File from '../storage/file'
 
 import path from 'path'
 import knox from 'knox'
+import AWS from 'aws-sdk'
 import Boom from 'boom'
 import { promisify } from 'util'
 import debugFactory from 'debug'
@@ -25,43 +26,61 @@ export default class S3Storage extends AbstractStorage {
       region: this.options.region,
       bucket: this.options.bucket
     })
+    this._s3 = new AWS.S3({
+      accessKeyId: this.options.key,
+      secretAccessKey: this.options.secret,
+      region: this.options.region,
+      // endpoint: `http://${this.options.endpoint}:${this.options.port}`,
+      // s3ForcePathStyle: 'true',
+      // signatureVersion: 'v4',
+      params: {
+        Bucket: this.options.bucket
+      }
+    })
   }
 
   async readInfo (file) {
     debug('Start reading info for "%s"', file)
 
     const filePath = this._filepath(file)
-    const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, filePath)
 
-    if (res.statusCode === 404) {
-      // Check if it is a directory
-      const res = await promisify(this._S3_knox.list).call(this._S3_knox, {
-        prefix: path.join(filePath, '..') + '/',
-        delimiter: '/'
-      })
+    try {
+      const res = await this._s3.headObject({
+        Key: filePath
+      }).promise()
 
-      const prefixes = (res && res.CommonPrefixes) || []
-
-      if (prefixes.find(v => v.Prefix === filePath) || prefixes.find(v => v.Prefix === filePath + '/')) {
-        return {
-          isDirectory: true,
-          ContentType: 'application/x-directory',
-          ContentLength: 0,
-          ETag: null,
-          LastModified: null
-        }
-      } else {
-        return
+      return {
+        isDirectory: false,
+        ContentType: res.ContentType,
+        ContentLength: parseInt(res.ContentLength),
+        ETag: res.ETag,
+        LastModified: res.LastModified
       }
-    }
-    if (res.statusCode !== 200) throw InvalidResponse('head', res)
+    } catch (err) {
+      if (err.code === 'Forbidden') {
+        throw InvalidResponse('head', { statusCode: 403 })
+      } else if (err.code === 'NotFound') {
+        // Check if it is a directory
+        const res = await promisify(this._S3_knox.list).call(this._S3_knox, {
+          prefix: path.join(filePath, '..') + '/',
+          delimiter: '/'
+        })
 
-    return {
-      isDirectory: res.headers['content-type'] === 'application/x-directory',
-      ContentType: res.headers['content-type'],
-      ContentLength: parseInt(res.headers['content-length']),
-      ETag: res.headers['etag'],
-      LastModified: res.headers['last-modified']
+        const prefixes = (res && res.CommonPrefixes) || []
+
+        if (prefixes.find(v => v.Prefix === filePath) || prefixes.find(v => v.Prefix === filePath + '/')) {
+          return {
+            isDirectory: true,
+            ContentType: 'application/x-directory',
+            ContentLength: 0,
+            ETag: null,
+            LastModified: null
+          }
+        } else {
+          return
+        }
+      }
+      throw err
     }
   }
 

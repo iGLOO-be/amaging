@@ -10,6 +10,7 @@ import merge from 'lodash/merge'
 import copy from 'copy'
 import rimraf from 'rimraf'
 import uuid from 'uuid'
+import globby from 'globby'
 
 import { getServer } from './utils'
 const server = getServer()
@@ -57,6 +58,7 @@ if (env === 'local') {
 } else if (env === 's3') {
   module.exports = function (options, done) {
     if (!done) { done = options }
+    const testID = uuid()
     options = merge({
       customers: {
         test: {
@@ -71,7 +73,7 @@ if (env === 'local') {
               style: 'path',
 
               bucket: process.env.MINIO_BUCKET,
-              path: 'storage/main/',
+              path: `storage/main/${testID}/`,
               key: process.env.MINIO_ACCESS_KEY,
               secret: process.env.MINIO_SECRET_KEY
             }
@@ -84,7 +86,7 @@ if (env === 'local') {
               style: 'path',
 
               bucket: process.env.MINIO_BUCKET,
-              path: 'storage/cache/',
+              path: `storage/cache/${testID}/`,
               key: process.env.MINIO_ACCESS_KEY,
               secret: process.env.MINIO_SECRET_KEY
             }
@@ -132,7 +134,11 @@ if (env === 'local') {
         }, done)
       },
       function (done) {
-        const files = fs.readdirSync(storageDir)
+        const files = globby.sync('**/*', {
+          cwd: storageDir,
+          onlyFiles: true
+        })
+
         return async.each(files, (file, done) =>
           s3.putObject({
             ContentType: mime.getType(file),

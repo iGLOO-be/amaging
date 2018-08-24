@@ -42,12 +42,12 @@ describe('GET a file', () => {
       .set('x-authentication-policy', policy.policy)
       .expect(200)
     expect(res.body).toEqual(expect.any(Array))
-    res.body.forEach(file => {
-      expect(file).toMatchSnapshot({
-        LastModified: expect.any(String),
-        ETag: expect.any(String)
-      })
-    })
+
+    expect(res.body.map(file => ({
+      ...file,
+      LastModified: null,
+      ETag: null
+    }))).toMatchSnapshot()
   }
 
   test('Should return a 403 because no auth', async () => {

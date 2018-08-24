@@ -2,13 +2,14 @@
 
 import request from 'supertest'
 import chai from 'chai'
+import { sign } from '@igloo-be/amaging-policy'
 import appFactory from './fixtures/app'
 
 chai.should()
 
 let app = null
 
-const {requestFileToken, requestJSONToken, requestDeleteToken, requestJWT} = require('./fixtures/utils')
+const {requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot} = require('./fixtures/utils')
 
 beforeAll(done => { app = appFactory(done) })
 
@@ -102,15 +103,62 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return a 200 OK by adding a json file with a JWT token', async () => {
-    const tok = await requestJWT(JSON.stringify({
-      test: true
-    }), 'file.json')
+    const data = { test: true }
+    const filePath = '/test/file.json'
     await request(app)
-      .post('/test/file.json')
-      .type(tok.contentType)
-      .set('Authorization', tok.authorization)
-      .send(tok.buffer)
+      .post(filePath)
+      .type('application/json')
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .send(JSON.stringify(data))
       .expect(200)
+
+    const res = await request(app).get(filePath).expect(200)
+    expect(res.body).toEqual(data)
+  })
+
+  test('Should return a 403 with an expired token', async () => {
+    const data = { test: true }
+    const filePath = '/test/expired-token.json'
+    expectRequestToMatchSnapshot(
+      await request(app)
+        .post(filePath)
+        .type('application/json')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').expiresIn(-1).toJWT())
+        .set('Accept', 'application/json')
+        .send(JSON.stringify(data))
+        .expect(403)
+    )
+    await request(app).get(filePath).expect(404)
+  })
+
+  test('Should return a 403 with an invalid secret', async () => {
+    const data = { test: true }
+    const filePath = '/test/bad-secret.json'
+    expectRequestToMatchSnapshot(
+      await request(app)
+        .post(filePath)
+        .type('application/json')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', 'bad-secret').toJWT())
+        .set('Accept', 'application/json')
+        .send(JSON.stringify(data))
+        .expect(403)
+    )
+    await request(app).get(filePath).expect(404)
+  })
+
+  test('Should return a 403 with an invalid access key', async () => {
+    const data = { test: true }
+    const filePath = '/test/bad-access-key.json'
+    expectRequestToMatchSnapshot(
+      await request(app)
+        .post(filePath)
+        .type('application/json')
+        .set('Authorization', 'Bearer ' + await sign('unkown', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .set('Accept', 'application/json')
+        .send(JSON.stringify(data))
+        .expect(403)
+    )
+    await request(app).get(filePath).expect(404)
   })
 
   test(

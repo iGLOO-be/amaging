@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`POST a new json file and check his Content-Type Should return a 403 with an expired token 1`] = `
+Object {
+  "body": Object {
+    "error": "Forbidden",
+    "message": "Token is invalid or expired.",
+    "statusCode": 403,
+  },
+  "status": 403,
+  "text": "{\\"statusCode\\":403,\\"error\\":\\"Forbidden\\",\\"message\\":\\"Token is invalid or expired.\\"}",
+}
+`;
+
+exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid access key 1`] = `
+Object {
+  "body": Object {
+    "error": "Forbidden",
+    "message": "Access key is invalid.",
+    "statusCode": 403,
+  },
+  "status": 403,
+  "text": "{\\"statusCode\\":403,\\"error\\":\\"Forbidden\\",\\"message\\":\\"Access key is invalid.\\"}",
+}
+`;
+
+exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid secret 1`] = `
+Object {
+  "body": Object {
+    "error": "Forbidden",
+    "message": "Token is invalid or expired.",
+    "statusCode": 403,
+  },
+  "status": 403,
+  "text": "{\\"statusCode\\":403,\\"error\\":\\"Forbidden\\",\\"message\\":\\"Token is invalid or expired.\\"}",
+}
+`;

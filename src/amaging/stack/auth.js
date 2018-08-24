@@ -34,24 +34,28 @@ export default () =>
       const match = headers[headerJWTPolicy].match(jwtPolicyRE)
       if (!match) {
         debug('403: Policy creation failed')
-        return result403()
+        return next(httpError(403, 'Invalid authorization header.'))
       }
       const jwt = match[1]
 
       const accessKey = getAccessKey(jwt)
       if (!accessKey) {
         debug('403: Unable to get accessKey from JWT')
-        return result403()
+        return next(httpError(403, 'Access key not found in token.'))
       }
 
       // Retrive secret
       const secret = amaging.customer.access != null ? amaging.customer.access[accessKey] : undefined
       if (!secret) {
         debug('403: unkown access key')
-        return result403()
+        return next(httpError(403, 'Access key is invalid.'))
       }
 
       const policy = await parse(secret, jwt)
+      if (!policy) {
+        debug('403: invalid JWT')
+        return next(httpError(403, 'Token is invalid or expired.'))
+      }
 
       amaging.policy = policy
 

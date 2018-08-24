@@ -45,8 +45,8 @@ export async function executeMiddleware (fn, ...args) {
   }
 }
 
-export function httpError (status, message) {
-  return new Boom(message, {statusCode: status})
+export function httpError (status, message, data) {
+  return new Boom(message, {statusCode: status, data})
 }
 
 export function cleanAmagingFile (filePath) {

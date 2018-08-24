@@ -44,7 +44,8 @@ describe('GET a file', () => {
     expect(res.body).toEqual(expect.any(Array))
     res.body.forEach(file => {
       expect(file).toMatchSnapshot({
-        LastModified: expect.any(String)
+        LastModified: expect.any(String),
+        ETag: expect.any(String)
       })
     })
   }

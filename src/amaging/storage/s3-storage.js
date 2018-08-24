@@ -86,7 +86,7 @@ export default class S3Storage extends AbstractStorage {
 
   async requestReadStream (file) {
     debug('Create readStream for "%s"', file)
-    return promisify(this._S3_knox.getFile).call(this._S3_knox, this._filepath(file))
+    return this._s3.getObject({ Key: this._filepath(file) }).createReadStream()
   }
 
   async requestWriteStream (file, info) {
@@ -109,7 +109,9 @@ export default class S3Storage extends AbstractStorage {
   }
 
   async deleteFile (file) {
-    return promisify(this._S3_knox.deleteFile).call(this._S3_knox, this._filepath(file))
+    return this._s3.deleteObject({
+      Key: this._filepath(file)
+    }).promise()
   }
 
   async deleteFilesFromPrefix (file) {

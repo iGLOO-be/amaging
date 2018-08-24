@@ -3,7 +3,6 @@ import AbstractStorage from './abstract-storage'
 import File from '../storage/file'
 
 import path from 'path'
-import knox from 'knox'
 import AWS from 'aws-sdk'
 import Boom from 'boom'
 import stream from 'stream'
@@ -17,15 +16,6 @@ export default class S3Storage extends AbstractStorage {
   constructor (options) {
     super()
     this.options = options
-    this._S3_knox = new knox.createClient({ // eslint-disable-line new-cap
-      port: this.options.port,
-      endpoint: this.options.endpoint,
-      style: this.options.style,
-      key: this.options.key,
-      secret: this.options.secret,
-      region: this.options.region,
-      bucket: this.options.bucket
-    })
     this._s3 = new AWS.S3({
       accessKeyId: this.options.key,
       secretAccessKey: this.options.secret,

@@ -32,13 +32,31 @@ export default class S3Storage extends AbstractStorage {
 
     const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, this._filepath(file))
 
-    if (res.statusCode === 404) return
+    if (res.statusCode === 404) {
+      // Check if it is a directory
+      const res = await promisify(this._S3_knox.list).call(this._S3_knox, {
+        prefix: path.join(this._filepath(file), '..') + '/',
+        delimiter: '/'
+      })
+
+      if (res && res.CommonPrefixes && res.CommonPrefixes.find(v => v.Prefix === this._filepath(file))) {
+        return {
+          isDirectory: true,
+          ContentType: 'application/x-directory',
+          ContentLength: 0,
+          ETag: null,
+          LastModified: null
+        }
+      } else {
+        return
+      }
+    }
     if (res.statusCode !== 200) throw InvalidResponse('head', res)
 
     return {
       isDirectory: res.headers['content-type'] === 'application/x-directory',
       ContentType: res.headers['content-type'],
-      ContentLength: res.headers['content-length'],
+      ContentLength: parseInt(res.headers['content-length']),
       ETag: res.headers['etag'],
       LastModified: res.headers['last-modified']
     }

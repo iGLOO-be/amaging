@@ -115,4 +115,10 @@ describe('GET a file', () => {
       .get('/test/a')
       .expect(404)
   })
+
+  test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {
+    await request(app)
+      .get('/test/a/b/a/qsdqsd/qdae/aze')
+      .expect(404)
+  })
 })

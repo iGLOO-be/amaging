@@ -161,6 +161,24 @@ describe('POST a new json file and check his Content-Type', () => {
     await request(app).get(filePath).expect(404)
   })
 
+  test('Should return a 403 with an invalid conditions', async () => {
+    const data = { test: true }
+    const filePath = '/test/bad-access-key.json'
+    expectRequestToMatchSnapshot(
+      await request(app)
+        .post(filePath)
+        .type('application/json')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+          .cond('eq', 'key', '1234')
+          .toJWT()
+        )
+        .set('Accept', 'application/json')
+        .send(JSON.stringify(data))
+        .expect(400)
+    )
+    await request(app).get(filePath).expect(404)
+  })
+
   test(
     'Should return the json Content-Type and the content of the file.json',
     async () => {

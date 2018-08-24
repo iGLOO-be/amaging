@@ -24,6 +24,22 @@ Object {
 }
 `;
 
+exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid conditions 1`] = `
+Object {
+  "body": Object {
+    "data": Object {
+      "key": "key",
+      "type": "INVALID_KEY",
+    },
+    "error": "Bad Request",
+    "message": "Invalid value for key: key",
+    "statusCode": 400,
+  },
+  "status": 400,
+  "text": "{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"Invalid value for key: key\\",\\"data\\":{\\"key\\":\\"key\\",\\"type\\":\\"INVALID_KEY\\"}}",
+}
+`;
+
 exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid secret 1`] = `
 Object {
   "body": Object {

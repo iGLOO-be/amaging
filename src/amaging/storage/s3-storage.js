@@ -30,16 +30,19 @@ export default class S3Storage extends AbstractStorage {
   async readInfo (file) {
     debug('Start reading info for "%s"', file)
 
-    const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, this._filepath(file))
+    const filePath = this._filepath(file)
+    const res = await promisify(this._S3_knox.headFile).call(this._S3_knox, filePath)
 
     if (res.statusCode === 404) {
       // Check if it is a directory
       const res = await promisify(this._S3_knox.list).call(this._S3_knox, {
-        prefix: path.join(this._filepath(file), '..') + '/',
+        prefix: path.join(filePath, '..') + '/',
         delimiter: '/'
       })
 
-      if (res && res.CommonPrefixes && res.CommonPrefixes.find(v => v.Prefix === this._filepath(file))) {
+      const prefixes = (res && res.CommonPrefixes) || []
+
+      if (prefixes.find(v => v.Prefix === filePath) || prefixes.find(v => v.Prefix === filePath + '/')) {
         return {
           isDirectory: true,
           ContentType: 'application/x-directory',

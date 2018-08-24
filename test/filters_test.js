@@ -6,9 +6,9 @@ import { assertResEqualFile, assertResImageEqualFilePromise } from './fixtures/u
 import appFactory from './fixtures/app'
 let app = null
 
-beforeAll(done => { app = appFactory(done) })
-
 describe('GET : Play with image filters', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test('Should return a 200 OK by modifying the image', async () => {
     const res = await request(app)
       .get('/test/blur(5,2)&/igloo.jpg')

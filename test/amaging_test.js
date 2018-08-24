@@ -11,12 +11,12 @@ let app = null
 
 const {requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot} = require('./fixtures/utils')
 
-beforeAll(done => { app = appFactory(done) })
-
 /*
         READ
 */
 describe('GET a file', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test('Should return a 404 error because of an unexpected url', async () => {
     await request(app)
       .get('/notExist.png')
@@ -61,6 +61,8 @@ describe('GET a file', () => {
         HEAD
 */
 describe('HEAD a file', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test('Should return a 404 error because the file doesn\'t exist', async () => {
     await request(app)
       .head('/igl00.png')
@@ -80,6 +82,8 @@ describe('HEAD a file', () => {
         WRITE
 */
 describe('POST a new json file and check his Content-Type', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test(
     'Should return a 404 not found when retreive the file that doesn\'t exist',
     async () => {
@@ -196,6 +200,8 @@ describe('POST a new json file and check his Content-Type', () => {
 })
 
 describe('POST a new image file\n', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test(
     'Should return a 404 not found when retreive the image that doesn\'t exist',
     async () => {
@@ -243,6 +249,8 @@ describe('POST a new image file\n', () => {
 })
 
 describe('POST : authentication\n', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test(
     'Should return a 403 error NOT AUTHORIZED because of no token provided',
     async () => {
@@ -267,7 +275,7 @@ describe('POST : authentication\n', () => {
     }
   )
 
-  return test(
+  test(
     'Should return a 403 error NOT AUTHORIZED because of an altered token',
     async () => {
       await request(app)
@@ -285,28 +293,18 @@ describe('POST : authentication\n', () => {
         DELETE
 */
 describe('DELETE files just added\n', () => {
+  beforeEach(done => { app = appFactory(done) })
+
   test('Should return a 200 OK by erasing the image', async () => {
     await request(app)
       .del('/test/delete.jpg')
       .set('x-authentication', 'apiaccess')
       .set('x-authentication-token', requestDeleteToken('delete.jpg'))
       .expect(200)
-  })
-
-  test(
-    'Should return a 404 not found by erasing the same image AGAIN',
-    async () => {
-      await request(app)
-        .del('/test/delete.jpg')
-        .set('x-authentication', 'apiaccess')
-        .set('x-authentication-token', requestDeleteToken('delete.jpg'))
-        .expect(404)
-    }
-  )
-
-  return test('Should return a 404 if getting file', async () => {
     await request(app)
-      .get('/test/delete.jpg')
+      .del('/test/delete.jpg')
+      .set('x-authentication', 'apiaccess')
+      .set('x-authentication-token', requestDeleteToken('delete.jpg'))
       .expect(404)
   })
 })

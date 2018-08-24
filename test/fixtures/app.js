@@ -20,8 +20,7 @@ const env = process.env.TEST_ENV || 'local'
 const storageDir = path.join(__dirname, 'storage')
 
 if (env === 'local') {
-  module.exports = function (options, done) {
-    if (!done) { done = options }
+  module.exports = async function (options) {
     const testID = uuid()
     options = extend({
       customers: {
@@ -47,17 +46,21 @@ if (env === 'local') {
 
     const app = server(options)
 
-    async.series([
-      done => rimraf(options.customers.test.storage.options.path, done),
-      done => rimraf(options.customers.test.cacheStorage.options.path, done),
-      done => copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
-    ], done)
+    await new Promise((resolve, reject) => {
+      async.series([
+        done => rimraf(options.customers.test.storage.options.path, done),
+        done => rimraf(options.customers.test.cacheStorage.options.path, done),
+        done => copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
+      ], (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
+    })
 
     return app
   }
 } else if (env === 's3') {
-  module.exports = function (options, done) {
-    if (!done) { done = options }
+  module.exports = async function (options) {
     const testID = uuid()
 
     const isMinio = process.env.MINIO_ENDPOINT && process.env.MINIO_PORT
@@ -102,7 +105,6 @@ if (env === 'local') {
     const app = server(options)
 
     if (options.__skip_populate) {
-      done()
       return app
     }
 
@@ -120,47 +122,28 @@ if (env === 'local') {
       }
     })
 
-    let keys = null
-    async.series([
-      done =>
-        s3.listObjects(
-          {Prefix: options.customers.test.storage.options.path}
-          , function (err, _keys) {
-            keys = _keys
-            return done(err)
-          }),
-      function (done) {
-        if (!__guard__(keys != null ? keys.Contents : undefined, x => x.length)) {
-          return done()
-        }
-        return s3.deleteObjects({
-          Delete: {
-            Objects: (keys != null ? keys.Contents.map(k => ({Key: k.Key})) : undefined)
-          }
-        }, done)
-      },
-      function (done) {
-        const files = globby.sync('**/*', {
-          cwd: storageDir,
-          onlyFiles: true
-        })
-
-        return async.each(files, (file, done) =>
-          s3.putObject({
-            ContentType: mime.getType(file),
-            Body: fs.createReadStream(path.join(storageDir, file)),
-            Key: options.customers.test.storage.options.path + file
-          }, done)
-        , done)
+    const keys = await s3.listObjects({Prefix: options.customers.test.storage.options.path}).promise()
+    await s3.deleteObjects({
+      Delete: {
+        Objects: keys.Contents.map(k => ({Key: k.Key}))
       }
-    ], done)
+    }).promise()
+
+    const files = await globby('**/*', {
+      cwd: storageDir,
+      onlyFiles: true
+    })
+
+    await Promise.all(files.map(file => (
+      s3.putObject({
+        ContentType: mime.getType(file),
+        Body: fs.createReadStream(path.join(storageDir, file)),
+        Key: options.customers.test.storage.options.path + file
+      }).promise()
+    )))
 
     return app
   }
 } else {
   throw new Error('Invalid the test environment variable TEST_ENV. Valids: "local" or "s3".')
-}
-
-function __guard__ (value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined
 }

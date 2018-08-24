@@ -6,11 +6,8 @@ import {requestPolicyFileToken, assertResImageEqualFilePromise} from './fixtures
 import appFactory from './fixtures/app'
 import chai from 'chai'
 chai.should()
-let app = null
 
 describe('Policy', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   /*
           VALID POLICY
   */
@@ -18,6 +15,7 @@ describe('Policy', () => {
     test(
       'Should return a 404 not found when retreive the image that doesn\'t exist',
       async () => {
+        const app = await appFactory()
         await request(app)
           .get('/test/policy/tente.jpg')
           .expect(404)
@@ -30,6 +28,7 @@ describe('Policy', () => {
         const pol = requestPolicyFileToken('expected/tente.jpg', {
           expiration: '2025-01-01T00:00:00'
         })
+        const app = await appFactory()
         await request(app)
           .post('/test/policy/tente.jpg')
           .set('x-authentication', 'apiaccess')
@@ -51,6 +50,7 @@ describe('Policy', () => {
         const pol = requestPolicyFileToken('fixtures/storage/some-file-with-unknown-ext.ozo', {
           expiration: '2025-01-01T00:00:00'
         })
+        const app = await appFactory()
         await request(app)
           .post('/test/policy/some-file-with-unknown-ext.ozo')
           .set('x-authentication', 'apiaccess')
@@ -67,6 +67,7 @@ describe('Policy', () => {
         const pol = requestPolicyFileToken('fixtures/storage/some-file-with-unknown-ext.ozo', {
           expiration: '2025-01-01T00:00:00'
         })
+        const app = await appFactory()
         await request(app)
           .post('/test/policy/some-file-with-unknown-ext.ozo')
           .set('x-authentication', 'apiaccess')
@@ -85,6 +86,7 @@ describe('Policy', () => {
     test(
       'Should return a 404 not found when retreive the image that doesn\'t exist',
       async () => {
+        const app = await appFactory()
         await request(app)
           .get('/test/policy/expired.jpg')
           .expect(404)
@@ -97,6 +99,7 @@ describe('Policy', () => {
         const pol = requestPolicyFileToken('expected/tente.jpg', {
           expiration: '1970-01-01T00:00:00'
         })
+        const app = await appFactory()
         await request(app)
           .post('/test/policy/expired.jpg')
           .set('x-authentication', 'apiaccess')
@@ -110,6 +113,7 @@ describe('Policy', () => {
     return test(
       'Should return a 404 not found when retreive the image that doesn\'t exist',
       async () => {
+        const app = await appFactory()
         await request(app)
           .get('/test/policy/expired.jpg')
           .expect(404)
@@ -124,6 +128,7 @@ describe('Policy', () => {
     test(
       'Should return a 404 not found when retreive the image that doesn\'t exist',
       async () => {
+        const app = await appFactory()
         await request(app)
           .get('/test/policy/invalid.jpg')
           .expect(404)
@@ -133,6 +138,7 @@ describe('Policy', () => {
     test(
       'Should return a 400 Bad Request when adding an image in multipart with a invalid',
       async () => {
+        const app = await appFactory()
         const pol = requestPolicyFileToken('expected/tente.jpg', {
           expiration: '2025-01-01T00:00:00',
           conditions: [
@@ -152,6 +158,7 @@ describe('Policy', () => {
     return test(
       'Should return a 404 not found when retreive the image that doesn\'t exist',
       async () => {
+        const app = await appFactory()
         await request(app)
           .get('/test/policy/invalid.jpg')
           .expect(404)
@@ -170,6 +177,7 @@ describe('Policy', () => {
           ['eq', 'key', 'some-key']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/invalid.jpg')
         .set('accept', 'application/json')
@@ -193,6 +201,7 @@ describe('Policy', () => {
         expiration: '1970-01-01T00:00:00',
         conditions: []
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/invalid.jpg')
         .set('accept', 'application/json')
@@ -216,6 +225,7 @@ describe('Policy', () => {
             ['not-existing-validator', 'key', 'some-key']
           ]
         })
+        const app = await appFactory()
         await request(app)
           .post('/test/policy/invalid.jpg')
           .set('accept', 'application/json')
@@ -243,6 +253,7 @@ describe('Policy', () => {
           ['eq', 'action', 'create']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/action-restriction/creation-allowed.jpg')
         .set('x-authentication', 'apiaccess')
@@ -259,6 +270,7 @@ describe('Policy', () => {
           ['eq', 'action', 'update']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/action-restriction/creation-not-allowed.jpg')
         .set('x-authentication', 'apiaccess')
@@ -276,6 +288,7 @@ describe('Policy', () => {
           ['eq', 'action', 'create']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/action-restriction/update-allowed.jpg')
         .set('x-authentication', 'apiaccess')
@@ -306,6 +319,7 @@ describe('Policy', () => {
           ['eq', 'action', 'create']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/action-restriction/update-not-allowed.jpg')
         .set('x-authentication', 'apiaccess')
@@ -336,6 +350,7 @@ describe('Policy', () => {
           ['eq', 'action', 'create']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/action-restriction/delete-allowed.jpg')
         .set('x-authentication', 'apiaccess')
@@ -366,6 +381,7 @@ describe('Policy', () => {
           ['eq', 'action', 'create']
         ]
       })
+      const app = await appFactory()
       await request(app)
         .post('/test/policy/action-restriction/delete-not-allowed.jpg')
         .set('x-authentication', 'apiaccess')

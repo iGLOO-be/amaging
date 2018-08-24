@@ -10,7 +10,6 @@ const { assert } = chai
 const env = process.env.TEST_ENV || 'local'
 
 let Etag, newEtag
-let app = null
 
 const cacheControl = 'max-age=0, private'
 
@@ -26,10 +25,9 @@ if (env === 'local') {
         CACHE HTTP
 */
 describe('MANAGE HTTP CACHE', () => {
-  beforeEach(done => { app = appFactory(done) })
-
   describe('GET the image', () =>
     test('Should return a 200', async () => {
+      const app = await appFactory()
       const res = await request(app)
         .get('/test/ice.jpg')
         .expect(200)
@@ -40,6 +38,7 @@ describe('MANAGE HTTP CACHE', () => {
 
   describe('GET the image and create cache storage', () => {
     test('Should return a 200 OK', async () => {
+      const app = await appFactory()
       const res = await request(app)
         .get('/test/190x180&/ice.jpg')
         .expect(200)
@@ -54,6 +53,7 @@ describe('MANAGE HTTP CACHE', () => {
 
     // # Via cacheFile
     test('Should return a 304 not modified (190x180)', async () => {
+      const app = await appFactory()
       const res = await request(app)
         .get('/test/190x180&/ice.jpg')
         .expect(200)
@@ -65,6 +65,7 @@ describe('MANAGE HTTP CACHE', () => {
 
     // # Via file
     return test('Should return a 304 not modified (ice.jpg)', async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/ice.jpg')
         .set('if-none-match', Etag)
@@ -75,6 +76,7 @@ describe('MANAGE HTTP CACHE', () => {
   // # with different ETag and should return 200
   describe('GET the image with former Etags', () => {
     test('Should return a 200 OK (ice.jpg)', async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/ice.jpg')
         .set('if-none-match', newEtag)
@@ -83,6 +85,7 @@ describe('MANAGE HTTP CACHE', () => {
 
     // # Via cacheFile
     return test('Should return a 200 OK (190x180)', async () => {
+      const app = await appFactory()
       await request(app)
         .get('/test/190x180&/ice.jpg')
         .set('if-none-match', Etag)

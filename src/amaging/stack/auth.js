@@ -61,10 +61,9 @@ export default () =>
 
       policy.set('key', params.file)
 
-      for (let val = 0; val < amaging.auth.headers.length; val++) {
-        const header = amaging.auth.headers[val]
-        policy.set(header, val)
-      }
+      amaging.auth.headers.forEach(header => {
+        policy.set(header, req.headers[header])
+      })
 
       return next()
 
@@ -102,10 +101,9 @@ export default () =>
 
           policy.set('key', params.file)
 
-          for (let val = 0; val < amaging.auth.headers.length; val++) {
-            const header = amaging.auth.headers[val]
-            policy.set(header, val)
-          }
+          amaging.auth.headers.forEach(header => {
+            policy.set(header, req.headers[header])
+          })
 
           return next()
         })

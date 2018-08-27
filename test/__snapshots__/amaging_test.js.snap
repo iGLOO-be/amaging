@@ -24,7 +24,23 @@ Object {
 }
 `;
 
-exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid conditions 1`] = `
+exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid conditions Invalid content-type 1`] = `
+Object {
+  "body": Object {
+    "data": Object {
+      "key": "content-type",
+      "type": "INVALID_KEY",
+    },
+    "error": "Bad Request",
+    "message": "Invalid value for key: content-type",
+    "statusCode": 400,
+  },
+  "status": 400,
+  "text": "{\\"statusCode\\":400,\\"error\\":\\"Bad Request\\",\\"message\\":\\"Invalid value for key: content-type\\",\\"data\\":{\\"key\\":\\"content-type\\",\\"type\\":\\"INVALID_KEY\\"}}",
+}
+`;
+
+exports[`POST a new json file and check his Content-Type Should return a 403 with an invalid conditions Invalid key 1`] = `
 Object {
   "body": Object {
     "data": Object {

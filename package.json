@@ -1,6 +1,6 @@
 {
   "name": "@igloo-be/amaging",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "lib/amaging/server.js",
   "scripts": {
     "test": "npm run lint && npm run test:local",

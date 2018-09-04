@@ -56,7 +56,7 @@ export function cleanAmagingFile (filePath) {
 
 export function fileTypeOrLookup (type, file) {
   if (!type || (type === 'application/octet-stream')) {
-    return mime.getType(file)
+    return mime.getType(file) || 'application/octet-stream'
   } else {
     return type
   }

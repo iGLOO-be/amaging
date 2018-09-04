@@ -38,6 +38,6 @@ export default class AbstractStorage {
 
   _validWriteInfo (info) {
     assert.ok(info.ContentLength, 'ContentLength property is mandatory in write info.')
-    return assert.ok(info.ContentType, 'ContentType property is mandatory in write info.')
+    assert.ok(info.ContentType, 'ContentType property is mandatory in write info.')
   }
 }

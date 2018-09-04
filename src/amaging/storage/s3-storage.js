@@ -83,7 +83,14 @@ export default class S3Storage extends AbstractStorage {
     const pass = new stream.PassThrough()
 
     this._validWriteInfo(info)
-    this._s3.upload({ Key: this._filepath(file), Body: pass })
+
+    const uploadArg = {
+      Key: this._filepath(file),
+      Body: pass,
+      ContentLength: parseFloat(info.ContentLength),
+      ContentType: info.ContentType || 'application/octet-stream'
+    }
+    this._s3.upload(uploadArg)
       .promise()
       .then(() => {
         pass.emit('close')

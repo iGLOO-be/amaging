@@ -369,7 +369,6 @@ describe('Policy', () => {
         .set('x-authentication', 'apiaccess')
         .set('x-authentication-policy', pol.policy)
         .set('x-authentication-token', pol.token)
-        .attach('img', pol.file_path)
         .expect(200)
     })
 

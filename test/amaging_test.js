@@ -110,7 +110,7 @@ describe('POST a new json file and check his Content-Type', () => {
   test('Should return a 200 OK by adding a json file with a JWT token', async () => {
     const app = await appFactory()
     const data = { test: true }
-    const filePath = '/test/file.json'
+    const filePath = '/test/file.notajsonext'
     await request(app)
       .post(filePath)
       .type('application/json')
@@ -119,7 +119,12 @@ describe('POST a new json file and check his Content-Type', () => {
       .expect(200)
 
     const res = await request(app).get(filePath).expect(200)
-    expect(res.body).toEqual(data)
+    if (process.env.TEST_ENV === 's3') {
+      expect(res.body).toEqual(data)
+      expect(res.headers['content-type']).toEqual('application/json')
+    } else {
+      expect(res.headers['content-type']).toEqual('application/octet-stream')
+    }
   })
 
   test('Should return a 403 with an expired token', async () => {

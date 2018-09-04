@@ -35,6 +35,12 @@ export default class S3Storage extends AbstractStorage {
     const filePath = this._filepath(file)
 
     try {
+      if (file === '/') {
+        const err = new Error('Root directory')
+        err.code = 'NotFound'
+        throw err
+      }
+
       const res = await this._s3.headObject({
         Key: filePath
       }).promise()

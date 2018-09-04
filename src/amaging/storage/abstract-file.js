@@ -22,8 +22,8 @@ export default class AbstractFile {
     this.path = this.filename.charAt(0) === '/' ? this.filename : '/' + this.filename
   }
 
-  async readInfo () {
-    const info = await this.storage.readInfo(this.path)
+  async readInfo (inputInfo) {
+    const info = inputInfo || await this.storage.readInfo(this.path)
     if (info) {
       this.info = Object.assign({}, info, {
         ContentType: info.ContentType || mime.getType(this.filename) || 'application/octet-stream'

@@ -12,6 +12,14 @@ const debug = debugFactory('amaging:storage:s3')
 const InvalidResponse = (method, response) =>
   new Boom(`Invalid ${method.toUpperCase()} response from S3. (Status: ${response.statusCode})`, { statusCode: 500, data: { response } })
 
+const DIRECTORY_INFO = {
+  isDirectory: true,
+  ContentType: 'application/x-directory',
+  ContentLength: 0,
+  ETag: null,
+  LastModified: null
+}
+
 export default class S3Storage extends AbstractStorage {
   constructor (options) {
     super()
@@ -65,13 +73,7 @@ export default class S3Storage extends AbstractStorage {
         const prefixes = (res && res.CommonPrefixes) || []
 
         if (prefixes.find(v => v.Prefix === filePath) || prefixes.find(v => v.Prefix === filePath + '/')) {
-          return {
-            isDirectory: true,
-            ContentType: 'application/x-directory',
-            ContentLength: 0,
-            ETag: null,
-            LastModified: null
-          }
+          return Object.assign({}, DIRECTORY_INFO)
         } else {
           return
         }
@@ -146,7 +148,8 @@ export default class S3Storage extends AbstractStorage {
           File.create(
             this,
             null,
-            file.Prefix.replace(this.options.path, '').replace(/\/$/, '')
+            file.Prefix.replace(this.options.path, '').replace(/\/$/, ''),
+            Object.assign({}, DIRECTORY_INFO)
           )
         )))
       ])

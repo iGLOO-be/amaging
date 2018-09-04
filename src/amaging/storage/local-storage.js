@@ -23,7 +23,7 @@ export default class LocalStorage extends AbstractStorage {
           isDirectory: true,
           ContentType: 'application/x-directory',
           ContentLength: 0,
-          ETag: `"${0}"`,
+          ETag: `"0"`,
           LastModified: stat.mtime
         }
       }

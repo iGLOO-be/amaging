@@ -14,6 +14,9 @@ export default options =>
         cacheControl: 'private',
         maxAge: 0,
         etag: true
+      },
+      writer: {
+        maxSize: 200 * 1024 * 1024 // 200MB
       }
     }, amaging.options)
 

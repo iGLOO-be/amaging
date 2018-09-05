@@ -37,6 +37,7 @@ export default () =>
 
     const form = new formidable.IncomingForm()
     form.keepExtensions = true
+    form.maxFileSize = req.amaging.options.writer.maxSize
 
     // Limit handled files to 1
     form.onPart = (function () {

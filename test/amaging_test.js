@@ -225,6 +225,42 @@ describe('POST a new json file and check his Content-Type', () => {
         })
     }
   )
+  describe('Options: writer.maxSize', () => {
+    test('Should error when body is too large', async () => {
+      const app = await appFactory({
+        writer: {
+          maxSize: 3
+        }
+      })
+      const data = { test: true }
+      const filePath = '/test/body-too-large.json'
+      expectRequestToMatchSnapshot(
+        await request(app)
+          .post(filePath)
+          .type('application/json')
+          .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+            .toJWT()
+          )
+          .set('Accept', 'application/json')
+          .send(JSON.stringify(data))
+          .expect(413)
+      )
+      await request(app).get(filePath).expect(404)
+    })
+  })
+
+  test('Should return the json Content-Type and the content of the file.json', async () => {
+    const app = await appFactory()
+    await request(app)
+      .get('/test/file.json')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect('Content-Length', '13')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({
+        test: true
+      })
+  })
 })
 
 describe('POST a new image file\n', () => {

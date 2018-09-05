@@ -1,6 +1,7 @@
 
 import { httpError } from '../lib/utils'
 import pEvent from 'p-event'
+import Boom from 'boom'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:writer:default')
@@ -58,6 +59,18 @@ export default () =>
     })
 
     debug('Got a write stream, lets pipe')
+    let reqSize = 0
+    req.on('data', data => {
+      reqSize += data.length
+
+      if (reqSize > req.amaging.options.writer.maxSize) {
+        next(Boom.entityTooLarge())
+        stream.end(() => {
+          amaging.file.deleteFile()
+        })
+      }
+    })
+
     req.pipe(stream)
     await pEvent(stream, 'close')
 

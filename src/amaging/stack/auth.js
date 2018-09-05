@@ -17,6 +17,18 @@ const hash = input =>
     .update(input)
     .digest('hex')
 
+const policySetKey = (policy, key) => {
+  try {
+    policy.set('key', key)
+  } catch (err) {
+    if (err.type === 'INVALID_KEY') {
+      policy.set('key', '/' + key)
+    } else {
+      throw err
+    }
+  }
+}
+
 export default () =>
   async function (req, res, next) {
     const { amaging } = req
@@ -59,7 +71,7 @@ export default () =>
 
       amaging.policy = policy
 
-      policy.set('key', params.file)
+      policySetKey(policy, params.file)
 
       amaging.auth.headers.forEach(header => {
         policy.set(header, req.headers[header])
@@ -99,7 +111,7 @@ export default () =>
 
           amaging.policy = policy
 
-          policy.set('key', params.file)
+          policySetKey(policy, params.file)
 
           amaging.auth.headers.forEach(header => {
             policy.set(header, req.headers[header])

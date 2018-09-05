@@ -28,11 +28,21 @@ export default class LocalStorage extends AbstractStorage {
         }
       }
 
+      const metaData = {}
+      try {
+        Object.assign(metaData, await fs.readJSON(getMetaDataFileName(this._filepath(file))))
+      } catch (err) {
+        if (err.code !== 'ENOENT') {
+          throw err
+        }
+      }
+
       return {
         isDirectory: false,
         ContentLength: stat.size,
         ETag: `"${stat.size}"`,
-        LastModified: stat.mtime
+        LastModified: stat.mtime,
+        ...metaData
       }
     } catch (err) {
       if (err.code !== 'ENOENT') {
@@ -47,7 +57,15 @@ export default class LocalStorage extends AbstractStorage {
 
   async requestWriteStream (file, info) {
     await fs.mkdirp(path.dirname(this._filepath(file)))
-    return fs.createWriteStream(this._filepath(file))
+    const stream = fs.createWriteStream(this._filepath(file))
+
+    stream.on('close', () => {
+      fs.writeFile(getMetaDataFileName(this._filepath(file)), {
+        ContentType: info.ContentType
+      })
+    })
+
+    return stream
   }
 
   async deleteFile (file) {
@@ -59,9 +77,9 @@ export default class LocalStorage extends AbstractStorage {
   }
 
   async list (prefix) {
-    const dir = await fs.readdir(this._filepath(prefix))
-    if (dir && Array.isArray(dir)) {
-      const files = await Promise.all(dir.map(file => (
+    const dirFiles = await fs.readdir(this._filepath(prefix))
+    if (dirFiles && Array.isArray(dirFiles)) {
+      const files = await Promise.all(dirFiles.filter(isMetaDataFile).map(file => (
         File.create(
           this,
           null,
@@ -79,4 +97,12 @@ export default class LocalStorage extends AbstractStorage {
   _filepath (file) {
     return path.join(this.options.path, file)
   }
+}
+
+function isMetaDataFile (file) {
+  return file.match(/\.amaging-meta-data$/)
+}
+
+function getMetaDataFileName (file) {
+  return file + '.amaging-meta-data'
 }

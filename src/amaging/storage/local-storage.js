@@ -64,7 +64,6 @@ export default class LocalStorage extends AbstractStorage {
       const files = await Promise.all(dir.map(file => (
         File.create(
           this,
-          null,
           path.join(prefix, file)
         )
       )))

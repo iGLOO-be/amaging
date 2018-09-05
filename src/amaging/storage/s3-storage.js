@@ -140,14 +140,12 @@ export default class S3Storage extends AbstractStorage {
         Promise.all(keys.Contents.map(file => (
           File.create(
             this,
-            null,
             file.Key.replace(this.options.path, '').replace(/\/$/, '')
           )
         ))),
         Promise.all((keys.CommonPrefixes || []).map(file => (
           File.create(
             this,
-            null,
             file.Prefix.replace(this.options.path, '').replace(/\/$/, ''),
             Object.assign({}, DIRECTORY_INFO)
           )

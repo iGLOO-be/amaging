@@ -10,7 +10,6 @@ export default () =>
     const [file, cacheFile] = await Promise.all([
       File.create(
         amaging.storage,
-        amaging.cacheStorage,
         params.file
       ),
       CacheFile.create(

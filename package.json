@@ -45,7 +45,7 @@
     "uuid": "^3.3.2"
   },
   "dependencies": {
-    "@igloo-be/amaging-policy": "^2.0.4",
+    "@igloo-be/amaging-policy": "^2.0.6",
     "async": "~2.6.1",
     "aws-sdk": "^2.298.0",
     "boom": "^7.2.0",

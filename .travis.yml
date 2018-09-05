@@ -1,12 +1,19 @@
 language: node_js
-node_js:
-  - "8"
-  - "9"
-  - "10"
 sudo: true
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y software-properties-common python-software-properties
-  - sudo add-apt-repository ppa:dhor/myway -y
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y graphicsmagick imagemagick
+- sudo apt-get update -qq
+- sudo apt-get install -qq -y software-properties-common python-software-properties
+- sudo add-apt-repository ppa:dhor/myway -y
+- sudo apt-get update -qq
+- sudo apt-get install -qq -y graphicsmagick imagemagick
+node_js:
+- '8'
+- '9'
+- '10'
+env:
+  matrix:
+  - TEST_ENV=local
+  - TEST_ENV=s3
+  global:
+  - secure: lOmvToB+fjCS8pXCIRWLb9us0rWlSaicr2U9k/KXb29Ruf2U0l/wFUoNNzdbJu1pWWBhfeU387UkHWZ4wlW+axdWhk/UmbDFrBG2R0GulTPnAPQW9G7MIx+BkJypdckPPAagZFaUuyGnwiT0BeCEKcPpoYuiWNgrMOWFB95//Bmfj04y5J6K26naaeBsWL8Vu3vJND2syWTgdxmiI84jBc3Yc8r1aQ7EgphDHJ5LB9vWImwb8oqtKwzsxGXE6vIQK4+8WhLxA93GEQkusgwEGGfFbDqDHzA722Fj4nKdwGMSMCqnRGVlMB2Ba33VfJ2/AquvHYDmf1YVCj696AIymHis4Po+GpTwEQoFS1am39QYmSfPVG7kavmaH+YBnRHYxe21BdRDMfK8VnnGtbprYz7bL58ZMTl9vd/zM7jeeyAwp8aM4xK691FACqhBLMjmIyq+ygaAOWSx0TsHXBkdfiTIBHOhmE6Wxl7Jm4X4IRk/YLlVHlO9eGFs5aV0RN0Oeea0VWaVjnxmso/mwqoA7ZPy9mZdJMPOl9pJT/DOu/G4j1hF5A1TjQ8eKUaZlB3obzvBG3uyibxnhsBwSD/ZmmanE0Pxy3SkcoOwMDQFwIGYXsikb/MWZ5sSHWkI4R7geVSS9RfCda+5bZA0v9ANIEPdKagAMZmhkzX0jTiYd5o=
+  - secure: BdHP9Zu0as9EmEd/b2AOPDb0C9fjeJnqxf8c+7OdHbI4/3ku75DYIoTtXWoATdHAtRZ6JeAz88tf05OWa1mlIpU3SHQCge3RyUXyy1hc7dqsz4N8VvHWxvC/QYOTtBkHQR4fFsY0rQlQUjpCM3sulTtNBRzWDA1Tf5ncMpfV7jYzUMXos+q+NMmshegyf5atWGHpdE712C+Ng52RooXm0BfRJF6vufu8oMMAB9gRiYEkvHYSPxBKAPezrYLoYkKSEmo3rxjs6x18+jNURIrgS7UkwbLGU0OyL5JfVQz/4AC5JVJ0LulWwaERE+rfqrMYGTHgxxi3GtJrsr5beERGNocOu7Q1D9zbsHLHwwNgtx2iLWvh/qSMMDDio5wLV69Q1c5Z2w9P4cdjqSFVMuUHKR7S+crAdk+qVQnyBR5CB95Vuy4RacaPsg942H6+nGjChDDx/FxSCKd25BVXrdtm4FdECEM26Z9xBeHJoAWVVP4N928RyLbFHpv6Ls+TgEKsb606LAhJgq8GVYA+hr3DzZKn/t5FWboOSypyJonBvnWjKz/sViy+dv2mIBS+04cfA36L9wr2qGKZsuuwcDXaK8xBHkm9CaTLVEn0M4pm7Bdfx9OdIsF7cufddiAOdPR62w42rWkCHaAWRJzrMVh/wjue4+KfBwK8WUymw9I8ZiY=

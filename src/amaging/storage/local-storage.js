@@ -2,16 +2,13 @@
 import AbstractStorage from './abstract-storage'
 import path from 'path'
 import fs from 'fs-extra'
-import extend from 'lodash/extend'
 import sortBy from 'lodash/sortBy'
 import File from '../storage/file'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options) {
     super()
-    this.options = extend(
-      {path: '/'}
-      , options)
+    this.options = Object.assign({ path: '/' }, options)
   }
 
   async readInfo (file) {
@@ -39,6 +36,10 @@ export default class LocalStorage extends AbstractStorage {
         throw err
       }
     }
+  }
+
+  async createAsDirectory (filename) {
+    await fs.mkdirp(this._filepath(filename))
   }
 
   async requestReadStream (file) {

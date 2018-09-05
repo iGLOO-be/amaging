@@ -36,6 +36,10 @@ export default class AbstractStorage {
     throw new Error('Not Implemented')
   }
 
+  async createAsDirectory (path) {
+    throw new Error('Not Implemented')
+  }
+
   _validWriteInfo (info) {
     assert.ok(info.ContentLength, 'ContentLength property is mandatory in write info.')
     assert.ok(info.ContentType, 'ContentType property is mandatory in write info.')

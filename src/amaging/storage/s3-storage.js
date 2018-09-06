@@ -12,13 +12,13 @@ const debug = debugFactory('amaging:storage:s3')
 const InvalidResponse = (method, response) =>
   new Boom(`Invalid ${method.toUpperCase()} response from S3. (Status: ${response.statusCode})`, { statusCode: 500, data: { response } })
 
-const DIRECTORY_INFO = {
+const DIRECTORY_INFO = Object.freeze({
   isDirectory: true,
   ContentType: 'application/x-directory',
   ContentLength: 0,
   ETag: null,
   LastModified: null
-}
+})
 
 export default class S3Storage extends AbstractStorage {
   constructor (options) {
@@ -52,6 +52,10 @@ export default class S3Storage extends AbstractStorage {
       const res = await this._s3.headObject({
         Key: filePath
       }).promise()
+
+      if (filePath.match(/\/$/)) {
+        return Object.assign({}, DIRECTORY_INFO)
+      }
 
       return {
         isDirectory: false,
@@ -130,14 +134,20 @@ export default class S3Storage extends AbstractStorage {
   }
 
   async list (prefix) {
+    const filePrefix = this._filepath(prefix)
+
     const keys = await this._s3.listObjects({
-      Prefix: this._filepath(prefix),
+      Prefix: filePrefix,
       Delimiter: '/'
     }).promise()
 
     if (keys && keys.Contents && Array.isArray(keys.Contents)) {
+      const contents = keys.Contents
+        // In case of directory (as file), it should not list himself
+        .filter(file => file.Key !== filePrefix)
+
       const [files, directories] = await Promise.all([
-        Promise.all(keys.Contents.map(file => (
+        Promise.all(contents.map(file => (
           File.create(
             this,
             file.Key.replace(this.options.path, '').replace(/\/$/, '')
@@ -155,6 +165,15 @@ export default class S3Storage extends AbstractStorage {
       return [...directories, ...files]
     }
     return []
+  }
+
+  async createAsDirectory (filename) {
+    await this._s3.upload({
+      Key: this._filepath(filename),
+      Body: '',
+      ContentType: DIRECTORY_INFO.ContentType,
+      ContentLength: DIRECTORY_INFO.ContentLength
+    }).promise()
   }
 
   _filepath (file) {

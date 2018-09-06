@@ -52,6 +52,11 @@ export default class AbstractFile {
     return !!this.info
   }
 
+  async createAsDirectory () {
+    await this.storage.createAsDirectory(this.filename)
+    await this.readInfo()
+  }
+
   isDirectory () {
     return (this.info != null ? this.info.isDirectory : undefined)
   }

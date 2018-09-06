@@ -16,8 +16,7 @@ export default () =>
     debug('Start default writer with %j', {
       contentLength,
       contentType
-    }
-    )
+    })
 
     // Set `action` to policy for allow action restriction
     amaging.policy.set('action',
@@ -25,6 +24,23 @@ export default () =>
         ? 'update'
         : 'create'
     )
+
+    if (amaging.file.filename.match(/\/$/)) {
+      debug('Start directory creation')
+
+      if (!amaging.file.exists()) {
+        debug('file not exist, creating a directory')
+        await amaging.file.createAsDirectory()
+        debug('end creating directory')
+      }
+
+      res.send({
+        success: true,
+        file: amaging.file
+      })
+
+      return
+    }
 
     if (!contentLength) {
       debug('Abort default writer due to missing headers')
@@ -55,6 +71,6 @@ export default () =>
 
     res.send({
       success: true,
-      file: amaging.file.info
+      file: amaging.file
     })
   }

@@ -6,8 +6,8 @@ import sortBy from 'lodash/sortBy'
 import File from '../storage/file'
 
 export default class LocalStorage extends AbstractStorage {
-  constructor (options) {
-    super()
+  constructor (options, amaging) {
+    super(options, amaging)
     this.options = Object.assign({ path: '/' }, options)
   }
 

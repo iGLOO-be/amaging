@@ -1,7 +1,6 @@
 
 export default () =>
   function (req, res, next) {
-    // if not multipart
     const contentType = req.headers['content-type']
 
     if (!(contentType != null ? contentType.match(/^multipart\/form-data/) : undefined)) {

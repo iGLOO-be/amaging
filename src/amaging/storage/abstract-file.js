@@ -1,6 +1,6 @@
 
-import mime from 'mime'
 import path from 'path'
+import { fileTypeOrLookup } from '../lib/utils'
 
 const optionsRegex = /^(.*)&\//
 const optionsSep = '&'
@@ -26,7 +26,7 @@ export default class AbstractFile {
     const info = inputInfo || await this.storage.readInfo(this.path)
     if (info) {
       this.info = Object.assign({}, info, {
-        ContentType: info.ContentType || mime.getType(this.filename) || 'application/octet-stream'
+        ContentType: fileTypeOrLookup(info.ContentType, this.filename)
       })
     }
     return this.info
@@ -80,5 +80,15 @@ export default class AbstractFile {
     }
     Object.assign(json, this.info)
     return json
+  }
+
+  get httpResponseHeaders () {
+    return {
+      'Content-Length': this.contentLength(),
+      'Content-Type': this.contentType(),
+      'Etag': this.eTag(),
+      'Cache-Control': `max-age=${this.storage.amaging.options.cache['maxAge']}, ${this.storage.amaging.options.cache['cacheControl']}`,
+      'Last-Modified': this.lastModified()
+    }
   }
 }

@@ -1,6 +1,6 @@
 
-import mime from 'mime'
 import path from 'path'
+import { fileTypeOrLookup } from '../lib/utils'
 
 const optionsRegex = /^(.*)&\//
 const optionsSep = '&'
@@ -26,7 +26,7 @@ export default class AbstractFile {
     const info = inputInfo || await this.storage.readInfo(this.path)
     if (info) {
       this.info = Object.assign({}, info, {
-        ContentType: info.ContentType || mime.getType(this.filename) || 'application/octet-stream'
+        ContentType: fileTypeOrLookup(info.ContentType, this.filename)
       })
     }
     return this.info

@@ -1,6 +1,4 @@
 
-import { fileTypeOrLookup } from '../lib/utils'
-
 import GMFilterEngine from '../../gm-filter/gm-filter'
 import tmp from 'tmp'
 import fs from 'fs-extra'
@@ -17,6 +15,7 @@ export default () =>
     const { amaging } = req
     const { options } = amaging.file
     const acceptType = [
+      'image/jpg',
       'image/jpeg',
       'image/png',
       'image/gif',
@@ -43,8 +42,7 @@ export default () =>
       return next()
     }
 
-    const fileType = fileTypeOrLookup(amaging.file.contentType(), amaging.file.filename)
-    if (!(acceptType.indexOf(fileType) > -1)) {
+    if (!(acceptType.indexOf(amaging.file.contentType()) > -1)) {
       debug('Stop image reader cause the file is not an image')
       return next()
     }

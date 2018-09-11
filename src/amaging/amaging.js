@@ -60,6 +60,8 @@ export default options =>
       cidResolver(),
       storageIniter(),
       fileIniter(),
+      cacheResolver(),
+      imageReader(),
       headResolver()
     ])
   })

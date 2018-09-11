@@ -8,7 +8,6 @@ const debug = debugFactory('amaging:reader:default')
 export default () =>
   async function (req, res, next) {
     const { amaging } = req
-    const customer = amaging.options.cache
 
     debug('Start default reader for file: %j', amaging.file)
 
@@ -24,11 +23,7 @@ export default () =>
 
     debug('File exists!')
 
-    res.setHeader('Content-Length', amaging.file.contentLength())
-    res.setHeader('Content-Type', amaging.file.contentType())
-    res.setHeader('Etag', amaging.file.eTag())
-    res.setHeader('Cache-Control', `max-age=${customer['maxAge']}, ${customer['cacheControl']}`)
-    res.setHeader('Last-Modified', amaging.file.lastModified())
+    res.set(amaging.file.httpResponseHeaders)
 
     const stream = await amaging.file.requestReadStream()
 

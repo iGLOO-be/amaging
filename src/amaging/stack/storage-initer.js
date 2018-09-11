@@ -8,11 +8,13 @@ export default () =>
 
     amaging.storage = AbstractStorage.create(
       customer.storage.type,
-      customer.storage.options
+      customer.storage.options,
+      amaging
     )
     amaging.cacheStorage = AbstractStorage.create(
       customer.cacheStorage.type,
-      customer.cacheStorage.options
+      customer.cacheStorage.options,
+      amaging
     )
 
     return next()

@@ -203,7 +203,7 @@ describe('POST a new json file and check his Content-Type', () => {
           .post(filePath)
           .type('application/json')
           .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
-            .cond('starts-with', 'content-type', 'image//')
+            .cond('starts-with', 'content-type', 'image/')
             .toJWT()
           )
           .set('Accept', 'application/json')
@@ -223,7 +223,7 @@ describe('POST a new json file and check his Content-Type', () => {
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Length', '13')
-        .expect('Content-Type', 'application/json')
+        .expect('Content-Type', 'application/json; charset=utf-8')
         .expect({
           test: true
         })

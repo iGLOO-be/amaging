@@ -81,4 +81,14 @@ export default class AbstractFile {
     Object.assign(json, this.info)
     return json
   }
+
+  get httpResponseHeaders () {
+    return {
+      'Content-Length': this.contentLength(),
+      'Content-Type': this.contentType(),
+      'Etag': this.eTag(),
+      'Cache-Control': `max-age=${this.storage.amaging.options.cache['maxAge']}, ${this.storage.amaging.options.cache['cacheControl']}`,
+      'Last-Modified': this.lastModified()
+    }
+  }
 }

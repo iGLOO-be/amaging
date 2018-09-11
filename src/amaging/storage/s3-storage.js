@@ -21,8 +21,8 @@ const DIRECTORY_INFO = Object.freeze({
 })
 
 export default class S3Storage extends AbstractStorage {
-  constructor (options) {
-    super()
+  constructor (options, amaging) {
+    super(options, amaging)
     this.options = options
     this._s3 = new AWS.S3({
       accessKeyId: this.options.key,

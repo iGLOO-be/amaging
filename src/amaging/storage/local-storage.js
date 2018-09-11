@@ -32,7 +32,7 @@ export default class LocalStorage extends AbstractStorage {
         LastModified: stat.mtime
       }
     } catch (err) {
-      if (err.code !== 'ENOENT') {
+      if (err.code !== 'ENOENT' && err.code !== 'ENOTDIR') {
         throw err
       }
     }

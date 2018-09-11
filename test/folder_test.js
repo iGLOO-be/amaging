@@ -67,4 +67,13 @@ describe('Get/add a folder', () => {
       .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
       .expect(200)
   })
+
+  test('Should return a 404 not found, trying to access a file as a folder, instead of throwing ENOTDIR)', async () => {
+    const app = await appFactory()
+    await addFolder(app, '/notADir')
+    await request(app)
+      .get('/test/notADir/')
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(404)
+  })
 })

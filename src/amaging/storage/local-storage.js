@@ -8,7 +8,7 @@ import File from '../storage/file'
 export default class LocalStorage extends AbstractStorage {
   constructor (options, amaging) {
     super(options, amaging)
-    this.options = Object.assign({ path: '/' }, options)
+    this.options = Object.assign({ path: '/' }, this.options)
   }
 
   async readInfo (file) {

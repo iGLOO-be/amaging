@@ -61,9 +61,9 @@ export default class LocalStorage extends AbstractStorage {
     const stream = fs.createWriteStream(this._filepath(file))
 
     stream.on('close', () => {
-      fs.writeFile(getMetaDataFileName(this._filepath(file)), {
+      fs.writeFile(getMetaDataFileName(this._filepath(file)), JSON.stringify({
         ContentType: info.ContentType
-      })
+      }))
     })
 
     return stream
@@ -80,13 +80,12 @@ export default class LocalStorage extends AbstractStorage {
   async list (prefix) {
     const dirFiles = await fs.readdir(this._filepath(prefix))
     if (dirFiles && Array.isArray(dirFiles)) {
-      const files = await Promise.all(dirFiles.filter(isMetaDataFile).map(file => (
+      const files = await Promise.all(dirFiles.filter(file => !isMetaDataFile(file)).map(file => (
         File.create(
           this,
           path.join(prefix, file)
         )
       )))
-
       return sortBy(files, file => !file.isDirectory())
     }
     return []

@@ -18,6 +18,7 @@ Array [
     "LastModified": null,
     "basename": "cache-eviction-delete.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/cache-eviction-delete.jpg",
   },
   Object {
@@ -27,6 +28,7 @@ Array [
     "LastModified": null,
     "basename": "cache-eviction-update.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/cache-eviction-update.jpg",
   },
   Object {
@@ -36,6 +38,7 @@ Array [
     "LastModified": null,
     "basename": "delete.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/delete.jpg",
   },
   Object {
@@ -45,6 +48,7 @@ Array [
     "LastModified": null,
     "basename": "file.json",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/file.json",
   },
   Object {
@@ -54,6 +58,7 @@ Array [
     "LastModified": null,
     "basename": "ice.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/ice.jpg",
   },
   Object {
@@ -63,6 +68,7 @@ Array [
     "LastModified": null,
     "basename": "igloo.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/igloo.jpg",
   },
   Object {
@@ -72,6 +78,7 @@ Array [
     "LastModified": null,
     "basename": "some-file-with-unknown-ext.ozo",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/some-file-with-unknown-ext.ozo",
   },
 ]
@@ -86,6 +93,7 @@ Array [
     "LastModified": null,
     "basename": "ice.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/sub-folder/ice.jpg",
   },
 ]
@@ -100,6 +108,7 @@ Array [
     "LastModified": null,
     "basename": "ice.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/sub-folder/ice.jpg",
   },
 ]
@@ -114,6 +123,7 @@ Array [
     "LastModified": null,
     "basename": "ice.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/sub-folder/ice.jpg",
   },
 ]
@@ -128,6 +138,7 @@ Array [
     "LastModified": null,
     "basename": "ice.jpg",
     "isDirectory": false,
+    "metaData": Object {},
     "path": "/sub-folder/ice.jpg",
   },
 ]

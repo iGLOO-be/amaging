@@ -6,16 +6,20 @@ import appFactory from './fixtures/app'
 
 const env = process.env.TEST_ENV || 'local'
 
-let Etag, newEtag
+let Etag, newEtag, size, newSize
 
 const cacheControl = 'max-age=0, private'
 
 if (env === 'local') {
   Etag = '"17252"'
-  newEtag = '"4676"'
+  size = '17252'
+  newEtag = process.env.CI ? '"4660"' : '"4676"'
+  newSize = process.env.CI ? '4660' : '4676'
 } else {
   Etag = '"1cc596b7a579db797f8aea80bba65415"'
+  size = '17252'
   newEtag = '"ab093153e0081a27fef6b85262189695"'
+  newSize = process.env.CI ? '4660' : '4676'
 }
 
 /*
@@ -31,7 +35,7 @@ describe('MANAGE HTTP CACHE', () => {
         .expect('cache-control', cacheControl)
         .expect('etag', Etag)
         .expect('content-type', 'image/jpeg')
-        .expect('content-length', '17252')
+        .expect('content-length', size)
         // .expect('Last-Modified')
     })
   )
@@ -45,7 +49,7 @@ describe('MANAGE HTTP CACHE', () => {
         .expect('cache-control', cacheControl)
         .expect('etag', newEtag)
         .expect('content-type', 'image/jpeg')
-        .expect('content-length', '4676')
+        .expect('content-length', newSize)
     })
 
     // # Via cacheFile
@@ -85,7 +89,7 @@ describe('MANAGE HTTP CACHE', () => {
         .expect('cache-control', cacheControl)
         .expect('etag', Etag)
         .expect('content-type', 'image/jpeg')
-        .expect('content-length', '17252')
+        .expect('content-length', size)
     })
 
     // # Via cacheFile
@@ -98,7 +102,7 @@ describe('MANAGE HTTP CACHE', () => {
         .expect('cache-control', cacheControl)
         .expect('etag', newEtag)
         .expect('content-type', 'image/jpeg')
-        .expect('content-length', '4676')
+        .expect('content-length', newSize)
     })
   })
 })

@@ -121,7 +121,7 @@ describe('POST a new json file and check his Content-Type', () => {
     const res = await request(app).get(filePath).expect(200)
     if (process.env.TEST_ENV === 's3') {
       expect(res.body).toEqual(data)
-      expect(res.headers['content-type']).toEqual('application/json')
+      expect(res.headers['content-type']).toEqual('application/json; charset=utf-8')
     } else {
       expect(res.headers['content-type']).toEqual('application/octet-stream')
     }

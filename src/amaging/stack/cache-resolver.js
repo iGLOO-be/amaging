@@ -20,6 +20,7 @@ const doneCacheWith = function (res, file, headers, next) {
       if (headers['if-none-match'] !== info['ETag']) {
         return next()
       } else {
+        res.set(file.httpResponseHeaders)
         res.status(304, 'Not Modified')
         return res.send('')
       }

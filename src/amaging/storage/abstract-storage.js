@@ -2,14 +2,15 @@
 import assert from 'assert'
 
 export default class AbstractStorage {
-  static create (type, options) {
+  static create (type, options, amaging) {
     const Storage = require(`./${type}-storage`).default
-    const storage = new Storage(options)
+    const storage = new Storage(options, amaging)
     return storage
   }
 
-  constructor (options) {
+  constructor (options, amaging) {
     this.options = options
+    this.amaging = amaging
   }
 
   async readInfo (file) {
@@ -33,6 +34,10 @@ export default class AbstractStorage {
   }
 
   async list (prefix) {
+    throw new Error('Not Implemented')
+  }
+
+  async createAsDirectory (path) {
     throw new Error('Not Implemented')
   }
 

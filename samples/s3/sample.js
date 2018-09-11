@@ -4,6 +4,7 @@ require('longjohn')
 const server = require('../../lib/amaging/server').default
 
 const app = server({
+  cors: true,
   customers: {
     test: {
       access: {

@@ -1,12 +1,18 @@
 language: node_js
-node_js:
-  - "8"
-  - "9"
-  - "10"
 sudo: true
 before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y software-properties-common python-software-properties
-  - sudo add-apt-repository ppa:dhor/myway -y
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq -y graphicsmagick imagemagick
+- sudo apt-get update -qq
+- sudo apt-get install -qq -y software-properties-common python-software-properties
+- sudo add-apt-repository ppa:dhor/myway -y
+- sudo apt-get update -qq
+- sudo apt-get install -qq -y graphicsmagick imagemagick
+node_js:
+- '8'
+- '9'
+- '10'
+env:
+  matrix:
+  - TEST_ENV=local
+  - TEST_ENV=s3
+  global:
+  - secure: BdHP9Zu0as9EmEd/b2AOPDb0C9fjeJnqxf8c+7OdHbI4/3ku75DYIoTtXWoATdHAtRZ6JeAz88tf05OWa1mlIpU3SHQCge3RyUXyy1hc7dqsz4N8VvHWxvC/QYOTtBkHQR4fFsY0rQlQUjpCM3sulTtNBRzWDA1Tf5ncMpfV7jYzUMXos+q+NMmshegyf5atWGHpdE712C+Ng52RooXm0BfRJF6vufu8oMMAB9gRiYEkvHYSPxBKAPezrYLoYkKSEmo3rxjs6x18+jNURIrgS7UkwbLGU0OyL5JfVQz/4AC5JVJ0LulWwaERE+rfqrMYGTHgxxi3GtJrsr5beERGNocOu7Q1D9zbsHLHwwNgtx2iLWvh/qSMMDDio5wLV69Q1c5Z2w9P4cdjqSFVMuUHKR7S+crAdk+qVQnyBR5CB95Vuy4RacaPsg942H6+nGjChDDx/FxSCKd25BVXrdtm4FdECEM26Z9xBeHJoAWVVP4N928RyLbFHpv6Ls+TgEKsb606LAhJgq8GVYA+hr3DzZKn/t5FWboOSypyJonBvnWjKz/sViy+dv2mIBS+04cfA36L9wr2qGKZsuuwcDXaK8xBHkm9CaTLVEn0M4pm7Bdfx9OdIsF7cufddiAOdPR62w42rWkCHaAWRJzrMVh/wjue4+KfBwK8WUymw9I8ZiY=

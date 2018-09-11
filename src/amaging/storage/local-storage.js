@@ -2,16 +2,13 @@
 import AbstractStorage from './abstract-storage'
 import path from 'path'
 import fs from 'fs-extra'
-import extend from 'lodash/extend'
 import sortBy from 'lodash/sortBy'
 import File from '../storage/file'
 
 export default class LocalStorage extends AbstractStorage {
-  constructor (options) {
-    super()
-    this.options = extend(
-      {path: '/'}
-      , options)
+  constructor (options, amaging) {
+    super(options, amaging)
+    this.options = Object.assign({ path: '/' }, options)
   }
 
   async readInfo (file) {
@@ -51,6 +48,10 @@ export default class LocalStorage extends AbstractStorage {
     }
   }
 
+  async createAsDirectory (filename) {
+    await fs.mkdirp(this._filepath(filename))
+  }
+
   async requestReadStream (file) {
     return fs.createReadStream(this._filepath(file))
   }
@@ -60,9 +61,9 @@ export default class LocalStorage extends AbstractStorage {
     const stream = fs.createWriteStream(this._filepath(file))
 
     stream.on('close', () => {
-      fs.writeFile(getMetaDataFileName(this._filepath(file)), {
+      fs.writeFile(getMetaDataFileName(this._filepath(file)), JSON.stringify({
         ContentType: info.ContentType
-      })
+      }))
     })
 
     return stream
@@ -79,14 +80,12 @@ export default class LocalStorage extends AbstractStorage {
   async list (prefix) {
     const dirFiles = await fs.readdir(this._filepath(prefix))
     if (dirFiles && Array.isArray(dirFiles)) {
-      const files = await Promise.all(dirFiles.filter(isMetaDataFile).map(file => (
+      const files = await Promise.all(dirFiles.filter(file => !isMetaDataFile(file)).map(file => (
         File.create(
           this,
-          null,
           path.join(prefix, file)
         )
       )))
-
       return sortBy(files, file => !file.isDirectory())
     }
     return []

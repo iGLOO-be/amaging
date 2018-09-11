@@ -19,7 +19,13 @@ const env = process.env.TEST_ENV || 'local'
 
 const storageDir = path.join(__dirname, 'storage')
 
+const mainTestId = uuid()
+
 if (env === 'local') {
+  afterAll(done => {
+    rimraf(path.join(__dirname, '../..', '.tmp', mainTestId), done)
+  })
+
   module.exports = async function (options) {
     const testID = uuid()
     options = extend({
@@ -31,13 +37,13 @@ if (env === 'local') {
           storage: {
             type: 'local',
             options: {
-              path: path.join(__dirname, '../..', '.tmp', 'storage', testID)
+              path: path.join(__dirname, '../..', '.tmp', mainTestId, testID, 'storage')
             }
           },
           cacheStorage: {
             type: 'local',
             options: {
-              path: path.join(__dirname, '../..', '.tmp', 'storage_cache', testID)
+              path: path.join(__dirname, '../..', '.tmp', mainTestId, testID, 'storage_cache')
             }
           }
         }
@@ -60,15 +66,38 @@ if (env === 'local') {
     return app
   }
 } else if (env === 's3') {
+  const isMinio = process.env.MINIO_ENDPOINT && process.env.MINIO_PORT
+  const minioConfig = isMinio ? {
+    endpoint: process.env.MINIO_ENDPOINT,
+    port: process.env.MINIO_PORT,
+    style: 'path'
+  } : {}
+
+  afterAll(async () => {
+    const s3 = new AWS.S3(Object.assign({
+      accessKeyId: process.env.S3_ACCESS_KEY,
+      secretAccessKey: process.env.S3_SECRET_KEY,
+      params: {
+        Bucket: process.env.S3_BUCKET
+      }
+    }, isMinio && {
+      endpoint: `http://${minioConfig.endpoint}:${minioConfig.port}`,
+      s3ForcePathStyle: 'true',
+      signatureVersion: 'v4'
+    }))
+
+    const keys = await s3.listObjects({Prefix: `test_${mainTestId}`}).promise()
+    if (keys.Contents.length > 0) {
+      await s3.deleteObjects({
+        Delete: {
+          Objects: keys.Contents.map(k => ({Key: k.Key}))
+        }
+      }).promise()
+    }
+  })
+
   module.exports = async function (options) {
     const testID = uuid()
-
-    const isMinio = process.env.MINIO_ENDPOINT && process.env.MINIO_PORT
-    const minioConfig = isMinio ? {
-      endpoint: process.env.MINIO_ENDPOINT,
-      port: process.env.MINIO_PORT,
-      style: 'path'
-    } : {}
 
     options = merge({
       customers: {
@@ -80,7 +109,7 @@ if (env === 'local') {
             type: 's3',
             options: Object.assign({
               bucket: process.env.S3_BUCKET,
-              path: `storage/main/${testID}/`,
+              path: `test_${mainTestId}/${testID}/storage/main/`,
               key: process.env.S3_ACCESS_KEY,
               secret: process.env.S3_SECRET_KEY
             }, minioConfig)
@@ -89,7 +118,7 @@ if (env === 'local') {
             type: 's3',
             options: Object.assign({
               bucket: process.env.S3_BUCKET,
-              path: `storage/cache/${testID}/`,
+              path: `test_${mainTestId}//${testID}storage/cache/`,
               key: process.env.S3_ACCESS_KEY,
               secret: process.env.S3_SECRET_KEY
             }, minioConfig)
@@ -119,11 +148,6 @@ if (env === 'local') {
 
     const keys = await s3.listObjects({Prefix: options.customers.test.storage.options.path}).promise()
     if (keys.Contents.length > 0) {
-      console.log('try delete', {
-        Delete: {
-          Objects: keys.Contents.map(k => ({Key: k.Key}))
-        }
-      })
       await s3.deleteObjects({
         Delete: {
           Objects: keys.Contents.map(k => ({Key: k.Key}))

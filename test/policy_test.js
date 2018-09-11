@@ -216,7 +216,7 @@ describe('Policy', () => {
         })
     })
 
-    return test(
+    test(
       'Should return a Forbidden when policy conditions are not correct',
       async () => {
         const pol = requestPolicyFileToken('expected/tente.jpg', {
@@ -251,6 +251,40 @@ describe('Policy', () => {
         expiration: '2025-01-01T00:00:00',
         conditions: [
           ['eq', 'action', 'create']
+        ]
+      })
+      const app = await appFactory()
+      await request(app)
+        .post('/test/policy/action-restriction/creation-allowed.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-policy', pol.policy)
+        .set('x-authentication-token', pol.token)
+        .attach('img', pol.file_path)
+        .expect(200)
+    })
+
+    test('Should return a 200 if key is allowed', async () => {
+      const pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'key', 'policy/action-restriction/creation-allowed.jpg']
+        ]
+      })
+      const app = await appFactory()
+      await request(app)
+        .post('/test/policy/action-restriction/creation-allowed.jpg')
+        .set('x-authentication', 'apiaccess')
+        .set('x-authentication-policy', pol.policy)
+        .set('x-authentication-token', pol.token)
+        .attach('img', pol.file_path)
+        .expect(200)
+    })
+
+    test('Should return a 200 if key is allowed (with slash at begin)', async () => {
+      const pol = requestPolicyFileToken('expected/tente.jpg', {
+        expiration: '2025-01-01T00:00:00',
+        conditions: [
+          ['eq', 'key', '/policy/action-restriction/creation-allowed.jpg']
         ]
       })
       const app = await appFactory()

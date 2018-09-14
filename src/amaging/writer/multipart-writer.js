@@ -3,6 +3,7 @@ import { httpError, fileTypeOrLookup, findMaxSizeFromPolicy } from '../lib/utils
 import formidable from 'formidable'
 import fs from 'fs-extra'
 import pEvent from 'p-event'
+import Boom from 'boom'
 
 import debug from 'debug'
 
@@ -52,16 +53,21 @@ export default () =>
       }
     })()
 
-    debug('Keep Refereces')
-    // keep references to fields and files
-    const files = await new Promise((resolve, reject) => {
-      form.parse(req, function (err, fields, files) {
-        if (err) reject(err)
-        else resolve(files)
+    debug('Parse request')
+    let files
+    try {
+      files = await new Promise((resolve, reject) => {
+        form.parse(req, function (err, fields, files) {
+          if (err) reject(err)
+          else resolve(files)
+        })
       })
-    })
-
-    debug('Check file')
+    } catch (err) {
+      if (err.message.match(/maxFileSize exceeded/)) {
+        throw Boom.entityTooLarge()
+      }
+      throw err
+    }
 
     const file = files[Object.keys(files)[0]]
 

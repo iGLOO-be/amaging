@@ -1,9 +1,8 @@
 
-import { httpError } from '../lib/utils'
+import { httpError, findMaxSizeFromPolicy } from '../lib/utils'
 import pEvent from 'p-event'
 import Boom from 'boom'
 import { Transform } from 'stream'
-import { parse as bytesParse } from 'bytes'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:writer:default')
@@ -18,6 +17,7 @@ export default () =>
     const action = amaging.file.exists()
       ? 'update'
       : 'create'
+    const maxSize = findMaxSizeFromPolicy(amaging.policy, amaging.options.writer.maxSize)
 
     debug('Start default writer with %j', {
       contentLength,
@@ -61,7 +61,7 @@ export default () =>
 
     debug('Got a write stream, lets pipe')
     const meterStream = req
-      .pipe(new Meter(req.amaging.options.writer.maxSize))
+      .pipe(new Meter(maxSize))
     meterStream.on('error', (err) => {
       writableStream.emit('error', err)
       next(err)
@@ -86,7 +86,7 @@ class Meter extends Transform {
   constructor (maxBytes) {
     super()
     this.bytes = 0
-    this.maxBytes = bytesParse(maxBytes) || Number.MAX_VALUE
+    this.maxBytes = maxBytes || Number.MAX_VALUE
   }
 
   _transform (chunk, encoding, cb) {

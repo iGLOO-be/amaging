@@ -12,6 +12,18 @@ Object {
 }
 `;
 
+exports[`POST a new json file and check his Content-Type Options: writer.maxSize Should honnor Content-Length restriction of policy 1`] = `
+Object {
+  "body": Object {
+    "error": "Request Entity Too Large",
+    "message": "Request Entity Too Large",
+    "statusCode": 413,
+  },
+  "status": 413,
+  "text": "{\\"statusCode\\":413,\\"error\\":\\"Request Entity Too Large\\",\\"message\\":\\"Request Entity Too Large\\"}",
+}
+`;
+
 exports[`POST a new json file and check his Content-Type Should return a 403 with an expired token 1`] = `
 Object {
   "body": Object {

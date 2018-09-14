@@ -1,5 +1,6 @@
 
 import merge from 'lodash/merge'
+import { parse as bytesParse } from 'bytes'
 
 export default options =>
   function (req, res, next) {
@@ -16,9 +17,11 @@ export default options =>
         etag: true
       },
       writer: {
-        maxSize: 200 * 1024 * 1024 // 200MB
+        maxSize: bytesParse('200mb')
       }
     }, amaging.options)
+
+    amaging.options.writer.maxSize = bytesParse(amaging.options.writer.maxSize)
 
     amaging.auth =
       {headers: []}

@@ -3,6 +3,7 @@ import { httpError, fileTypeOrLookup } from '../lib/utils'
 import formidable from 'formidable'
 import fs from 'fs-extra'
 import pEvent from 'p-event'
+import { parse as bytesParse } from 'bytes'
 
 import debug from 'debug'
 
@@ -37,7 +38,7 @@ export default () =>
 
     const form = new formidable.IncomingForm()
     form.keepExtensions = true
-    form.maxFileSize = req.amaging.options.writer.maxSize
+    form.maxFileSize = bytesParse(req.amaging.options.writer.maxSize)
 
     // Limit handled files to 1
     form.onPart = (function () {

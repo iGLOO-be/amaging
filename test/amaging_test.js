@@ -119,12 +119,8 @@ describe('POST a new json file and check his Content-Type', () => {
       .expect(200)
 
     const res = await request(app).get(filePath).expect(200)
-    if (process.env.TEST_ENV === 's3') {
-      expect(res.body).toEqual(data)
-      expect(res.headers['content-type']).toEqual('application/json; charset=utf-8')
-    } else {
-      expect(res.headers['content-type']).toEqual('application/octet-stream')
-    }
+    expect(res.body).toEqual(data)
+    expect(res.headers['content-type']).toEqual('application/json; charset=utf-8')
   })
 
   test('Should return a 403 with an expired token', async () => {

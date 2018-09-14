@@ -22,7 +22,7 @@ describe('CORS Support', () => {
   })
 
   test('CORS can be enabled with option cors = true', async () => {
-    const app = await appFactory({cors: true})
+    const app = await appFactory({ cors: true })
     const res = await request(app)
       .options('/test/some/file')
       .expect(204)
@@ -31,7 +31,7 @@ describe('CORS Support', () => {
   })
 
   test('CORS can be enabled with option cors = [empty object]', async () => {
-    const app = await appFactory({cors: {}})
+    const app = await appFactory({ cors: {} })
     const res = await request(app)
       .options('/test/some/file')
       .expect(204)

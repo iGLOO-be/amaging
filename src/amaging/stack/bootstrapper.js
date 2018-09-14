@@ -24,7 +24,7 @@ export default options =>
     amaging.options.writer.maxSize = bytesParse(amaging.options.writer.maxSize)
 
     amaging.auth =
-      {headers: []}
+      { headers: [] }
 
     return next()
   }

@@ -85,11 +85,11 @@ if (env === 'local') {
       signatureVersion: 'v4'
     }))
 
-    const keys = await s3.listObjects({Prefix: `test_${mainTestId}`}).promise()
+    const keys = await s3.listObjects({ Prefix: `test_${mainTestId}` }).promise()
     if (keys.Contents.length > 0) {
       await s3.deleteObjects({
         Delete: {
-          Objects: keys.Contents.map(k => ({Key: k.Key}))
+          Objects: keys.Contents.map(k => ({ Key: k.Key }))
         }
       }).promise()
     }
@@ -145,11 +145,11 @@ if (env === 'local') {
       signatureVersion: 'v4'
     }))
 
-    const keys = await s3.listObjects({Prefix: options.customers.test.storage.options.path}).promise()
+    const keys = await s3.listObjects({ Prefix: options.customers.test.storage.options.path }).promise()
     if (keys.Contents.length > 0) {
       await s3.deleteObjects({
         Delete: {
-          Objects: keys.Contents.map(k => ({Key: k.Key}))
+          Objects: keys.Contents.map(k => ({ Key: k.Key }))
         }
       }).promise()
     }

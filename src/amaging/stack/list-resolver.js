@@ -1,7 +1,7 @@
 
 import debugFactory from 'debug'
 import auth from './auth'
-import {httpError, executeMiddleware} from '../lib/utils'
+import { httpError, executeMiddleware } from '../lib/utils'
 const debug = debugFactory('amaging:list-resolver')
 
 export default () =>

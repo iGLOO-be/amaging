@@ -2,7 +2,7 @@
 
 import request from 'supertest'
 
-import {requestPolicyFileToken, assertResImageEqualFilePromise} from './fixtures/utils'
+import { requestPolicyFileToken, assertResImageEqualFilePromise } from './fixtures/utils'
 import appFactory from './fixtures/app'
 import chai from 'chai'
 chai.should()

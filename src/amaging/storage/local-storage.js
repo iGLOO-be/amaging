@@ -57,11 +57,19 @@ export default class LocalStorage extends AbstractStorage {
   }
 
   async requestWriteStream (file, info) {
-    await fs.mkdirp(path.dirname(this._filepath(file)))
-    const stream = fs.createWriteStream(this._filepath(file))
+    const fileName = this._filepath(file)
+    const tmpFileName = fileName + '.tmp.' + require('uuid')()
+    const metaFileName = getMetaDataFileName(fileName)
 
-    stream.on('close', () => {
-      fs.writeJSON(getMetaDataFileName(this._filepath(file)), {
+    await fs.mkdirp(path.dirname(fileName))
+    const stream = fs.createWriteStream(tmpFileName)
+
+    stream.on('finish', () => {
+      try {
+        fs.unlinkSync(fileName)
+      } catch (err) {}
+      fs.moveSync(tmpFileName, fileName)
+      fs.writeJSONSync(metaFileName, {
         ContentType: info.ContentType
       })
     })

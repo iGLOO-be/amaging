@@ -1,5 +1,29 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`POST a new json file and check his Content-Type Options: writer.maxSize default writer action = create Should error when body is too large 1`] = `
+Object {
+  "body": Object {
+    "error": "Request Entity Too Large",
+    "message": "Request Entity Too Large",
+    "statusCode": 413,
+  },
+  "status": 413,
+  "text": "{\\"statusCode\\":413,\\"error\\":\\"Request Entity Too Large\\",\\"message\\":\\"Request Entity Too Large\\"}",
+}
+`;
+
+exports[`POST a new json file and check his Content-Type Options: writer.maxSize default writer action = create Should honnor Content-Length restriction of policy 1`] = `
+Object {
+  "body": Object {
+    "error": "Request Entity Too Large",
+    "message": "Request Entity Too Large",
+    "statusCode": 413,
+  },
+  "status": 413,
+  "text": "{\\"statusCode\\":413,\\"error\\":\\"Request Entity Too Large\\",\\"message\\":\\"Request Entity Too Large\\"}",
+}
+`;
+
 exports[`POST a new json file and check his Content-Type Should return a 403 with an expired token 1`] = `
 Object {
   "body": Object {

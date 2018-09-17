@@ -61,3 +61,19 @@ export function fileTypeOrLookup (type, file) {
     return type
   }
 }
+
+export function findMaxSizeFromPolicy (policy, maxSize = Infinity) {
+  const conditions = policy.getConditionsForKey('Content-Length')
+  const eqCondition = conditions
+    .find(condition => condition.validatorName === 'eq')
+  if (eqCondition && Number.isInteger(eqCondition.validatorArgs[0])) {
+    return Math.min(eqCondition.validatorArgs[0], maxSize)
+  }
+  const rangeCondition = conditions
+    .find(condition => condition.validatorName === 'range')
+  if (rangeCondition && Number.isInteger(rangeCondition.validatorArgs[1])) {
+    return Math.min(rangeCondition.validatorArgs[1], maxSize)
+  }
+
+  return maxSize
+}

@@ -1,6 +1,8 @@
 
-import { httpError } from '../lib/utils'
+import { httpError, findMaxSizeFromPolicy } from '../lib/utils'
 import pEvent from 'p-event'
+import Boom from 'boom'
+import { Transform } from 'stream'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:writer:default')
@@ -12,6 +14,10 @@ export default () =>
     // Valid headers
     const contentLength = req.headers['content-length']
     const contentType = req.headers['content-type'] || 'application/octet-stream'
+    const action = amaging.file.exists()
+      ? 'update'
+      : 'create'
+    const maxSize = findMaxSizeFromPolicy(amaging.policy, amaging.options.writer.maxSize)
 
     debug('Start default writer with %j', {
       contentLength,
@@ -19,11 +25,7 @@ export default () =>
     })
 
     // Set `action` to policy for allow action restriction
-    amaging.policy.set('action',
-      amaging.file.exists()
-        ? 'update'
-        : 'create'
-    )
+    amaging.policy.set('action', action)
 
     if (amaging.file.filename.match(/\/$/)) {
       debug('Start directory creation')
@@ -52,14 +54,19 @@ export default () =>
     }
 
     debug('Start writing file...')
-    const stream = await amaging.file.requestWriteStream({
+    const writableStream = await amaging.file.requestWriteStream({
       ContentLength: contentLength,
       ContentType: contentType
     })
 
     debug('Got a write stream, lets pipe')
-    req.pipe(stream)
-    await pEvent(stream, 'close')
+    const meterStream = req
+      .pipe(new Meter(maxSize))
+    meterStream.on('error', (err) => {
+      writableStream.emit('error', err)
+      next(err)
+    })
+    await pEvent(meterStream.pipe(writableStream), 'finish')
 
     debug('Read info of new file and remove cached files')
     await Promise.all([
@@ -74,3 +81,20 @@ export default () =>
       file: amaging.file
     })
   }
+
+class Meter extends Transform {
+  constructor (maxBytes) {
+    super()
+    this.bytes = 0
+    this.maxBytes = maxBytes || Number.MAX_VALUE
+  }
+
+  _transform (chunk, encoding, cb) {
+    this.bytes += chunk.length
+    this.push(chunk)
+    if (this.bytes > this.maxBytes) {
+      return cb(Boom.entityTooLarge())
+    }
+    cb()
+  }
+}

@@ -1,8 +1,9 @@
 
-import { httpError, fileTypeOrLookup } from '../lib/utils'
+import { httpError, fileTypeOrLookup, findMaxSizeFromPolicy } from '../lib/utils'
 import formidable from 'formidable'
 import fs from 'fs-extra'
 import pEvent from 'p-event'
+import Boom from 'boom'
 
 import debug from 'debug'
 
@@ -21,10 +22,9 @@ export default () =>
 
     // Valid headers
     const contentType = req.headers['content-type']
+    const maxSize = findMaxSizeFromPolicy(amaging.policy, amaging.options.writer.maxSize)
 
-    debug('Start writer with %j',
-      {contentType}
-    )
+    debug('Start writer with %j', {contentType})
 
     if (!contentType.match(/^multipart\/form-data/)) {
       debug('Abort due to not multipart/form-data')
@@ -37,6 +37,7 @@ export default () =>
 
     const form = new formidable.IncomingForm()
     form.keepExtensions = true
+    form.maxFileSize = maxSize
 
     // Limit handled files to 1
     form.onPart = (function () {
@@ -52,16 +53,21 @@ export default () =>
       }
     })()
 
-    debug('Keep Refereces')
-    // keep references to fields and files
-    const files = await new Promise((resolve, reject) => {
-      form.parse(req, function (err, fields, files) {
-        if (err) reject(err)
-        else resolve(files)
+    debug('Parse request')
+    let files
+    try {
+      files = await new Promise((resolve, reject) => {
+        form.parse(req, function (err, fields, files) {
+          if (err) reject(err)
+          else resolve(files)
+        })
       })
-    })
-
-    debug('Check file')
+    } catch (err) {
+      if (err.message.match(/maxFileSize exceeded/)) {
+        throw Boom.entityTooLarge()
+      }
+      throw err
+    }
 
     const file = files[Object.keys(files)[0]]
 

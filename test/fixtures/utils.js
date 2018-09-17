@@ -154,7 +154,3 @@ export function assertResImageEqualFile (res, filePath, done) {
     })
   })
 }
-
-export function getServer () {
-  return require(process.env.APP_SRV_COVERAGE || '../../src/amaging/server').default
-}

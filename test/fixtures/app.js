@@ -12,8 +12,7 @@ import rimraf from 'rimraf'
 import uuid from 'uuid'
 import globby from 'globby'
 
-import { getServer } from './utils'
-const server = getServer()
+import createAmagingServer from '../../src/amaging/server'
 
 const env = process.env.TEST_ENV || 'local'
 
@@ -50,7 +49,7 @@ if (env === 'local') {
       }
     }, options)
 
-    const app = server(options)
+    const app = createAmagingServer(options)
 
     await new Promise((resolve, reject) => {
       async.series([
@@ -127,7 +126,7 @@ if (env === 'local') {
       }
     }, options)
 
-    const app = server(options)
+    const app = createAmagingServer(options)
 
     if (options.__skip_populate) {
       return app

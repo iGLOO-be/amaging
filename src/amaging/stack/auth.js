@@ -123,6 +123,7 @@ export default () =>
 
     // Traditional authentification
     } else {
+      req.app.emit('LEGACY_AUTH')
       amaging.policy = new Policy({})
 
       // Retrieve token

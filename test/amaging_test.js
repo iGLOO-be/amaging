@@ -228,37 +228,108 @@ describe('POST a new json file and check his Content-Type', () => {
   )
   describe('Options: writer.maxSize', () => {
     describe('default writer', () => {
-      test('Should error when body is too large', async () => {
-        const app = await appFactory({
-          writer: {
-            maxSize: 3
-          }
+      describe('action = create', () => {
+        test('Should error when body is too large', async () => {
+          const app = await appFactory({
+            writer: {
+              maxSize: 3
+            }
+          })
+          const data = { test: true }
+          const filePath = '/test/body-too-large.json'
+          expectRequestToMatchSnapshot(
+            await request(app)
+              .post(filePath)
+              .type('application/json')
+              .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+                .toJWT()
+              )
+              .set('Accept', 'application/json')
+              .send(JSON.stringify(data))
+              .expect(413)
+          )
+          await request(app).get(filePath).expect(404)
         })
-        const data = { test: true }
-        const filePath = '/test/body-too-large.json'
-        expectRequestToMatchSnapshot(
+
+        test('Should honnor Content-Length restriction of policy', async () => {
+          const app = await appFactory({
+            writer: {
+              maxSize: 100
+            }
+          })
+          const data = { test: true }
+          const filePath = '/test/body-too-large.json'
+          expectRequestToMatchSnapshot(
+            await request(app)
+              .post(filePath)
+              .type('application/json')
+              .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+                .cond('range', 'Content-Length', 0, 3)
+                .toJWT()
+              )
+              .set('Accept', 'application/json')
+              .send(JSON.stringify(data))
+              .expect(413)
+          )
+          await request(app).get(filePath).expect(404)
           await request(app)
             .post(filePath)
             .type('application/json')
             .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+              .cond('range', 'Content-Length', 0, 20)
               .toJWT()
             )
             .set('Accept', 'application/json')
             .send(JSON.stringify(data))
-            .expect(413)
-        )
-        await request(app).get(filePath).expect(404)
-      })
-
-      test('Should honnor Content-Length restriction of policy', async () => {
-        const app = await appFactory({
-          writer: {
-            maxSize: 100
-          }
+            .expect(200)
         })
-        const data = { test: true }
-        const filePath = '/test/body-too-large.json'
-        expectRequestToMatchSnapshot(
+      })
+      describe('action = update', () => {
+        test('Should error when body is too large', async () => {
+          const app = await appFactory({
+            writer: {
+              maxSize: 3
+            }
+          })
+          const filePath = '/test/body-too-large.json'
+
+          await request(app).get(filePath).expect(404)
+          await request(app)
+            .post(filePath)
+            .type('application/json')
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+            .set('Accept', 'application/json')
+            .send('123')
+            .expect(200)
+
+          await request(app)
+            .post(filePath)
+            .type('application/json')
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+            .set('Accept', 'application/json')
+            .send(JSON.stringify({ test: true }))
+            .expect(413)
+
+          expect((await request(app).get(filePath).expect(200)).body).toEqual(123)
+        })
+
+        test('Should honnor Content-Length restriction of policy', async () => {
+          const app = await appFactory({
+            writer: {
+              maxSize: 100
+            }
+          })
+          const filePath = '/test/body-too-large.json'
+
+          await request(app).get(filePath).expect(404)
+          await request(app)
+            .post(filePath)
+            .type('application/json')
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+            .set('Accept', 'application/json')
+            .send('123')
+            .expect(200)
+
           await request(app)
             .post(filePath)
             .type('application/json')
@@ -267,32 +338,24 @@ describe('POST a new json file and check his Content-Type', () => {
               .toJWT()
             )
             .set('Accept', 'application/json')
-            .send(JSON.stringify(data))
+            .send(JSON.stringify({ test: true }))
             .expect(413)
-        )
-        await request(app).get(filePath).expect(404)
-        await request(app)
-          .post(filePath)
-          .type('application/json')
-          .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
-            .cond('range', 'Content-Length', 0, 20)
-            .toJWT()
-          )
-          .set('Accept', 'application/json')
-          .send(JSON.stringify(data))
-          .expect(200)
+
+          expect((await request(app).get(filePath).expect(200)).body).toEqual(123)
+        })
       })
     })
 
     describe('multipart', () => {
-      test('Should error when body is too large', async () => {
-        const app = await appFactory({
-          writer: {
-            maxSize: 10
-          }
-        })
-        const filePath = '/test/body-too-large.json'
-        expectRequestToMatchSnapshot(
+      describe('create', () => {
+        test('Should error when body is too large', async () => {
+          const app = await appFactory({
+            writer: {
+              maxSize: 10
+            }
+          })
+          const filePath = '/test/body-too-large.json'
+          await request(app).get(filePath).expect(404)
           await request(app)
             .post(filePath)
             .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
@@ -301,14 +364,13 @@ describe('POST a new json file and check his Content-Type', () => {
             .set('Accept', 'application/json')
             .attach('file', __filename)
             .expect(413)
-        )
-        await request(app).get(filePath).expect(404)
-      })
+          await request(app).get(filePath).expect(404)
+        })
 
-      test('Should honnor Content-Length restriction of policy', async () => {
-        const app = await appFactory()
-        const filePath = '/test/body-too-large.json'
-        expectRequestToMatchSnapshot(
+        test('Should honnor Content-Length restriction of policy', async () => {
+          const app = await appFactory()
+          const filePath = '/test/body-too-large.json'
+          await request(app).get(filePath).expect(404)
           await request(app)
             .post(filePath)
             .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
@@ -318,17 +380,71 @@ describe('POST a new json file and check his Content-Type', () => {
             .set('Accept', 'application/json')
             .attach('file', __filename)
             .expect(413)
-        )
-        await request(app).get(filePath).expect(404)
-        await request(app)
-          .post(filePath)
-          .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
-            .cond('range', 'Content-Length', 0, bytes('10mb'))
-            .toJWT()
-          )
-          .set('Accept', 'application/json')
-          .attach('file', __filename)
-          .expect(200)
+          await request(app).get(filePath).expect(404)
+          await request(app)
+            .post(filePath)
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+              .cond('range', 'Conte nt-Length', 0, bytes('10mb'))
+              .toJWT()
+            )
+            .set('Accept', 'application/json')
+            .attach('file', __filename)
+            .expect(200)
+        })
+      })
+      describe('update', () => {
+        test('Should error when body is too large', async () => {
+          const app = await appFactory({
+            writer: {
+              maxSize: 10
+            }
+          })
+          const filePath = '/test/body-too-large.json'
+
+          await request(app).get(filePath).expect(404)
+          await request(app)
+            .post(filePath)
+            .type('application/json')
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+            .set('Accept', 'application/json')
+            .send('123')
+            .expect(200)
+
+          await request(app)
+            .post(filePath)
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+            .set('Accept', 'application/json')
+            .attach('file', __filename)
+            .expect(413)
+
+          expect((await request(app).get(filePath).expect(200)).body).toEqual(123)
+        })
+
+        test('Should honnor Content-Length restriction of policy', async () => {
+          const app = await appFactory()
+          const filePath = '/test/body-too-large.json'
+
+          await request(app).get(filePath).expect(404)
+          await request(app)
+            .post(filePath)
+            .type('application/json')
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+            .set('Accept', 'application/json')
+            .send('123')
+            .expect(200)
+
+          await request(app)
+            .post(filePath)
+            .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1')
+              .cond('range', 'Content-Length', 0, 3)
+              .toJWT()
+            )
+            .set('Accept', 'application/json')
+            .attach('file', __filename)
+            .expect(413)
+
+          expect((await request(app).get(filePath).expect(200)).body).toEqual(123)
+        })
       })
     })
   })

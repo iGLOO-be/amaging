@@ -29,8 +29,8 @@ export default options =>
       cidResolver(),
       storageIniter(),
       fileIniter(),
-      listResolver(),
       cacheResolver(),
+      listResolver(),
       imageReader(),
       defaultReader()
     ]),

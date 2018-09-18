@@ -82,6 +82,7 @@ export default () =>
     // # Policy
     } else if (headers[headerPolicy]) {
       debug('Start Policy authentification')
+      req.app.emit(amagingEvents.LEGACY_POLICY_AUTH_USED, headers[headerUserId])
 
       // Retrieve user id
       const userId = headers[headerUserId]
@@ -123,8 +124,8 @@ export default () =>
 
     // Traditional authentification
     } else {
-      req.app.emit('LEGACY_AUTH')
       amaging.policy = new Policy({})
+      req.app.emit(amagingEvents.LEGACY_POLICY_AUTH_USED, headers[headerUserId])
 
       // Retrieve token
       const sha = headers[headerToken]

@@ -1,4 +1,4 @@
-import {httpError} from '../lib/utils'
+import { httpError } from '../lib/utils'
 import crypto from 'crypto'
 import domain from 'domain' // eslint-disable-line
 import { parse, legacyParse, getAccessKey, Policy } from '@igloo-be/amaging-policy'

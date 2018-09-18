@@ -24,7 +24,9 @@ export default () =>
     const contentType = req.headers['content-type']
     const maxSize = findMaxSizeFromPolicy(amaging.policy, amaging.options.writer.maxSize)
 
-    debug('Start writer with %j', {contentType})
+    debug('Start writer with %j',
+      { contentType }
+    )
 
     if (!contentType.match(/^multipart\/form-data/)) {
       debug('Abort due to not multipart/form-data')

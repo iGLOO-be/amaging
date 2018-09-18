@@ -8,7 +8,7 @@ import appFactory from './fixtures/app'
 
 chai.should()
 
-const {requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot} = require('./fixtures/utils')
+const { requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot } = require('./fixtures/utils')
 
 /*
         READ

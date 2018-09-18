@@ -1,10 +1,13 @@
 
 import merge from 'lodash/merge'
 import { parse as bytesParse } from 'bytes'
+import { cleanAmagingFile } from '../lib/utils'
 
 export default options =>
   function (req, res, next) {
     const amaging = (req.amaging = (res.amaging = {}))
+
+    req.params.file = cleanAmagingFile(req.params[0])
 
     // TODO: do copy of options
     amaging.options = options
@@ -26,5 +29,5 @@ export default options =>
     amaging.auth =
       { headers: [] }
 
-    return next()
+    next()
   }

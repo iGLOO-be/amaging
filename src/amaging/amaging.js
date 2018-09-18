@@ -1,5 +1,5 @@
 
-import { executeStack, cleanAmagingFile } from './lib/utils'
+import asyncHandler from 'express-async-handler'
 
 import bootstrapper from './stack/bootstrapper'
 import cidResolver from './stack/cid-resolver'
@@ -16,11 +16,7 @@ import defaultWriter from './writer/default-writer'
 import mutlipartWriter from './writer/multipart-writer'
 import listResolver from './stack/list-resolver'
 
-const handler = stack =>
-  function (req, res, next) {
-    req.params.file = cleanAmagingFile(req.params[0])
-    return executeStack(stack, [req, res], next)
-  }
+const handler = stack => stack.map(asyncHandler)
 
 export default options =>
   ({

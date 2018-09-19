@@ -68,7 +68,7 @@ describe('Get/add a folder', () => {
       .expect(200)
   })
 
-  test('Should return a 404 not found, trying to access a file as a folder, instead of throwing ENOTDIR)', async () => {
+  test('Should return a 404 not found, trying to access a file as a folder, instead of throwing ENOTDIR', async () => {
     const app = await appFactory()
     await addFolder(app, '/notADir')
     await request(app)

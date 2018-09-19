@@ -24,13 +24,13 @@ export default function (options) {
   }
 
   // Routes
-  app.head('/:cid/*', amaging.head)
-  app.get('/:cid/*', amaging.read)
+  app.head('/:cid/*', ...amaging.head)
+  app.get('/:cid/*', ...amaging.read)
 
-  app.post('/:cid/*', amaging.write)
-  app.put('/:cid/*', amaging.write)
+  app.post('/:cid/*', ...amaging.write)
+  app.put('/:cid/*', ...amaging.write)
 
-  app.delete('/:cid/*', amaging.delete)
+  app.delete('/:cid/*', ...amaging.delete)
 
   // Error handling
   app.use(function (err, req, res, next) {

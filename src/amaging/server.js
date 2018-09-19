@@ -5,12 +5,12 @@ import Boom from 'boom'
 import isObject from 'lodash/isObject'
 import debugFactory from 'debug'
 import amagingFactory from './amaging'
-import * as amagingEvents from './events'
+import * as events from './events'
 
 const debug = debugFactory('amaging:server')
 
 export {
-  amagingEvents
+  events
 }
 
 export default function (options) {

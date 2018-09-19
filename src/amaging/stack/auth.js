@@ -2,7 +2,7 @@ import { httpError } from '../lib/utils'
 import crypto from 'crypto'
 import domain from 'domain' // eslint-disable-line
 import { parse, legacyParse, getAccessKey, Policy } from '@igloo-be/amaging-policy'
-import { AUTH_POLICY_LEGACY_USED, AUTH_LEGACY_USED } from '../events'
+import { AUTH_LEGACY_USED, AUTH_POLICY_LEGACY_USED } from '../events'
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:auth')
 
@@ -83,7 +83,6 @@ export default () =>
     // # Policy
     } else if (headers[headerPolicy]) {
       debug('Start Policy authentification')
-      req.app.emit(AUTH_POLICY_LEGACY_USED, headers[headerUserId])
 
       // Retrieve user id
       const userId = headers[headerUserId]
@@ -98,6 +97,8 @@ export default () =>
         debug('403: bad cid secret')
         return result403()
       }
+
+      req.app.emit(AUTH_POLICY_LEGACY_USED, { accessKey: userId })
 
       const d = domain.create()
 
@@ -126,7 +127,6 @@ export default () =>
     // Traditional authentification
     } else {
       amaging.policy = new Policy({})
-      req.app.emit(AUTH_LEGACY_USED, headers[headerUserId])
 
       // Retrieve token
       const sha = headers[headerToken]
@@ -148,6 +148,8 @@ export default () =>
         debug('403: bad cid secret')
         return result403()
       }
+
+      req.app.emit(AUTH_LEGACY_USED, { accessKey: userId })
 
       // Data to be hashed
       const fileName = params.file

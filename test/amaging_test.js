@@ -556,38 +556,52 @@ describe('POST : authentication\n', () => {
   )
 })
 
-test(
-  'Should return a 400 "Bad request", because a file withe same name already exist',
-  async () => {
-    const filePath = '/test/sameName'
-    const app = await appFactory()
-    await request(app)
-      .post(filePath)
-      .send({ 'test': true })
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(200)
-    await request(app)
-      .post(`${filePath}/`)
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(400)
+describe('File/Directory collision', () => {
+  describe('File', () => {
+    test('Trying to create a directory when a file already exists, should return a 400 "Bad request"', async () => {
+      const filePath = '/test/sameName'
+      const app = await appFactory()
+      await request(app)
+        .post(filePath)
+        .send({ 'test': true })
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+      await request(app)
+        .post(`${filePath}/`)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(400)
 
-    expect((await request(app).get(filePath).expect(200)).body).toEqual({ 'test': true })
+      expect((await request(app).get(filePath).expect(200)).body).toEqual({ 'test': true })
+    })
   })
 
-test(
-  'Should return a 400 "Bad request", because a folder withe same name already exist',
-  async () => {
+  describe('Directory', () => {
     const filePath = '/test/sameName'
-    const app = await appFactory()
-    await request(app)
-      .post(`${filePath}/`)
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(200)
-    await request(app)
-      .post(filePath)
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(400)
+    let app
+
+    beforeEach(async () => {
+      app = await appFactory()
+      await request(app)
+        .post(`${filePath}/`)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+    })
+
+    test('default-writer: Trying to create a file when a directory already exists, should return a 400 "Bad request"', async () => {
+      await request(app)
+        .post(filePath)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(400, 'A directory exists with the same name.')
+    })
+    test('multipart-writer: Trying to create a file when a directory already exists, should return a 400 "Bad request"', async () => {
+      await request(app)
+        .post(filePath)
+        .attach('file', __filename)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(400, 'A directory exists with the same name.')
+    })
   })
+})
 
 /*
         DELETE

@@ -30,11 +30,11 @@ export default () =>
     if (amaging.file.filename.match(/\/$/)) {
       debug('Start directory creation')
 
-      if (!amaging.file.exists()) {
-        debug('file not exist, creating a directory')
-        await amaging.file.createAsDirectory()
-        debug('end creating directory')
+      if (amaging.file.exists() || amaging.file.isDirectory()) {
+        throw Boom.badRequest('File already exists with the same name.')
       }
+
+      await amaging.file.createAsDirectory()
 
       res.send({
         success: true,
@@ -42,6 +42,10 @@ export default () =>
       })
 
       return
+    }
+
+    if (amaging.file.exists() && amaging.file.isDirectory()) {
+      throw Boom.badRequest('A directory exists with the same name.')
     }
 
     if (!contentLength) {

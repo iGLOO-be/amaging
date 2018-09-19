@@ -8,7 +8,7 @@ import appFactory from './fixtures/app'
 
 chai.should()
 
-const { requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot } = require('./fixtures/utils')
+const { requestFileToken, requestJSONToken, expectRequestToMatchSnapshot } = require('./fixtures/utils')
 
 /*
         READ
@@ -607,17 +607,35 @@ describe('File/Directory collision', () => {
         DELETE
 */
 describe('DELETE files just added\n', () => {
-  test('Should return a 200 OK by erasing the image', async () => {
+  test('Should return a 200 OK by erasing a file', async () => {
     const app = await appFactory()
     await request(app)
       .del('/test/delete.jpg')
-      .set('x-authentication', 'apiaccess')
-      .set('x-authentication-token', requestDeleteToken('delete.jpg'))
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
       .expect(200)
     await request(app)
       .del('/test/delete.jpg')
-      .set('x-authentication', 'apiaccess')
-      .set('x-authentication-token', requestDeleteToken('delete.jpg'))
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
       .expect(404)
+  })
+  test('Should return a 200 OK by erasing a directory', async () => {
+    const app = await appFactory()
+    const filePath = '/test/some/directory/'
+    await request(app)
+      .post(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(200)
+    await request(app)
+      .get(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(200)
+    await request(app)
+      .del(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(400)
+    await request(app)
+      .get(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(200)
   })
 })

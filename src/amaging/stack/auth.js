@@ -2,7 +2,7 @@ import { httpError } from '../lib/utils'
 import crypto from 'crypto'
 import domain from 'domain' // eslint-disable-line
 import { parse, legacyParse, getAccessKey, Policy } from '@igloo-be/amaging-policy'
-import * as amagingEvents from '../events'
+import { AUTH_POLICY_LEGACY_USED, AUTH_LEGACY_USED } from '../events'
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:auth')
 
@@ -83,7 +83,7 @@ export default () =>
     // # Policy
     } else if (headers[headerPolicy]) {
       debug('Start Policy authentification')
-      req.app.emit(amagingEvents.LEGACY_POLICY_AUTH_USED, headers[headerUserId])
+      req.app.emit(AUTH_POLICY_LEGACY_USED, headers[headerUserId])
 
       // Retrieve user id
       const userId = headers[headerUserId]
@@ -126,7 +126,7 @@ export default () =>
     // Traditional authentification
     } else {
       amaging.policy = new Policy({})
-      req.app.emit(amagingEvents.LEGACY_POLICY_AUTH_USED, headers[headerUserId])
+      req.app.emit(AUTH_LEGACY_USED, headers[headerUserId])
 
       // Retrieve token
       const sha = headers[headerToken]

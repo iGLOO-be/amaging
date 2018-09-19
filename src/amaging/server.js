@@ -5,8 +5,13 @@ import Boom from 'boom'
 import isObject from 'lodash/isObject'
 import debugFactory from 'debug'
 import amagingFactory from './amaging'
+import * as amagingEvents from './events'
 
 const debug = debugFactory('amaging:server')
+
+export {
+  amagingEvents
+}
 
 export default function (options) {
   const app = express(options)

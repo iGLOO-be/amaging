@@ -1,6 +1,7 @@
 
 import path from 'path'
 import { fileTypeOrLookup } from '../lib/utils'
+import GMFilterEngine from '../../gm-filter/gm-filter'
 
 const optionsRegex = /^(.*)&\//
 const optionsSep = '&'
@@ -11,7 +12,7 @@ export default class AbstractFile {
     const match = filename.match(optionsRegex)
 
     if (match) {
-      this.options = match[1].split(optionsSep)
+      this.options = GMFilterEngine.isValidOption(match[1].split(optionsSep))
       this.filename = filename.replace(optionsRegex, '')
     } else {
       this.options = []

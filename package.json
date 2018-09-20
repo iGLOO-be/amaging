@@ -8,7 +8,7 @@
     "test:local": "TEST_ENV=local npm run test:jest",
     "test:s3": "TEST_ENV=s3 npm run test:jest",
     "lint": "eslint --ignore-path .gitignore .",
-    "start": "nodemon samples/local/sample.js",
+    "start": "DEBUG=amaging* PORT=4000 nodemon --exec babel-node samples/local/sample.js",
     "start:s3": "nodemon lib/samples/s3/sample.js",
     "build": "rm -rf lib && babel -d lib src",
     "prepare": "npm run build"
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.1",
+    "@babel/node": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^9.0.0",
@@ -65,6 +66,6 @@
     "mime": "~2.3.1",
     "nconf": "^0.10.0",
     "p-event": "^2.1.0",
-    "tmp": "0.0.33"
+    "tempy": "^0.2.1"
   }
 }

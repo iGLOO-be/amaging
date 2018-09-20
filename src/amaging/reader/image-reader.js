@@ -1,14 +1,11 @@
 
 import GMFilterEngine from '../../gm-filter/gm-filter'
-import tmp from 'tmp'
 import fs from 'fs-extra'
-import { promisify } from 'util'
 import pEvent from 'p-event'
+import tempy from 'tempy'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:reader:image')
-
-const createTmpFile = promisify(tmp.file)
 
 export default () =>
   async function (req, res, next) {
@@ -57,7 +54,7 @@ export default () =>
 
     debug('Begin image transform with filters. %j', gmFilter)
 
-    const tmpFile = await createTmpFile()
+    const tmpFile = tempy.file()
     debug('Temp file created: ', tmpFile)
 
     debug('Request a read stream on original file')

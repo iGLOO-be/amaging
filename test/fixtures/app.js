@@ -51,6 +51,14 @@ if (env === 'local') {
 
     const app = createAmagingServer(options)
 
+    app.use((err, req, res, next) => {
+      const shouldLog = !err.output || !err.output.statusCode || err.output.statusCode >= 500
+      if (shouldLog) {
+        console.error(err)
+      }
+      next(err)
+    })
+
     await new Promise((resolve, reject) => {
       async.series([
         done => rimraf(options.customers.test.storage.options.path, done),

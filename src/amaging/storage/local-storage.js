@@ -4,6 +4,7 @@ import path from 'path'
 import fs from 'fs-extra'
 import sortBy from 'lodash/sortBy'
 import File from '../storage/file'
+import tempy from 'tempy'
 
 export default class LocalStorage extends AbstractStorage {
   constructor (options, amaging) {
@@ -65,11 +66,18 @@ export default class LocalStorage extends AbstractStorage {
 
   async requestWriteStream (file, info) {
     const fileName = this._filepath(file)
-    const tmpFileName = fileName + '.tmp.' + require('uuid')()
+    const tmpFileName = tempy.file()
     const metaFileName = getMetaDataFileName(fileName)
 
     await fs.mkdirp(path.dirname(fileName))
     const stream = fs.createWriteStream(tmpFileName)
+
+    // try to remove temp file in case of error
+    stream.on('error', () => {
+      try {
+        fs.unlinkSync(tmpFileName)
+      } catch (err) {}
+    })
 
     stream.on('finish', () => {
       try {
@@ -80,6 +88,7 @@ export default class LocalStorage extends AbstractStorage {
         ContentType: info.ContentType
       })
     })
+
     return stream
   }
 

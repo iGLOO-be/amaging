@@ -33,6 +33,10 @@ export default () =>
       return next()
     }
 
+    if (amaging.file.exists() && amaging.file.isDirectory()) {
+      throw Boom.badRequest('A directory exists with the same name.')
+    }
+
     debug('Start writing file...')
 
     // # HANDLE MULTIPART

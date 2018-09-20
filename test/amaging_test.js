@@ -8,7 +8,7 @@ import appFactory from './fixtures/app'
 
 chai.should()
 
-const { requestFileToken, requestJSONToken, requestDeleteToken, expectRequestToMatchSnapshot } = require('./fixtures/utils')
+const { requestFileToken, requestJSONToken, expectRequestToMatchSnapshot } = require('./fixtures/utils')
 
 /*
         READ
@@ -556,21 +556,86 @@ describe('POST : authentication\n', () => {
   )
 })
 
+describe('File/Directory collision', () => {
+  describe('File', () => {
+    test('Trying to create a directory when a file already exists, should return a 400 "Bad request"', async () => {
+      const filePath = '/test/sameName'
+      const app = await appFactory()
+      await request(app)
+        .post(filePath)
+        .send({ 'test': true })
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+      await request(app)
+        .post(`${filePath}/`)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(400)
+
+      expect((await request(app).get(filePath).expect(200)).body).toEqual({ 'test': true })
+    })
+  })
+
+  describe('Directory', () => {
+    const filePath = '/test/sameName'
+    let app
+
+    beforeEach(async () => {
+      app = await appFactory()
+      await request(app)
+        .post(`${filePath}/`)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+    })
+
+    test('default-writer: Trying to create a file when a directory already exists, should return a 400 "Bad request"', async () => {
+      await request(app)
+        .post(filePath)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(400, 'A directory exists with the same name.')
+    })
+    test('multipart-writer: Trying to create a file when a directory already exists, should return a 400 "Bad request"', async () => {
+      await request(app)
+        .post(filePath)
+        .attach('file', __filename)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(400, 'A directory exists with the same name.')
+    })
+  })
+})
+
 /*
         DELETE
 */
 describe('DELETE files just added\n', () => {
-  test('Should return a 200 OK by erasing the image', async () => {
+  test('Should return a 200 OK by erasing a file', async () => {
     const app = await appFactory()
     await request(app)
       .del('/test/delete.jpg')
-      .set('x-authentication', 'apiaccess')
-      .set('x-authentication-token', requestDeleteToken('delete.jpg'))
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
       .expect(200)
     await request(app)
       .del('/test/delete.jpg')
-      .set('x-authentication', 'apiaccess')
-      .set('x-authentication-token', requestDeleteToken('delete.jpg'))
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
       .expect(404)
+  })
+  test('Should return a 200 OK by erasing a directory', async () => {
+    const app = await appFactory()
+    const filePath = '/test/some/directory/'
+    await request(app)
+      .post(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(200)
+    await request(app)
+      .get(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(200)
+    await request(app)
+      .del(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(400)
+    await request(app)
+      .get(filePath)
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .expect(200)
   })
 })

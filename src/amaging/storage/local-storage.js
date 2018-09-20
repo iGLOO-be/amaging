@@ -12,39 +12,46 @@ export default class LocalStorage extends AbstractStorage {
   }
 
   async readInfo (file) {
+    let stat
+
     try {
-      const stat = await fs.stat(this._filepath(file))
-
-      if (stat.isDirectory()) {
-        return {
-          isDirectory: true,
-          ContentType: 'application/x-directory',
-          ContentLength: 0,
-          ETag: `"0"`,
-          LastModified: stat.mtime
-        }
-      }
-
-      const metaData = {}
-      try {
-        Object.assign(metaData, await fs.readJSON(getMetaDataFileName(this._filepath(file))))
-      } catch (err) {
-        if (err.code !== 'ENOENT') {
-          throw err
-        }
-      }
-
-      return {
-        isDirectory: false,
-        ContentLength: stat.size,
-        ETag: `"${stat.size}"`,
-        LastModified: stat.mtime,
-        ...metaData
-      }
+      stat = await fs.stat(this._filepath(file).replace(/\/+$/, ''))
     } catch (err) {
       if (err.code !== 'ENOENT' && err.code !== 'ENOTDIR') {
         throw err
       }
+    }
+
+    if (!stat) {
+      return null
+    }
+
+    if (stat.isDirectory()) {
+      return {
+        isDirectory: true,
+        ContentType: 'application/x-directory',
+        ContentLength: 0,
+        ETag: `"0"`,
+        LastModified: stat.mtime
+      }
+    }
+
+    const metaData = {}
+    try {
+      Object.assign(metaData, await fs.readJSON(getMetaDataFileName(this._filepath(file))))
+    } catch (err) {
+      if (err.code !== 'ENOENT' && err.code !== 'ENOTDIR') {
+        console.log('throw ????', err)
+        throw err
+      }
+    }
+
+    return {
+      isDirectory: false,
+      ContentLength: stat.size,
+      ETag: `"${stat.size}"`,
+      LastModified: stat.mtime,
+      ...metaData
     }
   }
 
@@ -73,7 +80,6 @@ export default class LocalStorage extends AbstractStorage {
         ContentType: info.ContentType
       })
     })
-
     return stream
   }
 

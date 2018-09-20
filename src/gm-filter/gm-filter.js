@@ -19,6 +19,10 @@ export default class GMFilterEngine {
     this._filters = []
   }
 
+  static isValidOption (options) {
+    return options.filter(o => filterMatchingOption(o))
+  }
+
   addOption (option) {
     const filter = filterMatchingOption(option)
 

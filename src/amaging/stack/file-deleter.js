@@ -1,5 +1,4 @@
 
-import { httpError } from '../lib/utils'
 import debugFactory from 'debug'
 import Boom from 'boom'
 const debug = debugFactory('amaging:delete')
@@ -15,7 +14,7 @@ export default () =>
 
     if (!amaging.file.exists()) {
       debug('The process of deleting the file failed because it was not found.')
-      return next(httpError(404, 'File not found'))
+      throw Boom.notFound()
     }
 
     if (amaging.file.isDirectory()) {

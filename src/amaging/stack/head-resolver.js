@@ -1,5 +1,5 @@
 
-import { httpError } from '../lib/utils'
+import Boom from 'boom'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:head-resolver')
@@ -12,7 +12,7 @@ export default () =>
 
     if (!amaging.file.exists()) {
       debug('file not found')
-      return next(httpError(404, 'File not found'))
+      throw Boom.notFound()
     } else {
       debug('file found')
       res.setHeader('Connection', 'close')
@@ -22,6 +22,6 @@ export default () =>
         'ETag': amaging.file.info['ETag'],
         'Last-Modified': amaging.file.info['LastModified']
       })
-      return res.end()
+      res.end()
     }
   }

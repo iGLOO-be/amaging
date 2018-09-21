@@ -1,6 +1,6 @@
 
 import pEvent from 'p-event'
-import { httpError } from '../lib/utils'
+import Boom from 'boom'
 
 import debugFactory from 'debug'
 const debug = debugFactory('amaging:reader:default')
@@ -13,12 +13,12 @@ export default () =>
 
     if (!amaging.file.exists()) {
       debug('Stop default reader cause to not found file.')
-      return next(httpError(404, 'File not found'))
+      throw Boom.notFound()
     }
 
     if (amaging.file.isDirectory()) {
       debug('Stop default reader cause to file is a directory.')
-      return next(httpError(404, 'File not found'))
+      throw Boom.notFound()
     }
 
     debug('File exists!')
@@ -40,6 +40,6 @@ export default () =>
       if ((err.code !== 'ENOENT') && (err.code !== 'NotFound') && (err.code !== 'NoSuchKey')) {
         throw err
       }
-      throw httpError(404, 'File not found')
+      throw Boom.notFound()
     }
   }

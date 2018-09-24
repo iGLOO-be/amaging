@@ -1,4 +1,4 @@
-import { httpError } from '../lib/utils'
+import Boom from 'boom'
 import crypto from 'crypto'
 import domain from 'domain' // eslint-disable-line
 import { parse, legacyParse, getAccessKey, Policy } from '@igloo-be/amaging-policy'
@@ -36,7 +36,7 @@ export default () =>
     const { params } = req
     const { headers } = req
 
-    const result403 = () => next(httpError(403, 'Not Authorized !'))
+    const result403 = () => next(Boom.forbidden('Not Authorized !'))
 
     const cid = amaging.customer.id
 
@@ -47,27 +47,27 @@ export default () =>
       const match = headers[headerJWTPolicy].match(jwtPolicyRE)
       if (!match) {
         debug('403: Policy creation failed')
-        return next(httpError(403, 'Invalid authorization header.'))
+        throw Boom.forbidden('Invalid authorization header.')
       }
       const jwt = match[1]
 
       const accessKey = getAccessKey(jwt)
       if (!accessKey) {
         debug('403: Unable to get accessKey from JWT')
-        return next(httpError(403, 'Access key not found in token.'))
+        throw Boom.forbidden('Access key not found in token.')
       }
 
       // Retrive secret
       const secret = amaging.customer.access != null ? amaging.customer.access[accessKey] : undefined
       if (!secret) {
         debug('403: unkown access key')
-        return next(httpError(403, 'Access key is invalid.'))
+        throw Boom.forbidden('Access key is invalid.')
       }
 
       const policy = await parse(secret, jwt)
       if (!policy) {
         debug('403: invalid JWT')
-        return next(httpError(403, 'Token is invalid or expired.'))
+        throw Boom.forbidden('Token is invalid or expired.')
       }
 
       amaging.policy = policy

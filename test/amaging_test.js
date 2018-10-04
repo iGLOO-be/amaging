@@ -66,7 +66,7 @@ describe('HEAD a file', () => {
   test('Should return a 404 error because the file doesn\'t exist', async () => {
     const app = await appFactory()
     await request(app)
-      .head('/igl00.png')
+      .head('/test/igl00.png')
       .expect(404)
   })
 

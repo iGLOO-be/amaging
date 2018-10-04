@@ -1,7 +1,8 @@
 
 import debugFactory from 'debug'
 import auth from './auth'
-import { httpError, executeMiddleware } from '../lib/utils'
+import { executeMiddleware } from '../lib/utils'
+import Boom from 'boom'
 const debug = debugFactory('amaging:list-resolver')
 
 export default () =>
@@ -23,7 +24,7 @@ export default () =>
     amaging.policy.set('action', 'list')
 
     if (!amaging.file.isDirectory()) {
-      throw httpError(404, 'Directory not found.')
+      throw Boom.notFound('Directory not found.')
     }
 
     debug('Start getting list from storage', prefix)

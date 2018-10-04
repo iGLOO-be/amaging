@@ -1,5 +1,5 @@
 
-import { httpError, fileTypeOrLookup, findMaxSizeFromPolicy } from '../lib/utils'
+import { fileTypeOrLookup, findMaxSizeFromPolicy } from '../lib/utils'
 import formidable from 'formidable'
 import fs from 'fs-extra'
 import pEvent from 'p-event'
@@ -79,12 +79,12 @@ export default () =>
 
     if (!file) {
       debug('Abort due to missing file')
-      throw httpError(403, 'Missing file')
+      throw Boom.forbidden('Missing file')
     }
 
     if (!file.size) {
       debug('Abort due to missing file size')
-      throw httpError(403, 'Missing file size')
+      throw Boom.forbidden('Missing file size')
     }
 
     file.type = fileTypeOrLookup(file.type, file.name)

@@ -1,5 +1,5 @@
 
-import { httpError, findMaxSizeFromPolicy } from '../lib/utils'
+import { findMaxSizeFromPolicy } from '../lib/utils'
 import pEvent from 'p-event'
 import Boom from 'boom'
 import { Transform } from 'stream'
@@ -50,7 +50,7 @@ export default () =>
 
     if (!contentLength) {
       debug('Abort default writer due to missing headers')
-      return next(httpError(403, 'Missing header(s)'))
+      throw Boom.forbidden('Missing header(s)')
     }
 
     if (contentType.match(/^multipart\/form-data/)) {

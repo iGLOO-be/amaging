@@ -1,5 +1,4 @@
 
-import Boom from 'boom'
 import mime from 'mime'
 
 export async function executeMiddleware (fn, ...args) {
@@ -15,10 +14,6 @@ export async function executeMiddleware (fn, ...args) {
       })
     }
   })
-}
-
-export function httpError (status, message, data) {
-  return new Boom(message, { statusCode: status, data })
 }
 
 export function cleanAmagingFile (filePath) {

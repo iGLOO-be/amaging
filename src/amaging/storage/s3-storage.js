@@ -128,7 +128,7 @@ export default class S3Storage extends AbstractStorage {
         Delete: {
           Objects: keys.Contents.map(k => ({ Key: k.Key }))
         }
-      })
+      }).promise()
     }
   }
 

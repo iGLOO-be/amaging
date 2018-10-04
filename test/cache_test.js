@@ -1,8 +1,10 @@
 /* eslint-env jest */
 
 import request from 'supertest'
+import fs from 'fs'
+import path from 'path'
+import { sign } from '@igloo-be/amaging-policy'
 
-import { requestFileToken, requestDeleteToken, assertResImageEqualFilePromise } from './fixtures/utils'
 import appFactory from './fixtures/app'
 
 /*
@@ -21,8 +23,7 @@ describe('Cache Eviction by deleting file', () => {
         .expect(200)
       await request(app)
         .del('/test/cache-eviction-delete.jpg')
-        .set('x-authentication', 'apiaccess')
-        .set('x-authentication-token', requestDeleteToken('cache-eviction-delete.jpg'))
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
         .expect(200)
       await request(app)
         .get('/test/blur(8,2)&/cache-eviction-delete.jpg')
@@ -39,22 +40,22 @@ describe('Cache Eviction by updating file', () => {
   describe('UPDATE the original file (cache-eviction-update.jpg by tipi.jpg) to erase the cache', () =>
     test('Should return a 200 OK by updating the original image', async () => {
       const app = await appFactory()
-      const tok = requestFileToken('expected/tipi.jpg', 'cache-eviction-update.jpg', 'image/jpeg')
-      await request(app)
+      const buffer = fs.readFileSync(path.join(__dirname, 'expected/tipi.jpg'))
+      const res2 = await request(app)
         .get('/test/410x410&/cache-eviction-update.jpg')
         .expect(200)
+      const originalLength = res2.body.length
       await request(app)
         .post('/test/cache-eviction-update.jpg')
-        .type(tok.contentType)
-        .set('Content-Length', tok.length)
-        .set('x-authentication', 'apiaccess')
-        .set('x-authentication-token', tok.token)
-        .send(tok.buffer)
+        .type('image/jpeg')
+        .set('Content-Length', buffer.length)
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .send(buffer)
         .expect(200)
       const res = await request(app)
         .get('/test/410x410&/cache-eviction-update.jpg')
         .expect(200)
-      await assertResImageEqualFilePromise(res, 'expected/410x410_tipi.jpg')
+      expect(res.body.length).not.toEqual(originalLength)
     })
   )
 })

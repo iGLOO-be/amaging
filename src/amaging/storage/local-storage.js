@@ -42,7 +42,6 @@ export default class LocalStorage extends AbstractStorage {
       Object.assign(metaData, await fs.readJSON(getMetaDataFileName(this._filepath(file))))
     } catch (err) {
       if (err.code !== 'ENOENT' && err.code !== 'ENOTDIR') {
-        console.log('throw ????', err)
         throw err
       }
     }

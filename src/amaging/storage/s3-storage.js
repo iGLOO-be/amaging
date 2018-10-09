@@ -123,7 +123,7 @@ export default class S3Storage extends AbstractStorage {
     }).promise()
 
     debug('Proceed to delete')
-    if (keys && keys.Contents && Array.isArray(keys.Contents)) {
+    if (keys && keys.Contents && Array.isArray(keys.Contents) && keys.Contents > 0) {
       await this._s3.deleteObjects({
         Delete: {
           Objects: keys.Contents.map(k => ({ Key: k.Key }))

@@ -461,6 +461,23 @@ describe('POST a new json file and check his Content-Type', () => {
         test: true
       })
   })
+
+  test('Should works when update a file in a isolate directory', async () => {
+    const app = await appFactory()
+
+    await request(app)
+      .post('/test/foo/bar/foo/does/not/exists/pls/file.json')
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .set('Accept', 'application/json')
+      .attach('file', __filename)
+      .expect(200)
+
+    await request(app)
+      .delete('/test/foo/bar/foo/does/not/exists/pls/file.json')
+      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .set('Accept', 'application/json')
+      .expect(200)
+  })
 })
 
 describe('POST a new image file\n', () => {

@@ -49,11 +49,11 @@ export default class S3Storage extends AbstractStorage {
       }
 
       const res = await this._s3.headObject({
-        Key: filePath
+        Key: filePath.replace(/\/$/, '')
       }).promise()
 
       if (filePath.match(/\/$/)) {
-        return Object.assign({}, DIRECTORY_INFO)
+        return
       }
 
       return {

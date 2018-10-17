@@ -2,7 +2,6 @@
 
 import path from 'path'
 import AWS from 'aws-sdk'
-import async from 'async'
 import fs from 'fs-extra'
 import mime from 'mime'
 import extend from 'lodash/extend'

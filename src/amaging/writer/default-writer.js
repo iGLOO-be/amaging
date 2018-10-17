@@ -67,7 +67,6 @@ export default () =>
     const meterStream = req
       .pipe(new Meter(maxSize))
     meterStream.on('error', (err) => {
-      writableStream.emit('error', err)
       next(err)
     })
     await pEvent(meterStream.pipe(writableStream), 'finish')

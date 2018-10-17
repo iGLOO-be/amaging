@@ -52,10 +52,6 @@ export default class S3Storage extends AbstractStorage {
         Key: filePath.replace(/\/$/, '')
       }).promise()
 
-      if (filePath.match(/\/$/)) {
-        return
-      }
-
       return {
         isDirectory: false,
         ContentType: res.ContentType,

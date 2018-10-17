@@ -28,7 +28,9 @@ if (env === 'local') {
 describe('MANAGE HTTP CACHE', () => {
   describe('GET the image', () =>
     test('Should return a 200', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['ice.jpg']
+      })
       await request(app)
         .get('/test/ice.jpg')
         .expect(200)
@@ -42,7 +44,9 @@ describe('MANAGE HTTP CACHE', () => {
 
   describe('GET the image and create cache storage', () => {
     test('Should return a 200 OK', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['ice.jpg']
+      })
       await request(app)
         .get('/test/190x180&/ice.jpg')
         .expect(200)
@@ -54,7 +58,9 @@ describe('MANAGE HTTP CACHE', () => {
 
     // # Via cacheFile
     test('Should return a 304 not modified (190x180)', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['ice.jpg']
+      })
       const res = await request(app)
         .get('/test/190x180&/ice.jpg')
         .expect(200)
@@ -68,7 +74,9 @@ describe('MANAGE HTTP CACHE', () => {
 
     // # Via file
     test('Should return a 304 not modified (ice.jpg)', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['ice.jpg']
+      })
       await request(app)
         .get('/test/ice.jpg')
         .set('if-none-match', Etag)
@@ -81,7 +89,9 @@ describe('MANAGE HTTP CACHE', () => {
   // # with different ETag and should return 200
   describe('GET the image with former Etags', () => {
     test('Should return a 200 OK (ice.jpg)', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['ice.jpg']
+      })
       await request(app)
         .get('/test/ice.jpg')
         .set('if-none-match', newEtag)
@@ -94,7 +104,9 @@ describe('MANAGE HTTP CACHE', () => {
 
     // # Via cacheFile
     test('Should return a 200 OK (190x180)', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['ice.jpg']
+      })
       await request(app)
         .get('/test/190x180&/ice.jpg')
         .set('if-none-match', Etag)

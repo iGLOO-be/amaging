@@ -14,7 +14,9 @@ import appFactory from './fixtures/app'
 describe('Cache Eviction by deleting file', () => {
   describe('DELETE the original file (cache-eviction-delete.jpg) to erase the cache', () =>
     test('Should return a 200 OK by erasing the original image', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['cache-eviction-delete.jpg']
+      })
       await request(app)
         .get('/test/cache-eviction-delete.jpg')
         .expect(200)
@@ -39,7 +41,9 @@ describe('Cache Eviction by deleting file', () => {
 describe('Cache Eviction by updating file', () => {
   describe('UPDATE the original file (cache-eviction-update.jpg by tipi.jpg) to erase the cache', () =>
     test('Should return a 200 OK by updating the original image', async () => {
-      const app = await appFactory()
+      const app = await appFactory({
+        testFixturesCopy: ['cache-eviction-update.jpg']
+      })
       const buffer = fs.readFileSync(path.join(__dirname, 'expected/tipi.jpg'))
       const res2 = await request(app)
         .get('/test/410x410&/cache-eviction-update.jpg')

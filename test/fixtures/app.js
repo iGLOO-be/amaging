@@ -3,7 +3,7 @@
 import path from 'path'
 import AWS from 'aws-sdk'
 import async from 'async'
-import fs from 'fs'
+import fs from 'fs-extra'
 import mime from 'mime'
 import extend from 'lodash/extend'
 import merge from 'lodash/merge'
@@ -59,16 +59,26 @@ if (env === 'local') {
       next(err)
     })
 
-    await new Promise((resolve, reject) => {
-      async.series([
-        done => rimraf(options.customers.test.storage.options.path, done),
-        done => rimraf(options.customers.test.cacheStorage.options.path, done),
-        done => copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, done)
-      ], (err) => {
-        if (err) reject(err)
-        else resolve()
+    await Promise.all([
+      fs.remove(options.customers.test.storage.options.path),
+      fs.remove(options.customers.test.cacheStorage.options.path)
+    ])
+
+    if (options.testPopulateFixtures) {
+      await new Promise((resolve, reject) => {
+        copy(path.join(__dirname, 'storage/**/*'), options.customers.test.storage.options.path, (err) => {
+          if (err) reject(err)
+          else resolve()
+        })
       })
-    })
+    }
+
+    if (options.testFixturesCopy) {
+      await Promise.all(options.testFixturesCopy.map(async file => {
+        await fs.mkdirp(path.dirname(path.join(options.customers.test.storage.options.path, file)))
+        await fs.copy(path.join(storageDir, file), path.join(options.customers.test.storage.options.path, file))
+      }))
+    }
 
     return app
   }
@@ -164,18 +174,30 @@ if (env === 'local') {
       }).promise()
     }
 
-    const files = await globby('**/*', {
-      cwd: storageDir,
-      onlyFiles: true
-    })
+    if (options.testPopulateFixtures) {
+      const files = await globby('**/*', {
+        cwd: storageDir,
+        onlyFiles: true
+      })
 
-    await Promise.all(files.map(file => (
-      s3.putObject({
-        ContentType: mime.getType(file),
-        Body: fs.createReadStream(path.join(storageDir, file)),
-        Key: options.customers.test.storage.options.path + file
-      }).promise()
-    )))
+      await Promise.all(files.map(file => (
+        s3.putObject({
+          ContentType: mime.getType(file),
+          Body: fs.createReadStream(path.join(storageDir, file)),
+          Key: options.customers.test.storage.options.path + file
+        }).promise()
+      )))
+    }
+
+    if (options.testFixturesCopy) {
+      await Promise.all(options.testFixturesCopy.map(file => (
+        s3.putObject({
+          ContentType: mime.getType(file),
+          Body: fs.createReadStream(path.join(storageDir, file)),
+          Key: options.customers.test.storage.options.path + file
+        }).promise()
+      )))
+    }
 
     return app
   }

@@ -22,7 +22,9 @@ describe('GET a file', () => {
   })
 
   test('Should return a 200 OK because the file exist', async () => {
-    const app = await appFactory()
+    const app = await appFactory({
+      testFixturesCopy: ['igloo.jpg']
+    })
     await request(app)
       .get('/test/igloo.jpg')
       .expect(200)
@@ -71,7 +73,9 @@ describe('HEAD a file', () => {
   })
 
   test('Should return a 200 OK with file info', async () => {
-    const app = await appFactory()
+    const app = await appFactory({
+      testFixturesCopy: ['igloo.jpg']
+    })
     await request(app)
       .head('/test/igloo.jpg')
       .expect(200)
@@ -84,15 +88,12 @@ describe('HEAD a file', () => {
         WRITE
 */
 describe('POST a new json file and check his Content-Type', () => {
-  test(
-    'Should return a 404 not found when retreive the file that doesn\'t exist',
-    async () => {
-      const app = await appFactory()
-      await request(app)
-        .get('/test/notExist.json')
-        .expect(404)
-    }
-  )
+  test('Should return a 404 not found when retreive the file that doesn\'t exist', async () => {
+    const app = await appFactory()
+    await request(app)
+      .get('/test/notExist.json')
+      .expect(404)
+  })
 
   test('Should return a 200 OK by adding a json file', async () => {
     const app = await appFactory()
@@ -211,21 +212,21 @@ describe('POST a new json file and check his Content-Type', () => {
     })
   })
 
-  test(
-    'Should return the json Content-Type and the content of the file.json',
-    async () => {
-      const app = await appFactory()
-      await request(app)
-        .get('/test/file.json')
-        .set('Accept', 'application/json')
-        .expect(200)
-        .expect('Content-Length', '13')
-        .expect('Content-Type', 'application/json; charset=utf-8')
-        .expect({
-          test: true
-        })
-    }
-  )
+  test('Should return the json Content-Type and the content of the file.json', async () => {
+    const app = await appFactory({
+      testFixturesCopy: ['file.json']
+    })
+    await request(app)
+      .get('/test/file.json')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .expect('Content-Length', '13')
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect({
+        test: true
+      })
+  })
+
   describe('Options: writer.maxSize', () => {
     describe('default writer', () => {
       describe('action = create', () => {
@@ -450,7 +451,9 @@ describe('POST a new json file and check his Content-Type', () => {
   })
 
   test('Should return the json Content-Type and the content of the file.json', async () => {
-    const app = await appFactory()
+    const app = await appFactory({
+      testFixturesCopy: ['file.json']
+    })
     await request(app)
       .get('/test/file.json')
       .set('Accept', 'application/json')
@@ -505,7 +508,10 @@ describe('POST a new image file\n', () => {
   })
 
   test('Should return a 200 OK when overwrite an image', async () => {
-    const app = await appFactory()
+    const app = await appFactory({
+      testFixturesCopy: ['igloo.jpg']
+    })
+    await request(app).get('/test/igloo.jpg').expect(200)
     const tok = requestFileToken('expected/igloo.jpg', 'igloo.jpg', 'image/jpeg')
     await request(app)
       .post('/test/igloo.jpg')
@@ -625,7 +631,9 @@ describe('File/Directory collision', () => {
 */
 describe('DELETE files just added\n', () => {
   test('Should return a 200 OK by erasing a file', async () => {
-    const app = await appFactory()
+    const app = await appFactory({
+      testFixturesCopy: ['delete.jpg']
+    })
     await request(app)
       .del('/test/delete.jpg')
       .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())

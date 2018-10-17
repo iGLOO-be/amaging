@@ -82,7 +82,7 @@ if (env === 'local') {
     return app
   }
 } else if (env === 's3') {
-  jest.setTimeout(10 * 1000)
+  jest.setTimeout(15 * 1000)
 
   const isMinio = process.env.MINIO_ENDPOINT && process.env.MINIO_PORT
   const minioConfig = isMinio ? {

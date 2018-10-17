@@ -18,7 +18,7 @@ if (env === 'local') {
 } else {
   Etag = '"1cc596b7a579db797f8aea80bba65415"'
   size = '17252'
-  newEtag = '"ab093153e0081a27fef6b85262189695"'
+  newEtag = process.env.CI ? '"ad4fb758ef1828595b46ed8bd564020c"' : '"ab093153e0081a27fef6b85262189695"'
   newSize = process.env.CI ? '4660' : '4676'
 }
 

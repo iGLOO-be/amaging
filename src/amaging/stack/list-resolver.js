@@ -23,7 +23,7 @@ export default () =>
     // Set `action` to policy for allow action restriction
     amaging.policy.set('action', 'list')
 
-    if (!amaging.file.isDirectory()) {
+    if (!amaging.file.exists() || !amaging.file.isDirectory()) {
       throw Boom.notFound('Directory not found.')
     }
 

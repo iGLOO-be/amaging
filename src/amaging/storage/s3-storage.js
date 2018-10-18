@@ -49,12 +49,8 @@ export default class S3Storage extends AbstractStorage {
       }
 
       const res = await this._s3.headObject({
-        Key: filePath
+        Key: filePath.replace(/\/$/, '')
       }).promise()
-
-      if (filePath.match(/\/$/)) {
-        return Object.assign({}, DIRECTORY_INFO)
-      }
 
       return {
         isDirectory: false,
@@ -122,8 +118,9 @@ export default class S3Storage extends AbstractStorage {
       Prefix: this._filepath(file)
     }).promise()
 
-    debug('Proceed to delete')
-    if (keys && keys.Contents && Array.isArray(keys.Contents) && keys.Contents > 0) {
+    debug('Proceed to delete', keys)
+    if (keys && keys.Contents && Array.isArray(keys.Contents) && keys.Contents.length > 0) {
+      debug('Proceed to deleteObjects', keys.Contents.map(k => ({ Key: k.Key })))
       await this._s3.deleteObjects({
         Delete: {
           Objects: keys.Contents.map(k => ({ Key: k.Key }))

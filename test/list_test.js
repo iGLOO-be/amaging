@@ -27,12 +27,12 @@ describe('GET a file', () => {
     }
   }
 
-  const listTest = async (path, policyConditions = []) => {
+  const listTest = async (path, policyConditions = [], options) => {
     const policy = createPolicy(SECRET_KEY, {
       conditions: policyConditions
     })
 
-    const app = await appFactory()
+    const app = await appFactory(options)
     const res = await request(app)
       .get(`/test${path}`)
       .set('x-authentication', ACCESS_KEY)
@@ -86,23 +86,33 @@ describe('GET a file', () => {
   })
 
   test('Should list files in storage in root', async () => {
-    await listTest('/')
+    await listTest('/', [], {
+      testFixturesCopy: ['ice.jpg']
+    })
   })
   test('Should list files in storage in sub folder', async () => {
-    await listTest('/sub-folder/')
+    await listTest('/sub-folder/', [], {
+      testFixturesCopy: ['sub-folder/ice.jpg']
+    })
   })
   test('Should list files when policy allow `list` action', async () => {
     await listTest('/sub-folder/', [
       ['eq', 'action', 'list']
-    ])
+    ], {
+      testFixturesCopy: ['sub-folder/ice.jpg']
+    })
     await listTest('/sub-folder/', [
       ['eq', 'action', 'list', 'create']
-    ])
+    ], {
+      testFixturesCopy: ['sub-folder/ice.jpg']
+    })
   })
   test('Should list files when policy allow `key`', async () => {
     await listTest('/sub-folder/', [
       ['eq', 'key', 'sub-folder/']
-    ])
+    ], {
+      testFixturesCopy: ['sub-folder/ice.jpg']
+    })
   })
 
   test('Should return a 404 error because of an unexpected url (access a directory without end slash)', async () => {

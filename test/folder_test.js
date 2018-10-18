@@ -16,7 +16,9 @@ describe('Get/add a folder', () => {
   }
 
   test('Should return a 200 directory exist', async () => {
-    const app = await appFactory()
+    const app = await appFactory({
+      testFixturesCopy: ['ice.jpg']
+    })
     await request(app)
       .get('/test/')
       .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())

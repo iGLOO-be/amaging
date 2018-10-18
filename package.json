@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npm run lint && npm run test:local",
     "test:jest": "jest",
-    "test:local": "TEST_ENV=local npm run test:jest",
+    "test:local": "npm run test:jest",
     "test:s3": "TEST_ENV=s3 npm run test:jest",
     "lint": "eslint --ignore-path .gitignore .",
     "start": "DEBUG=amaging* PORT=4000 nodemon --exec babel-node samples/local/sample.js",
@@ -50,7 +50,6 @@
   },
   "dependencies": {
     "@igloo-be/amaging-policy": "^3.0.0",
-    "async": "~2.6.1",
     "aws-sdk": "^2.314.0",
     "boom": "^7.2.0",
     "bytes": "^3.0.0",

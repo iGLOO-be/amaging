@@ -2,12 +2,6 @@
 import assert from 'assert'
 
 export default class AbstractStorage {
-  static create (type, options, amaging) {
-    const Storage = require(`./${type}-storage`).default
-    const storage = new Storage(options, amaging)
-    return storage
-  }
-
   constructor (options, amaging) {
     this.options = options
     this.amaging = amaging

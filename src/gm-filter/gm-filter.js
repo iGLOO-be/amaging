@@ -1,9 +1,45 @@
 
 import gm from 'gm'
-import fs from 'fs'
-import path from 'path'
 
-const filters = fs.readdirSync(path.join(__dirname, '/filters')).map(file => require(`./filters/${file}`).default)
+import autoOrient from './filters/auto-orient'
+import background from './filters/background'
+import blur from './filters/blur'
+import borderColor from './filters/border-color'
+import border from './filters/border'
+import box from './filters/box'
+import compress from './filters/compress'
+import crop from './filters/crop'
+import equalize from './filters/equalize'
+import extent from './filters/extent'
+import flip from './filters/flip'
+import flop from './filters/flop'
+import gravity from './filters/gravity'
+import implode from './filters/implode'
+import negative from './filters/negative'
+import quality from './filters/quality'
+import resize from './filters/resize'
+import sepia from './filters/sepia'
+
+const filters = [
+  autoOrient,
+  background,
+  blur,
+  borderColor,
+  border,
+  box,
+  compress,
+  crop,
+  equalize,
+  extent,
+  flip,
+  flop,
+  gravity,
+  implode,
+  negative,
+  quality,
+  resize,
+  sepia
+]
 const filterMatchingOption = function (option) {
   for (let Filter of Array.from(filters)) {
     const filter = new Filter(option)

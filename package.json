@@ -4,7 +4,7 @@
   "main": "lib/amaging/server.js",
   "scripts": {
     "test": "npm run lint && npm run test:local && npm run test:start",
-    "test:jest": "jest",
+    "test:jest": "BABEL_MODULES=cjs jest",
     "test:local": "npm run test:jest",
     "test:s3": "TEST_ENV=s3 npm run test:jest",
     "test:start": "node .",

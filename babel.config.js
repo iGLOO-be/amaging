@@ -2,9 +2,9 @@ module.exports = {
   'presets': [
     ['@babel/preset-env', {
       'targets': {
-        'node': '10'
+        'node': '8'
       },
-      'modules': false
+      'modules': process.env.BABEL_MODULES ? process.env.BABEL_MODULES : false
     }]
   ]
 }

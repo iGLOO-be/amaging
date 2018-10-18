@@ -3,11 +3,11 @@
   "version": "1.5.1",
   "main": "lib/amaging/server.js",
   "scripts": {
-    "test": "npm run lint && npm run test:local && npm run test:start",
+    "test": "npm run lint && npm run test:local && npm run test:build",
     "test:jest": "BABEL_MODULES=cjs jest",
     "test:local": "npm run test:jest",
     "test:s3": "TEST_ENV=s3 npm run test:jest",
-    "test:start": "node .",
+    "test:build": "npm run build && node .",
     "lint": "eslint --ignore-path .gitignore .",
     "start": "DEBUG=amaging* PORT=4000 nodemon --exec babel-node samples/local/sample.js",
     "start:s3": "nodemon lib/samples/s3/sample.js",

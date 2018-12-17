@@ -8,10 +8,13 @@ import appFactory from './fixtures/app'
 chai.should()
 
 describe('Get/add a folder', () => {
-  const addFolder = async (app, path) => {
+  const addFolder = async (app, path, headers) => {
     await request(app)
       .post(`/test${path}`)
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+      .set({
+        Authorization: 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT(),
+        ...headers
+      })
       .expect(200)
   }
 
@@ -33,49 +36,63 @@ describe('Get/add a folder', () => {
       .expect(404)
   })
 
-  test('Should return 200 OK by adding a new empty folder', async () => {
-    const app = await appFactory()
-    await addFolder(app, '/newFolder/')
-  })
+  describe('Create folder', () => {
+    test('Should return 200 OK by adding a new empty folder', async () => {
+      const app = await appFactory()
+      await addFolder(app, '/newFolder/')
+    })
 
-  test('Should return a 200 OK after adding a new empty folder', async () => {
-    const app = await appFactory()
-    await addFolder(app, '/newFolder/')
-    await request(app)
-      .get('/test/newFolder/')
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(200)
-  })
+    test('Should return a 200 OK after adding a new empty folder', async () => {
+      const app = await appFactory()
+      await addFolder(app, '/newFolder/')
+      await request(app)
+        .get('/test/newFolder/')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+    })
 
-  test('Sould return content-length of 0 because a new directory is empty', async () => {
-    const app = await appFactory()
-    await addFolder(app, '/newFolder/')
-    await request(app)
-      .head('/test/newFolder/')
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect('Content-Length', '0')
-      .expect(200)
-  })
+    test('Should return a 200 OK when Content-Type: text/plain', async () => {
+      const app = await appFactory()
+      await addFolder(app, '/newFolder/', {
+        Authorization: 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').cond('starts-with', 'content-type', 'image/').toJWT(),
+        'Content-Type': 'text/plain'
+      })
+      await request(app)
+        .get('/test/newFolder/')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+    })
 
-  test('Should return a 200 OK after adding new empty folders recursively', async () => {
-    const app = await appFactory()
-    await addFolder(app, '/newFolder/newSubFolder/')
-    await request(app)
-      .get('/test/newFolder/')
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(200)
-    await request(app)
-      .get('/test/newFolder/newSubFolder/')
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(200)
-  })
+    test('Sould return content-length of 0 because a new directory is empty', async () => {
+      const app = await appFactory()
+      await addFolder(app, '/newFolder/')
+      await request(app)
+        .head('/test/newFolder/')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect('Content-Length', '0')
+        .expect(200)
+    })
 
-  test('Should return a 404 not found, trying to access a file as a folder, instead of throwing ENOTDIR', async () => {
-    const app = await appFactory()
-    await addFolder(app, '/notADir')
-    await request(app)
-      .get('/test/notADir/')
-      .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
-      .expect(404)
+    test('Should return a 200 OK after adding new empty folders recursively', async () => {
+      const app = await appFactory()
+      await addFolder(app, '/newFolder/newSubFolder/')
+      await request(app)
+        .get('/test/newFolder/')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+      await request(app)
+        .get('/test/newFolder/newSubFolder/')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(200)
+    })
+
+    test('Should return a 404 not found, trying to access a file as a folder, instead of throwing ENOTDIR', async () => {
+      const app = await appFactory()
+      await addFolder(app, '/notADir')
+      await request(app)
+        .get('/test/notADir/')
+        .set('Authorization', 'Bearer ' + await sign('apiaccess', '4ec2b79b81ee67e305b1eb4329ef2cd1').toJWT())
+        .expect(404)
+    })
   })
 })

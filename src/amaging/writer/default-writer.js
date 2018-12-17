@@ -57,6 +57,9 @@ export default () =>
       return next()
     }
 
+    amaging.policy.set('content-type', contentType)
+    amaging.policy.set('content-length', contentLength)
+
     debug('Start writing file...')
     const writableStream = await amaging.file.requestWriteStream({
       ContentLength: contentLength,

@@ -74,10 +74,6 @@ export default () =>
 
       policySetKey(policy, params.file)
 
-      amaging.auth.headers.forEach(header => {
-        policy.set(header, req.headers[header])
-      })
-
       return next()
 
     // # Policy
